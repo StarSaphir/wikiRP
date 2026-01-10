@@ -1,0 +1,14 @@
+[
+  {
+    "content": "<h1>Titre</h1><p><br></p><p>Test <a href=\"../test/\" rel=\"noopener noreferrer\" target=\"_blank\">ceci est encore un test</a></p><p><br></p><p>test <a href=\"https://youtu.be/X77bf6zUJs0?si=N0cnLmbVRK78NFsZ\" rel=\"noopener noreferrer\" target=\"_blank\">lien</a></p>",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 370,
+    "id": "comp-1",
+    "type": "text",
+    "w": 300,
+    "x": 120,
+    "y": 40,
+    "z": 0
+  }
+]

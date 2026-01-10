@@ -1,0 +1,15 @@
+[
+  {
+    "id": "comp-1",
+    "type": "youtube",
+    "x": 50,
+    "y": 60,
+    "w": 560,
+    "h": 340,
+    "z": 0,
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "youtube_id": "6VqiMQoMXmw"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "content": "<h1><a href=\"../test2/\" rel=\"noopener noreferrer\" target=\"_blank\">test 2</a>, </h1><p>test 4</p>",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 170,
+    "id": "comp-1",
+    "type": "text",
+    "w": 800,
+    "x": 50,
+    "y": 10,
+    "z": 0
+  },
+  {
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 30,
+    "id": "comp-2",
+    "type": "separator",
+    "w": 800,
+    "x": 50,
+    "y": 180,
+    "z": 1
+  },
+  {
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 200,
+    "id": "comp-3",
+    "type": "table",
+    "w": 300,
+    "x": 50,
+    "y": 210,
+    "z": 2
+  }
+]

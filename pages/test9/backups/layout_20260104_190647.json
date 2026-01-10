@@ -1,0 +1,39 @@
+[
+  {
+    "id": "comp-1",
+    "type": "table",
+    "x": 50,
+    "y": 50,
+    "w": 300,
+    "h": 200,
+    "z": 0,
+    "content": "<table border=\"1\" style=\"width:100%; border-collapse:collapse;\"><tbody><tr><th>Colonne 1</th><th>Colonne 2</th></tr><tr><td>Donnéea</td><td>Données</td></tr></tbody></table>",
+    "custom_css": "",
+    "custom_js": ""
+  },
+  {
+    "id": "comp-2",
+    "type": "gallery",
+    "x": 420,
+    "y": 240,
+    "w": 560,
+    "h": 315,
+    "z": 1,
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "images": []
+  },
+  {
+    "id": "comp-3",
+    "type": "text",
+    "x": 520,
+    "y": 50,
+    "w": 300,
+    "h": 200,
+    "z": 2,
+    "content": "",
+    "custom_css": "",
+    "custom_js": ""
+  }
+]

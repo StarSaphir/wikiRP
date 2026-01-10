@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test3</title>
+    <link rel="stylesheet" href="../../static/viewer.css">
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>Wiki Navigator</h2>
+        </div>
+        <ul class="sidebar-nav" id="nav-list"></ul>
+    </nav>
+    
+    <main class="content">
+        <div class="canvas-container" id="canvas" style="min-height: 510px;">
+        <div class="component component-text" id="comp-1" style="left:50px;top:10px;width:800px;height:170px;z-index:0;">
+            <div class="text-content"><h1><a href="../test2/" rel="noopener noreferrer" target="_blank">test 2</a>, </h1><p>test 4</p></div>
+        </div>
+        <div class="component component-separator" id="comp-2" style="left:50px;top:180px;width:800px;height:30px;z-index:1;">
+            <hr />
+        </div>
+        <div class="component component-table" id="comp-3" style="left:50px;top:210px;width:300px;height:200px;z-index:2;">
+            <div class="table-content"></div>
+        </div>
+        </div>
+    </main>
+    
+    <div class="mobile-warning" id="mobile-warning">
+        <div class="mobile-warning-content">
+            <p>📱 Ce Wiki est optimisé pour une consultation sur ordinateur</p>
+            <button onclick="document.getElementById('mobile-warning').style.display='none'">Continuer</button>
+        </div>
+    </div>
+    
+    <script src="../../static/viewer.js"></script>
+</body>
+</html>

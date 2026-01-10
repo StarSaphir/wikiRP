@@ -1,0 +1,64 @@
+[
+  {
+    "content": "<p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p>",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 855,
+    "id": "comp-1",
+    "type": "text",
+    "w": 1265,
+    "x": 0,
+    "y": 0,
+    "z": 0
+  },
+  {
+    "bg_color": "#2e2e2e",
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 700,
+    "id": "comp-3",
+    "type": "shape",
+    "w": 300,
+    "x": 1265,
+    "y": 0,
+    "z": 0
+  },
+  {
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 290,
+    "id": "comp-7",
+    "image_path": "images/img_20260102_093149.png",
+    "type": "image",
+    "w": 290,
+    "x": 1270,
+    "y": 15,
+    "z": 3
+  },
+  {
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 70,
+    "id": "comp-8",
+    "type": "separator",
+    "w": 290,
+    "x": 1270,
+    "y": 305,
+    "z": 3
+  },
+  {
+    "content": "<p>Lorem Ipsum</p>",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 195,
+    "id": "comp-9",
+    "type": "text",
+    "w": 290,
+    "x": 1270,
+    "y": 330,
+    "z": 4
+  }
+]

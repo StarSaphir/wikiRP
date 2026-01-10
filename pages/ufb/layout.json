@@ -1,0 +1,99 @@
+[
+  {
+    "content": "<p>L’Union Fédérale Balte (UFB) est une organisation politique et militaire regroupant plusieurs États souverains d’Europe du Nord et de la région baltique. Fondée dans un contexte d’instabilité internationale et de crainte d’un conflit majeur, elle vise à garantir la sécurité collective de ses membres tout en préservant strictement leur souveraineté nationale, leurs identités culturelles et leurs systèmes politiques propres.</p><p><br></p><p>Contrairement à un État fédéral classique, l’UFB ne dispose pas de souveraineté propre : elle fonctionne comme une fédération d’États indépendants coopérant à travers des institutions communes, principalement dans les domaines de la défense, de l’économie stratégique et de la régulation industrielle. Les décisions majeures sont prises par le Conseil des Blocs, organe central représentant l’ensemble des États membres, assisté par des institutions techniques spécialisées.</p><p><br></p><p>L’UFB adopte une posture internationale de neutralité armée, privilégiant l’isolation stratégique et la dissuasion défensive. Sa doctrine militaire repose sur une défense en profondeur, une forte décentralisation des forces et une mobilisation étroite de la société civile dans la préparation aux conflits. Les forces armées sont communes à l’ensemble de l’Union et ne relèvent pas d’armées nationales distinctes.</p><p><br></p><p>Sur le plan économique, l’UFB pratique un dirigisme coordonné visant à réduire les disparités entre États membres et à garantir l’autonomie stratégique de l’Union, notamment dans les secteurs de l’armement, de la métallurgie, de l’énergie et des télécommunications. Cette orientation est incarnée par le Conseil Économique Balte et par le cadre du Nouvel Ordre Économique, destiné à encadrer la production, les échanges et, en certaines circonstances, la gestion des réparations de guerre.</p><p><br></p><p>État laïque, l’UFB garantit la liberté de culte et n’impose aucune religion officielle, bien qu’une foi majoritaire, le shoukakouisme, occupe une place culturelle importante au sein de ses sociétés. L’Union se caractérise enfin par une culture politique marquée par la résilience, la discipline collective et la primauté du bien commun, héritées de conditions géographiques, historiques et sécuritaires particulièrement exigeantes.</p>",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 710,
+    "id": "comp-1",
+    "type": "text",
+    "w": 1110,
+    "x": 0,
+    "y": 90,
+    "z": 0
+  },
+  {
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 40,
+    "id": "comp-2",
+    "type": "separator",
+    "w": 1110,
+    "x": 0,
+    "y": 50,
+    "z": 1
+  },
+  {
+    "content": "<h1>UFB</h1>",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 50,
+    "id": "comp-3",
+    "type": "text",
+    "w": 340,
+    "x": 0,
+    "y": 0,
+    "z": 2
+  },
+  {
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 430,
+    "id": "comp-4",
+    "type": "shape",
+    "w": 400,
+    "x": 1170,
+    "y": 60,
+    "z": 3
+  },
+  {
+    "content": "<p>Union Fédérale Balte</p>",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 40,
+    "id": "comp-5",
+    "type": "text",
+    "w": 300,
+    "x": 1200,
+    "y": 80,
+    "z": 4
+  },
+  {
+    "content": "",
+    "custom_css": "hr { background-color: white;}\n",
+    "custom_js": "",
+    "h": 20,
+    "id": "comp-6",
+    "type": "separator",
+    "w": 400,
+    "x": 1170,
+    "y": 110,
+    "z": 5
+  },
+  {
+    "id": "comp-9",
+    "type": "text",
+    "x": 1200,
+    "y": 297,
+    "w": 300,
+    "h": 60,
+    "z": 6,
+    "content": "<p>Drapeau de l'UFB</p>",
+    "custom_css": "",
+    "custom_js": ""
+  },
+  {
+    "id": "comp-12",
+    "type": "image",
+    "x": 1200,
+    "y": 130,
+    "w": 300,
+    "h": 170,
+    "z": 7,
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "image_path": "images/img_20260104_215752.png"
+  }
+]

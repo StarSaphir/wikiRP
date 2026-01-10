@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test</title>
+    <link rel="stylesheet" href="../../static/viewer.css">
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>Wiki Navigator</h2>
+        </div>
+        <ul class="sidebar-nav" id="nav-list"></ul>
+    </nav>
+    
+    <main class="content">
+        <div class="canvas-container" id="canvas" style="min-height: 955px;">
+        <div class="component component-text" id="comp-1" style="left:0px;top:0px;width:1265px;height:855px;z-index:0;">
+            <div class="text-content"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean blandit justo in magna condimentum interdum. Duis felis tellus, consequat eget venenatis ac, auctor ac erat. Fusce suscipit, diam sed condimentum iaculis, ligula turpis dapibus orci, in ultricies erat eros lacinia diam. Duis fermentum sed ex vitae elementum. Praesent faucibus ante nec nunc malesuada, eu consectetur velit pharetra. Duis orci justo, aliquet in mollis et, ultrices mollis elit. Aliquam erat volutpat. Integer interdum condimentum blandit. Quisque at augue metus. Phasellus eget arcu id lacus vestibulum lacinia.</p><p><br></p><p>Sed imperdiet tempus enim at faucibus. Ut vehicula euismod metus, porttitor gravida nisl semper vitae. Nam tincidunt, felis in consectetur commodo, ex tellus molestie elit, eu pellentesque felis turpis sed massa. Fusce non lobortis lectus. Quisque eu lobortis felis, ut suscipit massa. Nulla et tortor ante. Vivamus ut libero volutpat, eleifend mi et, fermentum risus.</p><p><br></p><p>Curabitur massa lorem, molestie a ultrices nec, ultrices gravida ex. Etiam placerat odio diam, bibendum tempor elit placerat id. Maecenas ullamcorper bibendum justo, in pharetra neque. Morbi sit amet ligula eu eros aliquam dictum quis et enim. Morbi sed magna consectetur, faucibus est ut, fringilla metus. Quisque et rhoncus turpis. Vestibulum ut odio sapien. Pellentesque nec arcu a nulla pellentesque porta ut sit amet sapien. Nulla vel massa nec turpis gravida dignissim. Vestibulum cursus sagittis condimentum. Nullam tincidunt pharetra lectus.</p><p><br></p><p>Vivamus tristique ante vel eleifend hendrerit. Nulla at finibus lorem. Aliquam eleifend erat quis lorem viverra dapibus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Proin gravida luctus cursus. In hac habitasse platea dictumst. Nulla sit amet velit leo. Quisque consequat leo nulla, ut vehicula ex porta vel. Phasellus mollis dapibus dolor, id ullamcorper eros mollis eget. Aenean sit amet eleifend justo.</p><p><br></p><p>Donec felis mi, rhoncus id odio nec, fermentum posuere augue. Nunc faucibus commodo auctor. Vivamus augue odio, rhoncus id sem sed, commodo aliquet ligula. Pellentesque sed nisl eu libero aliquam dictum. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Etiam malesuada posuere vulputate. Aenean iaculis arcu id ex ultrices lobortis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque et ornare massa. Pellentesque fermentum mollis augue, dictum dapibus ligula ultrices ut.</p><p><br></p></div>
+        </div>
+        <div class="component component-shape" id="comp-3" style="left:1265px;top:0px;width:300px;height:700px;z-index:0;">
+            <div class="shape" style="background:#2e2e2e;width:100%;height:100%;"></div>
+        </div>
+        <div class="component component-image" id="comp-7" style="left:1270px;top:15px;width:290px;height:290px;z-index:3;">
+            <img src="images/img_20260102_093149.png" alt="Image" />
+        </div>
+        <div class="component component-separator" id="comp-8" style="left:1270px;top:305px;width:290px;height:70px;z-index:3;">
+            <hr />
+        </div>
+        <div class="component component-text" id="comp-9" style="left:1270px;top:330px;width:290px;height:195px;z-index:4;">
+            <div class="text-content"><p>Lorem Ipsum</p></div>
+        </div>
+        </div>
+    </main>
+    
+    <div class="mobile-warning" id="mobile-warning">
+        <div class="mobile-warning-content">
+            <p>📱 Ce Wiki est optimisé pour une consultation sur ordinateur</p>
+            <button onclick="document.getElementById('mobile-warning').style.display='none'">Continuer</button>
+        </div>
+    </div>
+    
+    <script src="../../static/viewer.js"></script>
+</body>
+</html>

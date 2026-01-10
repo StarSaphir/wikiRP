@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architect Wiki - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 40px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .header h1 {
+            font-size: 48px;
+            color: #4a9eff;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(74, 158, 255, 0.5);
+        }
+        
+        .header p {
+            font-size: 18px;
+            color: #999;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            background: #4a9eff;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3);
+        }
+        
+        .btn:hover {
+            background: #3a8eef;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 158, 255, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #444;
+        }
+        
+        .pages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+        
+        .page-card {
+            background: #252525;
+            border-radius: 10px;
+            padding: 25px;
+            border: 2px solid #333;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .page-card:hover {
+            border-color: #4a9eff;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        
+        .page-card h3 {
+            color: #4a9eff;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        
+        .page-card .slug {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+        
+        .page-card .visibility {
+            margin: 10px 0;
+            font-size: 13px;
+        }
+        
+        .page-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .page-actions button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: opacity 0.2s;
+        }
+        
+        .page-actions button:hover {
+            opacity: 0.8;
+        }
+        
+        .edit-btn {
+            background: #4a9eff;
+            color: white;
+        }
+        
+        .view-btn {
+            background: #5cb85c;
+            color: white;
+        }
+        
+        .toggle-btn {
+            background: #ff9800;
+            color: white;
+            flex: 0.5;
+        }
+        
+        .delete-btn {
+            background: #d9534f;
+            color: white;
+            flex: 0.5;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .empty-state h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: #2a2a2a;
+            padding: 40px;
+            border-radius: 15px;
+            min-width: 400px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        
+        .modal-content h2 {
+            color: #4a9eff;
+            margin-bottom: 25px;
+        }
+        
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            background: #333;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ Architect Wiki</h1>
+            <p>Générateur de Wiki pour World-Building</p>
+        </div>
+        
+        <div class="actions">
+            <button class="btn" onclick="showCreateModal()">➕ Nouvelle Page</button>
+            <button class="btn btn-secondary" onclick="window.open('/wiki/', '_blank')">🏠 Accueil Wiki</button>
+            <button class="btn btn-secondary" onclick="exportStatic()">📦 Exporter pour GitHub Pages</button>
+        </div>
+        
+        <div class="pages-grid" id="pages-grid">
+            {% if pages %}
+                {% for page in pages %}
+                <div class="page-card">
+                    <h3>{{ page.title }}</h3>
+                    <div class="slug">{{ page.slug }}</div>
+                    <div class="visibility">
+                        {% if page.hidden_from_nav %}
+                        <span style="color: #ff9800;">🔒 Cachée de la navigation</span>
+                        {% else %}
+                        <span style="color: #5cb85c;">👁️ Visible</span>
+                        {% endif %}
+                    </div>
+                    <div class="page-actions">
+                        <button class="edit-btn" onclick="editPage('{{ page.slug }}')">✏️ Éditer</button>
+                        <button class="view-btn" onclick="viewPage('{{ page.slug }}')">👁️ Voir</button>
+                        <button class="toggle-btn" onclick="toggleVisibility('{{ page.slug }}', {{ 'false' if page.hidden_from_nav else 'true' }})">
+                            {% if page.hidden_from_nav %}👁️{% else %}🔒{% endif %}
+                        </button>
+                        <button class="delete-btn" onclick="deletePage('{{ page.slug }}', '{{ page.title }}')">🗑️</button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <h2>Aucune page pour le moment</h2>
+                    <p>Créez votre première page pour commencer !</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Modal Création -->
+    <div class="modal" id="create-modal">
+        <div class="modal-content">
+            <h2>Créer une Nouvelle Page</h2>
+            <input type="text" id="page-title" placeholder="Titre de la page">
+            <div class="modal-actions">
+                <button class="btn" onclick="createPage()">Créer</button>
+                <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showCreateModal() {
+            document.getElementById('create-modal').style.display = 'flex';
+            document.getElementById('page-title').focus();
+        }
+        
+        function closeModal() {
+            document.getElementById('create-modal').style.display = 'none';
+            document.getElementById('page-title').value = '';
+        }
+        
+        async function createPage() {
+            const title = document.getElementById('page-title').value.trim();
+            
+            if (!title) {
+                alert('Veuillez entrer un titre');
+                return;
+            }
+            
+            const response = await fetch('/api/pages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title })
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                window.location.href = `/editor/${data.slug}`;
+            }
+        }
+        
+        function editPage(slug) {
+            window.location.href = `/editor/${slug}`;
+        }
+        
+        function viewPage(slug) {
+            window.open(`/pages/${slug}/`, '_blank');
+        }
+        
+        async function deletePage(slug, title) {
+            if (!confirm(`Supprimer la page "${title}" ?\n\nCette action est irréversible !`)) return;
+            
+            console.log('Suppression de:', slug);
+            
+            try {
+                const response = await fetch(`/api/pages/${slug}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log('Status:', response.status);
+                const data = await response.json();
+                console.log('Réponse:', data);
+                
+                if (response.ok) {
+                    alert('✅ Page supprimée !');
+                    location.reload();
+                } else {
+                    alert('❌ Erreur: ' + (data.error || 'Erreur inconnue'));
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors de la suppression: ' + error.message);
+            }
+        }
+        
+        async function toggleVisibility(slug, hide) {
+            const response = await fetch(`/api/pages/${slug}/visibility`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ hidden: hide })
+            });
+            
+            if (response.ok) {
+                location.reload();
+            }
+        }
+        
+        function exportStatic() {
+            alert('Export en cours...\n\nCopiez le dossier "pages" et "data" vers votre repository GitHub.\nActivez GitHub Pages dans les paramètres du repository.');
+        }
+        
+        // Gestion de la touche Entrée dans le modal
+        document.getElementById('page-title').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') createPage();
+        });
+    </script>
+</body>
+</html>
