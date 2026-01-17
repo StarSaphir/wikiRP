@@ -500,16 +500,19 @@ def generate_wiki_home():
 
 def generate_404_page():
     """
-    Génère la page 404 (/wiki/404.html)
-    Avec suggestions de pages similaires
+    Génère la page 404
+    - À la racine /404.html pour GitHub Pages
+    - Dans /wiki/404.html pour cohérence
     """
-    print("\n📝 Génération de /wiki/404.html...")
+    print("\n📝 Génération de la page 404...")
     
     inventory = load_inventory()
     visible_pages = [p for p in inventory if not p.get('hidden_from_nav', False)]
+    suggestions = random.sample(visible_pages, min(3, len(visible_pages))) if visible_pages else []
     
-    # 3 pages aléatoires pour suggestions
-    suggestions = random.sample(visible_pages, min(3, len(visible_pages)))
+    # Détecter si on est en local ou sur GitHub Pages
+    # En local : liens relatifs
+    # Sur GitHub : liens absolus avec /repo-name/
     
     html = '''<!DOCTYPE html>
 <html lang="fr">
@@ -586,6 +589,19 @@ def generate_404_page():
             color: #999;
             margin-bottom: 40px;
             line-height: 1.6;
+        }
+        
+        .url-info {
+            background: rgba(255, 74, 74, 0.1);
+            border: 1px solid rgba(255, 74, 74, 0.3);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 30px auto;
+            max-width: 600px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #ff6b6b;
+            word-break: break-all;
         }
         
         .actions {
@@ -687,8 +703,10 @@ def generate_404_page():
         <h1>Oups ! Page introuvable</h1>
         <p>La page que vous recherchez n'existe pas ou a été déplacée.</p>
         
+        <div class="url-info" id="url-display"></div>
+        
         <div class="actions">
-            <a href="/wiki/" class="btn btn-primary">
+            <a href="/" class="btn btn-primary" id="home-link">
                 🏠 Retour à l'accueil
             </a>
             <a href="javascript:history.back()" class="btn btn-secondary">
@@ -717,17 +735,63 @@ def generate_404_page():
     
     html += '''
     </div>
+    
+    <script>
+        // Afficher l'URL demandée
+        const urlDisplay = document.getElementById('url-display');
+        if (urlDisplay) {
+            urlDisplay.textContent = '📍 ' + window.location.pathname;
+        }
+        
+        // Détecter si on est sur GitHub Pages et ajuster les liens
+        const isGitHubPages = window.location.hostname.includes('github.io');
+        
+        if (isGitHubPages) {
+            // Sur GitHub Pages, déterminer le nom du repo
+            const pathParts = window.location.pathname.split('/').filter(p => p);
+            const repoName = pathParts[0] || '';
+            
+            // Mettre à jour le lien d'accueil
+            const homeLink = document.getElementById('home-link');
+            if (homeLink && repoName) {
+                homeLink.href = `/${repoName}/wiki/`;
+            }
+            
+            // Mettre à jour les liens de suggestions
+            document.querySelectorAll('.suggestion-card').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && !href.startsWith('http') && repoName) {
+                    link.href = `/${repoName}${href}`;
+                }
+            });
+        } else {
+            // En local, utiliser /wiki/
+            const homeLink = document.getElementById('home-link');
+            if (homeLink) {
+                homeLink.href = '/wiki/';
+            }
+        }
+        
+        console.log('🔍 Page 404 chargée');
+        console.log('📍 URL demandée:', window.location.href);
+    </script>
 </body>
 </html>'''
     
-    # Sauvegarder
-    output_file = WIKI_DIR / '404.html'
-    with open(output_file, 'w', encoding='utf-8') as f:
+    # Sauvegarder dans /wiki/404.html
+    WIKI_DIR.mkdir(exist_ok=True)
+    wiki_404 = WIKI_DIR / '404.html'
+    with open(wiki_404, 'w', encoding='utf-8') as f:
         f.write(html)
+    print(f"   ✅ {wiki_404}")
     
-    print(f"   ✅ {output_file}")
-    return output_file
-
+    # Sauvegarder à la racine pour GitHub Pages
+    root_404 = BASE_DIR / '404.html'
+    with open(root_404, 'w', encoding='utf-8') as f:
+        f.write(html)
+    print(f"   ✅ {root_404} (pour GitHub Pages)")
+    
+    return root_404
 
 def main():
     """Point d'entrée principal"""

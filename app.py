@@ -110,6 +110,14 @@ def dashboard():
     inventory = load_inventory()
     return render_template('dashboard.html', pages=inventory)
 
+@app.errorhandler(404)
+def page_not_found(e):
+    root_404 = BASE_DIR / '404.html'
+    if root_404.exists():
+        with open(root_404, 'r', encoding='utf-8') as f:
+            return f.read(), 404
+    return "404", 404
+
 @app.route('/editor/<slug>')
 def editor(slug):
     page_dir = get_page_dir(slug)
