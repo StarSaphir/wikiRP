@@ -5,227 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>test14</title>
     
-    <!-- CSS avec chemin relatif pour GitHub Pages -->
+    <!-- ✅ Chargement du CSS externe -->
+    <link rel="stylesheet" href="../../static/css/viewer.css">
+    
+    <!-- Styles spécifiques à la page (si nécessaire) -->
     <style>
-        /* Inclure directement les styles critiques */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0a0a0a;
-            color: #e0e0e0;
-            overflow-x: hidden;
-        }
-        
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 250px;
-            height: 100vh;
-            background: #1a1a1a;
-            border-right: 2px solid #333;
-            padding: 20px;
-            overflow-y: auto;
-            z-index: 1000;
-        }
-        
-        .sidebar-header {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #333;
-        }
-        
-        .sidebar-header h2 {
-            color: #4a9eff;
-            font-size: 24px;
-        }
-        
-        .sidebar-nav {
-            list-style: none;
-        }
-        
-        .sidebar-nav li {
-            margin-bottom: 10px;
-        }
-        
-        .sidebar-nav a {
-            display: block;
-            padding: 12px 15px;
-            color: #e0e0e0;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: all 0.3s;
-            background: #252525;
-        }
-        
-        .sidebar-nav a:hover {
-            background: #4a9eff;
-            color: white;
-            transform: translateX(5px);
-        }
-        
-        .sidebar-nav a.active {
-            background: #4a9eff;
-            color: white;
-        }
-        
-        .content {
-            margin-left: 250px;
-            min-height: 100vh;
-            padding: 40px;
-        }
-        
+        /* Hauteur minimale du canvas */
         .canvas-container {
-            position: relative;
-            width: 100%;
-            background: #1a1a1a;
-            border-radius: 10px;
-            padding: 20px;
             min-height: 428px;
-        }
-        
-        .component {
-            position: absolute;
-            overflow: hidden;
-        }
-        
-        .component-text .text-content {
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
-            padding: 15px;
-        }
-        
-        .component-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        
-        .component-separator hr {
-            border: none;
-            border-top: 2px solid #666;
-            margin: 0;
-        }
-        
-        .component-shape {
-            border-radius: 5px;
-        }
-        
-        .component-video video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .component-youtube iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        
-        .component-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            padding: 10px;
-        }
-        
-        .component-gallery img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        
-        .component-gallery img:hover {
-            transform: scale(1.05);
-        }
-        
-        .component-table {
-            overflow: auto;
-            padding: 10px;
-        }
-        
-        .component-table table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #252525;
-        }
-        
-        .component-table th,
-        .component-table td {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid #333;
-        }
-        
-        .component-table th {
-            background: #333;
-            color: #4a9eff;
-            font-weight: bold;
-        }
-        
-        /* Mobile - Toast non intrusif */
-        .mobile-toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(74, 158, 255, 0.95);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            z-index: 9999;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            font-size: 14px;
-            text-align: center;
-            max-width: 90%;
-            animation: slideUp 0.3s ease-out;
-        }
-        
-        @keyframes slideUp {
-            from {
-                transform: translateX(-50%) translateY(100px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(-50%) translateY(0);
-                opacity: 1;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s;
-            }
-            
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            
-            .content {
-                margin-left: 0;
-            }
         }
     </style>
 </head>
 <body>
     <nav class="sidebar">
         <div class="sidebar-header">
-            <h2>📚 Wiki Navigator</h2>
+            <h2>📚 test14</h2>
         </div>
-        <ul class="sidebar-nav" id="nav-list">
-            <!-- Sera rempli par JavaScript -->
-        </ul>
+        
+        <div class="nav-toggle">
+            <button class="nav-btn active" data-tab="links">🔗 Liens</button>
+            <button class="nav-btn" data-tab="toc">📋 Sommaire</button>
+        </div>
+        
+        <div class="nav-content" id="nav-links">
+            <div class="nav-section" id="internal-links-section" style="display:none;">
+                <div class="nav-section-title">Liens référencés</div>
+                <ul class="sidebar-nav" id="internal-links-list"></ul>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Autres pages</div>
+                <ul class="sidebar-nav" id="other-pages-list"></ul>
+            </div>
+        </div>
+        
+        <div class="nav-content" id="nav-toc" style="display:none;">
+            <ul class="toc-list" id="toc-list">
+                <li style="color: #666; font-size: 12px; padding: 10px;">Aucun titre trouvé</li>
+            </ul>
+        </div>
     </nav>
     
     <main class="content">
@@ -235,76 +53,177 @@
 </div>
 
         </div>
-        </main>
+    </main>
+    
+    <div class="link-preview" id="link-preview">
+        <div class="preview-header" id="preview-title"></div>
+        <div class="preview-content" id="preview-content"></div>
+        <div class="preview-footer">Cliquez pour ouvrir →</div>
+    </div>
+    
+    <script>
+        const PAGE_HEADINGS = [];
+        const INTERNAL_LINKS = [];
+        const CURRENT_SLUG = "test14";
+        const PAGES_METADATA = {"test": {"title": "test", "slug": "test", "preview": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean blandit justo in magna condimentum interdum. Duis felis tellus, consequat eget venenatis ac, auctor ac erat. Fusce suscipit, diam sed co...", "hidden_from_nav": false}, "test2": {"title": "test2", "slug": "test2", "preview": "test", "hidden_from_nav": false}, "test3": {"title": "test3", "slug": "test3", "preview": "test 2 , test 4", "hidden_from_nav": true}, "test4": {"title": "test4", "slug": "test4", "preview": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent placerat maximus erat non iaculis. Vivamus non interdum velit. Sed eleifend posuere tempus. Duis aliquet magna erat, at finibus dolor ...", "hidden_from_nav": false}, "test6": {"title": "test6", "slug": "test6", "preview": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent placerat maximus erat non iaculis. Vivamus non interdum velit. Sed eleifend posuere tempus. Duis aliquet magna erat, at finibus dolor ...", "hidden_from_nav": false}, "test7": {"title": "test7", "slug": "test7", "preview": "Titre Test ceci est encore un test test lien", "hidden_from_nav": false}, "test8": {"title": "test8", "slug": "test8", "preview": "Page sans texte", "hidden_from_nav": false}, "test9": {"title": "test9", "slug": "test9", "preview": "ABAAAA TEST", "hidden_from_nav": false}, "test10": {"title": "test10", "slug": "test10", "preview": "test", "hidden_from_nav": false}, "test11": {"title": "test11", "slug": "test11", "preview": "Page vide", "hidden_from_nav": false}, "ufb": {"title": "UFB", "slug": "ufb", "preview": "L’Union Fédérale Balte (UFB) est une organisation politique et militaire regroupant plusieurs États souverains d’Europe du Nord et de la région baltique. Fondée dans un contexte d’instabilité internat...", "hidden_from_nav": false}, "test12": {"title": "test12", "slug": "test12", "preview": "Page sans contenu", "hidden_from_nav": false}, "test13": {"title": "test13", "slug": "test13", "preview": "Page sans texte", "hidden_from_nav": false}, "test14": {"title": "test14", "slug": "test14", "preview": "test", "hidden_from_nav": false}, "test15": {"title": "test15", "slug": "test15", "preview": "Page vide", "hidden_from_nav": false}, "test16": {"title": "test16", "slug": "test16", "preview": "Page vide", "hidden_from_nav": false}, "test17": {"title": "test17", "slug": "test17", "preview": "test UFB test", "hidden_from_nav": false}, "test18": {"title": "test18", "slug": "test18", "preview": "Test je sais pus combien test 15 test", "hidden_from_nav": false}, "test18-18": {"title": "test18", "slug": "test18-18", "preview": "Page vide", "hidden_from_nav": false}, "test19": {"title": "test19", "slug": "test19", "preview": "test1 test2 test3", "hidden_from_nav": false}, "test20": {"title": "test20", "slug": "test20", "preview": "test test test", "hidden_from_nav": false}, "test21": {"title": "test21", "slug": "test21", "preview": "Test2 test2 test", "hidden_from_nav": false}, "test22": {"title": "test22", "slug": "test22", "preview": "Test", "hidden_from_nav": false}, "test23": {"title": "test23", "slug": "test23", "preview": "Page vide", "hidden_from_nav": false}, "test24": {"title": "test24", "slug": "test24", "preview": "Page vide", "hidden_from_nav": false}, "test25": {"title": "test25", "slug": "test25", "preview": "test test", "hidden_from_nav": false}, "test26": {"title": "test26", "slug": "test26", "preview": "Test", "hidden_from_nav": false}, "test27": {"title": "test27", "slug": "test27", "preview": "TEST 150 OU JSP COMBIEN testtst", "hidden_from_nav": false}, "test28": {"title": "test28", "slug": "test28", "preview": "test21", "hidden_from_nav": false}, "test29": {"title": "test29", "slug": "test29", "preview": "Test15", "hidden_from_nav": false}, "test30": {"title": "test30", "slug": "test30", "preview": "Test30 test40 Lorem ipsum", "hidden_from_nav": false}, "test31": {"title": "test31", "slug": "test31", "preview": "Page sans texte", "hidden_from_nav": false}, "test32": {"title": "test32", "slug": "test32", "preview": "Page sans texte", "hidden_from_nav": false}, "test33": {"title": "test33", "slug": "test33", "preview": "Test 1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ultricies lorem libero, et volutpat massa pharetra in. Nunc vehicula justo ac neque aliquet, id cursus felis malesuada. Donec...", "hidden_from_nav": false}};
         
-        <script>
-            // Charger la navigation depuis inventory.json
-            fetch('../../data/inventory.json')
-                .then(res => res.json())
-                .then(pages => {
-                    const navList = document.getElementById('nav-list');
-                    const currentSlug = window.location.pathname.split('/').filter(p => p).pop();
-                    
-                    pages.filter(p => !p.hidden_from_nav).forEach(page => {
+        fetch('../../data/inventory.json')
+            .then(res => res.json())
+            .then(pages => {
+                const visiblePages = pages.filter(p => !p.hidden_from_nav);
+                const referencedPages = visiblePages.filter(p => INTERNAL_LINKS.includes(p.slug) && p.slug !== CURRENT_SLUG);
+                const otherPages = visiblePages.filter(p => !INTERNAL_LINKS.includes(p.slug) && p.slug !== CURRENT_SLUG);
+                
+                if (referencedPages.length > 0) {
+                    document.getElementById('internal-links-section').style.display = 'block';
+                    const internalList = document.getElementById('internal-links-list');
+                    referencedPages.forEach(page => {
                         const li = document.createElement('li');
                         const a = document.createElement('a');
                         a.href = `../${page.slug}/`;
                         a.textContent = page.title;
-                        if (page.slug === currentSlug) {
-                            a.classList.add('active');
-                        }
                         li.appendChild(a);
-                        navList.appendChild(li);
+                        internalList.appendChild(li);
                     });
-                })
-                .catch(err => console.error('Erreur chargement navigation:', err));
-            
-            // Avertissement mobile non-intrusif
-            if (window.innerWidth < 768) {
-                const toast = document.createElement('div');
-                toast.className = 'mobile-toast';
-                toast.innerHTML = '📱 Ce wiki est optimisé pour ordinateur';
-                document.body.appendChild(toast);
+                }
                 
-                setTimeout(() => {
-                    toast.style.transition = 'opacity 0.3s, transform 0.3s';
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateX(-50%) translateY(100px)';
-                    setTimeout(() => toast.remove(), 300);
-                }, 5000);
+                const otherList = document.getElementById('other-pages-list');
+                otherPages.forEach(page => {
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = `../${page.slug}/`;
+                    a.textContent = page.title;
+                    li.appendChild(a);
+                    otherList.appendChild(li);
+                });
+            })
+            .catch(err => console.error('Erreur chargement navigation:', err));
+        
+        if (PAGE_HEADINGS.length > 0) {
+            const tocList = document.getElementById('toc-list');
+            tocList.innerHTML = '';
+            PAGE_HEADINGS.forEach(heading => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `#${heading.id}`;
+                a.textContent = heading.text;
+                a.classList.add(`level-${heading.level}`);
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const target = document.getElementById(heading.id);
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+                li.appendChild(a);
+                tocList.appendChild(li);
+            });
+        }
+        
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const tab = btn.dataset.tab;
+                document.getElementById('nav-links').style.display = tab === 'links' ? 'block' : 'none';
+                document.getElementById('nav-toc').style.display = tab === 'toc' ? 'block' : 'none';
+            });
+        });
+        
+        const preview = document.getElementById('link-preview');
+        let previewTimeout;
+        let isOverPreview = false;
+        
+        function showLinkPreview(linkElement) {
+            const href = linkElement.getAttribute('href');
+            const match = href.match(/\.\.\/([^\/]+)\//);
+            if (!match) return;
+            
+            const targetSlug = match[1];
+            const metadata = PAGES_METADATA[targetSlug];
+            
+            if (!metadata) {
+                console.warn('Pas de métadonnées pour', targetSlug);
+                return;
             }
             
-            // Galerie - Lightbox
-            document.querySelectorAll('.component-gallery img').forEach(img => {
-                img.addEventListener('click', () => {
-                    const lightbox = document.createElement('div');
-                    lightbox.style.cssText = `
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        background: rgba(0,0,0,0.9);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        z-index: 10000;
-                        cursor: pointer;
-                    `;
-                    
-                    const enlargedImg = document.createElement('img');
-                    enlargedImg.src = img.src;
-                    enlargedImg.style.cssText = `
-                        max-width: 90%;
-                        max-height: 90%;
-                        object-fit: contain;
-                    `;
-                    
-                    lightbox.appendChild(enlargedImg);
-                    lightbox.addEventListener('click', () => lightbox.remove());
-                    document.body.appendChild(lightbox);
-                });
+            document.getElementById('preview-title').textContent = metadata.title;
+            document.getElementById('preview-content').textContent = metadata.preview;
+            
+            const rect = linkElement.getBoundingClientRect();
+            preview.style.display = 'block';
+            
+            let left = rect.right + 15;
+            let top = rect.top;
+            
+            if (left + 400 > window.innerWidth) {
+                left = rect.left - 415;
+            }
+            
+            if (top + 250 > window.innerHeight) {
+                top = window.innerHeight - 260;
+            }
+            
+            preview.style.left = left + 'px';
+            preview.style.top = top + 'px';
+        }
+        
+        document.querySelectorAll('.text-content a[href*="../"]').forEach(link => {
+            link.addEventListener('mouseenter', (e) => {
+                clearTimeout(previewTimeout);
+                previewTimeout = setTimeout(() => {
+                    showLinkPreview(e.target);
+                }, 300);
             });
-        </script>
-    </body>
-    </html>
+            
+            link.addEventListener('mouseleave', () => {
+                clearTimeout(previewTimeout);
+                setTimeout(() => {
+                    if (!isOverPreview) {
+                        preview.style.display = 'none';
+                    }
+                }, 200);
+            });
+        });
+        
+        preview.addEventListener('mouseenter', () => {
+            isOverPreview = true;
+        });
+        
+        preview.addEventListener('mouseleave', () => {
+            isOverPreview = false;
+            preview.style.display = 'none';
+        });
+        
+        document.querySelectorAll('.component-gallery img').forEach(img => {
+            img.addEventListener('click', () => {
+                const lightbox = document.createElement('div');
+                lightbox.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:10000;cursor:pointer';
+                const enlargedImg = document.createElement('img');
+                enlargedImg.src = img.src;
+                enlargedImg.style.cssText = 'max-width:90%;max-height:90%;object-fit:contain';
+                lightbox.appendChild(enlargedImg);
+                lightbox.onclick = () => lightbox.remove();
+                document.body.appendChild(lightbox);
+            });
+        });
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        
+        document.querySelectorAll('.component').forEach(component => {
+            component.style.opacity = '0';
+            component.style.transform = 'translateY(20px)';
+            component.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+            observer.observe(component);
+        });
+        
+        console.log('✅ Viewer initialisé');
+        console.log('📊 Métadonnées:', Object.keys(PAGES_METADATA).length, 'pages');
+    </script>
+</body>
+</html>

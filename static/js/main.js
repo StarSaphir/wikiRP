@@ -96,6 +96,7 @@ function handleComponentSelect(componentId) {
 }
 
 function handleComponentUpdate(componentId, updates) {
+    console.log('🔄 Mise à jour composant:', componentId, updates);
     state.updateComponent(componentId, updates);
     canvas.updateComponent(componentId);
     componentsList.update();
@@ -136,7 +137,18 @@ function handleAddComponent(type, x, y) {
 
 async function handleSave() {
     try {
-        await API.savePage(SLUG, state.getComponents());
+        // 🔧 FIX: Récupérer les composants à jour depuis le state
+        const components = state.getComponents();
+        
+        console.log('💾 Sauvegarde de', components.length, 'composants');
+        console.log('📊 Contenu des composants:', components.map(c => ({
+            id: c.id,
+            type: c.type,
+            hasContent: !!c.content,
+            contentLength: c.content ? c.content.length : 0
+        })));
+        
+        await API.savePage(SLUG, components);
         alert('✅ Sauvegardé avec succès !');
     } catch (error) {
         console.error('Erreur lors de la sauvegarde:', error);

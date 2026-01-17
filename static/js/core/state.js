@@ -247,7 +247,16 @@ export class State {
     updateComponent(id, updates) {
         const index = this.components.findIndex(c => c.id === id);
         if (index !== -1) {
-            this.components[index] = { ...this.components[index], ...updates };
+            // 🔧 FIX: Mettre à jour l'objet existant (pas créer un nouveau)
+            Object.assign(this.components[index], updates);
+            
+            console.log(`📝 Composant ${id} mis à jour:`, {
+                type: this.components[index].type,
+                hasContent: !!this.components[index].content,
+                contentLength: this.components[index].content?.length || 0,
+                updates: Object.keys(updates)
+            });
+            
             this.emit('componentUpdated', { id, updates });
         } else {
             console.warn(`⚠️ Tentative de mise à jour d'un composant inexistant: ${id}`);

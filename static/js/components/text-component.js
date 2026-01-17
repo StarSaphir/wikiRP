@@ -189,8 +189,13 @@ export class TextComponent extends BaseComponent {
         const finishEditing = () => {
             console.log('✅ Finalisation édition texte...');
             
-            component.content = quill.root.innerHTML;
-            textEl.innerHTML = component.content;
+            // 🔧 FIX: Récupérer le contenu de Quill
+            const newContent = quill.root.innerHTML;
+            component.content = newContent;
+            textEl.innerHTML = newContent;
+            
+            // 🔧 FIX: Mettre à jour dans le state ET déclencher un événement
+            this.state.updateComponent(component.id, { content: newContent });
             
             this.instances.delete(component.id);
             this.state.unlockEditor();
@@ -202,15 +207,19 @@ export class TextComponent extends BaseComponent {
                 element.interactInstance.draggable(true).resizable(true);
             }
             
+            // 🔧 FIX: Émettre un événement pour notifier le changement
             this.state.emit('componentContentUpdated', {
                 id: component.id,
-                content: component.content
+                content: newContent
             });
             
             this.state.setSelectedComponent(component.id);
             
             document.removeEventListener('keydown', handleEscape);
+            
+            console.log('📝 Contenu sauvegardé:', newContent.substring(0, 100) + '...');
         };
+
 
         // Gestion Escape
         const handleEscape = (e) => {

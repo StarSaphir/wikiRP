@@ -532,15 +532,14 @@ def generate_404_page():
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
             color: #e0e0e0;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            padding: 40px 20px;
+            overflow-y: auto;  /* ← Permet le scroll */
         }
-        
+
         .container {
             text-align: center;
             max-width: 800px;
+            margin: 0 auto;    /* ← Centre le contenu */
             padding: 40px 20px;
             animation: fadeIn 1s ease-out;
         }

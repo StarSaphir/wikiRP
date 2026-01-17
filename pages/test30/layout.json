@@ -24,15 +24,15 @@
     "z": 1
   },
   {
-    "id": "comp-3",
-    "type": "table",
-    "x": 130,
-    "y": 300,
-    "w": 400,
-    "h": 250,
-    "z": 2,
-    "content": "",
+    "content": "<p>Lorem ipsum</p>",
     "custom_css": "",
-    "custom_js": ""
+    "custom_js": "",
+    "h": 200,
+    "id": "comp-4",
+    "type": "text",
+    "w": 300,
+    "x": 770,
+    "y": 360,
+    "z": 3
   }
 ]

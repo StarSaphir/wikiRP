@@ -4,53 +4,248 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UFB</title>
-    <link rel="stylesheet" href="../../static/viewer.css">
+    
+    <!-- ✅ Chargement du CSS externe -->
+    <link rel="stylesheet" href="../../static/css/viewer.css">
+    
+    <!-- Styles spécifiques à la page (si nécessaire) -->
+    <style>
+        /* Hauteur minimale du canvas */
+        .canvas-container {
+            min-height: 900px;
+        }
+    </style>
 </head>
 <body>
     <nav class="sidebar">
         <div class="sidebar-header">
-            <h2>Wiki Navigator</h2>
+            <h2>📚 UFB</h2>
         </div>
-        <ul class="sidebar-nav" id="nav-list"></ul>
+        
+        <div class="nav-toggle">
+            <button class="nav-btn active" data-tab="links">🔗 Liens</button>
+            <button class="nav-btn" data-tab="toc">📋 Sommaire</button>
+        </div>
+        
+        <div class="nav-content" id="nav-links">
+            <div class="nav-section" id="internal-links-section" style="display:none;">
+                <div class="nav-section-title">Liens référencés</div>
+                <ul class="sidebar-nav" id="internal-links-list"></ul>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Autres pages</div>
+                <ul class="sidebar-nav" id="other-pages-list"></ul>
+            </div>
+        </div>
+        
+        <div class="nav-content" id="nav-toc" style="display:none;">
+            <ul class="toc-list" id="toc-list">
+                <li style="color: #666; font-size: 12px; padding: 10px;">Aucun titre trouvé</li>
+            </ul>
+        </div>
     </nav>
     
     <main class="content">
-        <div class="canvas-container" id="canvas" style="min-height: 900px;">
-        <div class="component component-text" id="comp-1" style="left:0px;top:90px;width:1110px;height:710px;z-index:0;">
-            <div class="text-content"><p>L’Union Fédérale Balte (UFB) est une organisation politique et militaire regroupant plusieurs États souverains d’Europe du Nord et de la région baltique. Fondée dans un contexte d’instabilité internationale et de crainte d’un conflit majeur, elle vise à garantir la sécurité collective de ses membres tout en préservant strictement leur souveraineté nationale, leurs identités culturelles et leurs systèmes politiques propres.</p><p><br></p><p>Contrairement à un État fédéral classique, l’UFB ne dispose pas de souveraineté propre : elle fonctionne comme une fédération d’États indépendants coopérant à travers des institutions communes, principalement dans les domaines de la défense, de l’économie stratégique et de la régulation industrielle. Les décisions majeures sont prises par le Conseil des Blocs, organe central représentant l’ensemble des États membres, assisté par des institutions techniques spécialisées.</p><p><br></p><p>L’UFB adopte une posture internationale de neutralité armée, privilégiant l’isolation stratégique et la dissuasion défensive. Sa doctrine militaire repose sur une défense en profondeur, une forte décentralisation des forces et une mobilisation étroite de la société civile dans la préparation aux conflits. Les forces armées sont communes à l’ensemble de l’Union et ne relèvent pas d’armées nationales distinctes.</p><p><br></p><p>Sur le plan économique, l’UFB pratique un dirigisme coordonné visant à réduire les disparités entre États membres et à garantir l’autonomie stratégique de l’Union, notamment dans les secteurs de l’armement, de la métallurgie, de l’énergie et des télécommunications. Cette orientation est incarnée par le Conseil Économique Balte et par le cadre du Nouvel Ordre Économique, destiné à encadrer la production, les échanges et, en certaines circonstances, la gestion des réparations de guerre.</p><p><br></p><p>État laïque, l’UFB garantit la liberté de culte et n’impose aucune religion officielle, bien qu’une foi majoritaire, le shoukakouisme, occupe une place culturelle importante au sein de ses sociétés. L’Union se caractérise enfin par une culture politique marquée par la résilience, la discipline collective et la primauté du bien commun, héritées de conditions géographiques, historiques et sécuritaires particulièrement exigeantes.</p></div>
-        </div>
-        <div class="component component-separator" id="comp-2" style="left:0px;top:50px;width:1110px;height:40px;z-index:1;">
-            <hr />
-        </div>
-        <div class="component component-text" id="comp-3" style="left:0px;top:0px;width:340px;height:50px;z-index:2;">
-            <div class="text-content"><h1>UFB</h1></div>
-        </div>
-        <div class="component component-shape" id="comp-4" style="left:1170px;top:60px;width:400px;height:430px;z-index:3;">
-            <div class="shape" style="background:#333;width:100%;height:100%;"></div>
-        </div>
-        <div class="component component-text" id="comp-5" style="left:1200px;top:80px;width:300px;height:40px;z-index:4;">
-            <div class="text-content"><p>Union Fédérale Balte</p></div>
-        </div>
-        <div class="component component-separator" id="comp-6" style="left:1170px;top:110px;width:400px;height:20px;z-index:5;hr { background-color: white;}
+        <div class="canvas-container">
+<div class="component component-text" id="comp-1" style="left:0px;top:90px;width:1110px;height:710px;z-index:0;">
+<div class="text-content"><p>L’Union Fédérale Balte (UFB) est une organisation politique et militaire regroupant plusieurs États souverains d’Europe du Nord et de la région baltique. Fondée dans un contexte d’instabilité internationale et de crainte d’un conflit majeur, elle vise à garantir la sécurité collective de ses membres tout en préservant strictement leur souveraineté nationale, leurs identités culturelles et leurs systèmes politiques propres.</p><p><br></p><p>Contrairement à un État fédéral classique, l’UFB ne dispose pas de souveraineté propre : elle fonctionne comme une fédération d’États indépendants coopérant à travers des institutions communes, principalement dans les domaines de la défense, de l’économie stratégique et de la régulation industrielle. Les décisions majeures sont prises par le Conseil des Blocs, organe central représentant l’ensemble des États membres, assisté par des institutions techniques spécialisées.</p><p><br></p><p>L’UFB adopte une posture internationale de neutralité armée, privilégiant l’isolation stratégique et la dissuasion défensive. Sa doctrine militaire repose sur une défense en profondeur, une forte décentralisation des forces et une mobilisation étroite de la société civile dans la préparation aux conflits. Les forces armées sont communes à l’ensemble de l’Union et ne relèvent pas d’armées nationales distinctes.</p><p><br></p><p>Sur le plan économique, l’UFB pratique un dirigisme coordonné visant à réduire les disparités entre États membres et à garantir l’autonomie stratégique de l’Union, notamment dans les secteurs de l’armement, de la métallurgie, de l’énergie et des télécommunications. Cette orientation est incarnée par le Conseil Économique Balte et par le cadre du Nouvel Ordre Économique, destiné à encadrer la production, les échanges et, en certaines circonstances, la gestion des réparations de guerre.</p><p><br></p><p>État laïque, l’UFB garantit la liberté de culte et n’impose aucune religion officielle, bien qu’une foi majoritaire, le shoukakouisme, occupe une place culturelle importante au sein de ses sociétés. L’Union se caractérise enfin par une culture politique marquée par la résilience, la discipline collective et la primauté du bien commun, héritées de conditions géographiques, historiques et sécuritaires particulièrement exigeantes.</p></div>
+</div>
+<div class="component component-separator" id="comp-2" style="left:0px;top:50px;width:1110px;height:40px;z-index:1;">
+<hr />
+</div>
+<div class="component component-text" id="comp-3" style="left:0px;top:0px;width:340px;height:50px;z-index:2;">
+<div class="text-content"><h1 id="ufb">UFB</h1></div>
+</div>
+<div class="component component-shape" id="comp-4" style="left:1170px;top:60px;width:400px;height:430px;z-index:3;">
+<div style="width:100%;height:100%;background:#333;border-radius:5px;"></div>
+</div>
+<div class="component component-text" id="comp-5" style="left:1200px;top:80px;width:300px;height:40px;z-index:4;">
+<div class="text-content"><p>Union Fédérale Balte</p></div>
+</div>
+<div class="component component-separator" id="comp-6" style="left:1170px;top:110px;width:400px;height:20px;z-index:5;hr { background-color: white;}
 ">
-            <hr />
-        </div>
-        <div class="component component-text" id="comp-9" style="left:1200px;top:297px;width:300px;height:60px;z-index:6;">
-            <div class="text-content"><p>Drapeau de l'UFB</p></div>
-        </div>
-        <div class="component component-image" id="comp-12" style="left:1200px;top:130px;width:300px;height:170px;z-index:7;">
-            <img src="images/img_20260104_215752.png" alt="Image" />
-        </div>
+<hr />
+</div>
+<div class="component component-text" id="comp-9" style="left:1200px;top:297px;width:300px;height:60px;z-index:6;">
+<div class="text-content"><p>Drapeau de l'UFB</p></div>
+</div>
+<div class="component component-image" id="comp-12" style="left:1200px;top:130px;width:300px;height:170px;z-index:7;">
+<img src="images/img_20260104_215752.png" alt="Image" />
+</div>
+
         </div>
     </main>
     
-    <div class="mobile-warning" id="mobile-warning">
-        <div class="mobile-warning-content">
-            <p>📱 Ce Wiki est optimisé pour une consultation sur ordinateur</p>
-            <button onclick="document.getElementById('mobile-warning').style.display='none'">Continuer</button>
-        </div>
+    <div class="link-preview" id="link-preview">
+        <div class="preview-header" id="preview-title"></div>
+        <div class="preview-content" id="preview-content"></div>
+        <div class="preview-footer">Cliquez pour ouvrir →</div>
     </div>
     
-    <script src="../../static/viewer.js"></script>
+    <script>
+        const PAGE_HEADINGS = [{"level": 1, "text": "UFB", "id": "ufb"}];
+        const INTERNAL_LINKS = [];
+        const CURRENT_SLUG = "ufb";
+        const PAGES_METADATA = {"test": {"title": "test", "slug": "test", "preview": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean blandit justo in magna condimentum interdum. Duis felis tellus, consequat eget venenatis ac, auctor ac erat. Fusce suscipit, diam sed co...", "hidden_from_nav": false}, "test2": {"title": "test2", "slug": "test2", "preview": "test", "hidden_from_nav": false}, "test3": {"title": "test3", "slug": "test3", "preview": "test 2 , test 4", "hidden_from_nav": true}, "test4": {"title": "test4", "slug": "test4", "preview": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent placerat maximus erat non iaculis. Vivamus non interdum velit. Sed eleifend posuere tempus. Duis aliquet magna erat, at finibus dolor ...", "hidden_from_nav": false}, "test6": {"title": "test6", "slug": "test6", "preview": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent placerat maximus erat non iaculis. Vivamus non interdum velit. Sed eleifend posuere tempus. Duis aliquet magna erat, at finibus dolor ...", "hidden_from_nav": false}, "test7": {"title": "test7", "slug": "test7", "preview": "Titre Test ceci est encore un test test lien", "hidden_from_nav": false}, "test8": {"title": "test8", "slug": "test8", "preview": "Page sans texte", "hidden_from_nav": false}, "test9": {"title": "test9", "slug": "test9", "preview": "ABAAAA TEST", "hidden_from_nav": false}, "test10": {"title": "test10", "slug": "test10", "preview": "test", "hidden_from_nav": false}, "test11": {"title": "test11", "slug": "test11", "preview": "Page vide", "hidden_from_nav": false}, "ufb": {"title": "UFB", "slug": "ufb", "preview": "L’Union Fédérale Balte (UFB) est une organisation politique et militaire regroupant plusieurs États souverains d’Europe du Nord et de la région baltique. Fondée dans un contexte d’instabilité internat...", "hidden_from_nav": false}, "test12": {"title": "test12", "slug": "test12", "preview": "Page sans contenu", "hidden_from_nav": false}, "test13": {"title": "test13", "slug": "test13", "preview": "Page sans texte", "hidden_from_nav": false}, "test14": {"title": "test14", "slug": "test14", "preview": "test", "hidden_from_nav": false}, "test15": {"title": "test15", "slug": "test15", "preview": "Page vide", "hidden_from_nav": false}, "test16": {"title": "test16", "slug": "test16", "preview": "Page vide", "hidden_from_nav": false}, "test17": {"title": "test17", "slug": "test17", "preview": "test UFB test", "hidden_from_nav": false}, "test18": {"title": "test18", "slug": "test18", "preview": "Test je sais pus combien test 15 test", "hidden_from_nav": false}, "test18-18": {"title": "test18", "slug": "test18-18", "preview": "Page vide", "hidden_from_nav": false}, "test19": {"title": "test19", "slug": "test19", "preview": "test1 test2 test3", "hidden_from_nav": false}, "test20": {"title": "test20", "slug": "test20", "preview": "test test test", "hidden_from_nav": false}, "test21": {"title": "test21", "slug": "test21", "preview": "Test2 test2 test", "hidden_from_nav": false}, "test22": {"title": "test22", "slug": "test22", "preview": "Test", "hidden_from_nav": false}, "test23": {"title": "test23", "slug": "test23", "preview": "Page vide", "hidden_from_nav": false}, "test24": {"title": "test24", "slug": "test24", "preview": "Page vide", "hidden_from_nav": false}, "test25": {"title": "test25", "slug": "test25", "preview": "test test", "hidden_from_nav": false}, "test26": {"title": "test26", "slug": "test26", "preview": "Test", "hidden_from_nav": false}, "test27": {"title": "test27", "slug": "test27", "preview": "TEST 150 OU JSP COMBIEN testtst", "hidden_from_nav": false}, "test28": {"title": "test28", "slug": "test28", "preview": "test21", "hidden_from_nav": false}, "test29": {"title": "test29", "slug": "test29", "preview": "Test15", "hidden_from_nav": false}, "test30": {"title": "test30", "slug": "test30", "preview": "Test30 test40 Lorem ipsum", "hidden_from_nav": false}, "test31": {"title": "test31", "slug": "test31", "preview": "Page sans texte", "hidden_from_nav": false}, "test32": {"title": "test32", "slug": "test32", "preview": "Page sans texte", "hidden_from_nav": false}, "test33": {"title": "test33", "slug": "test33", "preview": "Test 1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ultricies lorem libero, et volutpat massa pharetra in. Nunc vehicula justo ac neque aliquet, id cursus felis malesuada. Donec...", "hidden_from_nav": false}};
+        
+        fetch('../../data/inventory.json')
+            .then(res => res.json())
+            .then(pages => {
+                const visiblePages = pages.filter(p => !p.hidden_from_nav);
+                const referencedPages = visiblePages.filter(p => INTERNAL_LINKS.includes(p.slug) && p.slug !== CURRENT_SLUG);
+                const otherPages = visiblePages.filter(p => !INTERNAL_LINKS.includes(p.slug) && p.slug !== CURRENT_SLUG);
+                
+                if (referencedPages.length > 0) {
+                    document.getElementById('internal-links-section').style.display = 'block';
+                    const internalList = document.getElementById('internal-links-list');
+                    referencedPages.forEach(page => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.href = `../${page.slug}/`;
+                        a.textContent = page.title;
+                        li.appendChild(a);
+                        internalList.appendChild(li);
+                    });
+                }
+                
+                const otherList = document.getElementById('other-pages-list');
+                otherPages.forEach(page => {
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = `../${page.slug}/`;
+                    a.textContent = page.title;
+                    li.appendChild(a);
+                    otherList.appendChild(li);
+                });
+            })
+            .catch(err => console.error('Erreur chargement navigation:', err));
+        
+        if (PAGE_HEADINGS.length > 0) {
+            const tocList = document.getElementById('toc-list');
+            tocList.innerHTML = '';
+            PAGE_HEADINGS.forEach(heading => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `#${heading.id}`;
+                a.textContent = heading.text;
+                a.classList.add(`level-${heading.level}`);
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const target = document.getElementById(heading.id);
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+                li.appendChild(a);
+                tocList.appendChild(li);
+            });
+        }
+        
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const tab = btn.dataset.tab;
+                document.getElementById('nav-links').style.display = tab === 'links' ? 'block' : 'none';
+                document.getElementById('nav-toc').style.display = tab === 'toc' ? 'block' : 'none';
+            });
+        });
+        
+        const preview = document.getElementById('link-preview');
+        let previewTimeout;
+        let isOverPreview = false;
+        
+        function showLinkPreview(linkElement) {
+            const href = linkElement.getAttribute('href');
+            const match = href.match(/\.\.\/([^\/]+)\//);
+            if (!match) return;
+            
+            const targetSlug = match[1];
+            const metadata = PAGES_METADATA[targetSlug];
+            
+            if (!metadata) {
+                console.warn('Pas de métadonnées pour', targetSlug);
+                return;
+            }
+            
+            document.getElementById('preview-title').textContent = metadata.title;
+            document.getElementById('preview-content').textContent = metadata.preview;
+            
+            const rect = linkElement.getBoundingClientRect();
+            preview.style.display = 'block';
+            
+            let left = rect.right + 15;
+            let top = rect.top;
+            
+            if (left + 400 > window.innerWidth) {
+                left = rect.left - 415;
+            }
+            
+            if (top + 250 > window.innerHeight) {
+                top = window.innerHeight - 260;
+            }
+            
+            preview.style.left = left + 'px';
+            preview.style.top = top + 'px';
+        }
+        
+        document.querySelectorAll('.text-content a[href*="../"]').forEach(link => {
+            link.addEventListener('mouseenter', (e) => {
+                clearTimeout(previewTimeout);
+                previewTimeout = setTimeout(() => {
+                    showLinkPreview(e.target);
+                }, 300);
+            });
+            
+            link.addEventListener('mouseleave', () => {
+                clearTimeout(previewTimeout);
+                setTimeout(() => {
+                    if (!isOverPreview) {
+                        preview.style.display = 'none';
+                    }
+                }, 200);
+            });
+        });
+        
+        preview.addEventListener('mouseenter', () => {
+            isOverPreview = true;
+        });
+        
+        preview.addEventListener('mouseleave', () => {
+            isOverPreview = false;
+            preview.style.display = 'none';
+        });
+        
+        document.querySelectorAll('.component-gallery img').forEach(img => {
+            img.addEventListener('click', () => {
+                const lightbox = document.createElement('div');
+                lightbox.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:10000;cursor:pointer';
+                const enlargedImg = document.createElement('img');
+                enlargedImg.src = img.src;
+                enlargedImg.style.cssText = 'max-width:90%;max-height:90%;object-fit:contain';
+                lightbox.appendChild(enlargedImg);
+                lightbox.onclick = () => lightbox.remove();
+                document.body.appendChild(lightbox);
+            });
+        });
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        
+        document.querySelectorAll('.component').forEach(component => {
+            component.style.opacity = '0';
+            component.style.transform = 'translateY(20px)';
+            component.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+            observer.observe(component);
+        });
+        
+        console.log('✅ Viewer initialisé');
+        console.log('📊 Métadonnées:', Object.keys(PAGES_METADATA).length, 'pages');
+    </script>
 </body>
 </html>

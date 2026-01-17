@@ -522,291 +522,29 @@ def generate_html(slug, layout):
         print("⚠️ Métadonnées vides, génération...")
         pages_metadata = generate_pages_metadata()
     
-    # Convertir en JSON pour JavaScript (avec échappement correct)
+    # Convertir en JSON pour JavaScript
     headings_json = json.dumps(page_headings, ensure_ascii=False)
     internal_links_list = list(internal_links)
     internal_links_json = json.dumps(internal_links_list, ensure_ascii=False)
     pages_metadata_json = json.dumps(pages_metadata, ensure_ascii=False)
     
-    # HTML avec styles inline
+    # HTML avec chargement du CSS externe
     html = f'''<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
+    
+    <!-- ✅ Chargement du CSS externe -->
+    <link rel="stylesheet" href="../../static/css/viewer.css">
+    
+    <!-- Styles spécifiques à la page (si nécessaire) -->
     <style>
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        
-        body {{
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0a0a0a;
-            color: #e0e0e0;
-            overflow-x: hidden;
-        }}
-        
-        .sidebar {{
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 280px;
-            height: 100vh;
-            background: #1a1a1a;
-            border-right: 2px solid #333;
-            padding: 20px;
-            overflow-y: auto;
-            z-index: 1000;
-        }}
-        
-        .sidebar-header {{
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #4a9eff;
-        }}
-        
-        .sidebar-header h2 {{
-            color: #4a9eff;
-            font-size: 20px;
-            margin-bottom: 10px;
-        }}
-        
-        .nav-toggle {{
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 20px;
-        }}
-        
-        .nav-btn {{
-            padding: 8px 12px;
-            background: #252525;
-            border: 2px solid #333;
-            color: #e0e0e0;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-            transition: all 0.3s;
-        }}
-        
-        .nav-btn:hover {{
-            background: #333;
-            border-color: #4a9eff;
-        }}
-        
-        .nav-btn.active {{
-            background: #4a9eff;
-            border-color: #4a9eff;
-            color: white;
-        }}
-        
-        .nav-section {{
-            margin-bottom: 25px;
-        }}
-        
-        .nav-section-title {{
-            color: #999;
-            font-size: 11px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            font-weight: bold;
-            letter-spacing: 0.5px;
-        }}
-        
-        .sidebar-nav {{
-            list-style: none;
-        }}
-        
-        .sidebar-nav li {{
-            margin-bottom: 8px;
-        }}
-        
-        .sidebar-nav a {{
-            display: block;
-            padding: 10px 12px;
-            color: #e0e0e0;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: all 0.2s;
-            font-size: 14px;
-            background: #252525;
-            border: 1px solid transparent;
-        }}
-        
-        .sidebar-nav a:hover {{
-            background: #333;
-            border-color: #4a9eff;
-            transform: translateX(3px);
-        }}
-        
-        .sidebar-nav a.active {{
-            background: #4a9eff;
-            color: white;
-        }}
-        
-        .toc-list {{
-            list-style: none;
-        }}
-        
-        .toc-list li {{
-            margin-bottom: 6px;
-        }}
-        
-        .toc-list a {{
-            display: block;
-            padding: 8px 10px;
-            color: #e0e0e0;
-            text-decoration: none;
-            border-radius: 4px;
-            font-size: 13px;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-        }}
-        
-        .toc-list a:hover {{
-            background: #252525;
-            border-left-color: #4a9eff;
-            padding-left: 15px;
-        }}
-        
-        .toc-list a.level-1 {{ font-weight: bold; }}
-        .toc-list a.level-2 {{ padding-left: 20px; font-size: 12px; }}
-        .toc-list a.level-3 {{ padding-left: 35px; font-size: 11px; color: #aaa; }}
-        
-        .content {{
-            margin-left: 280px;
-            min-height: 100vh;
-            padding: 40px;
-        }}
-        
+        /* Hauteur minimale du canvas */
         .canvas-container {{
-            position: relative;
-            width: 100%;
-            background: #1a1a1a;
-            border-radius: 10px;
-            padding: 20px;
             min-height: {max_bottom + 100}px;
         }}
-        
-        .component {{
-            position: absolute;
-            overflow: hidden;
-        }}
-        
-        .component-text .text-content {{
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
-            padding: 15px;
-            line-height: 1.6;
-        }}
-        
-        .component-text .text-content h1,
-        .component-text .text-content h2,
-        .component-text .text-content h3 {{
-            scroll-margin-top: 80px;
-        }}
-        
-        .component-text .text-content a {{
-            color: #4a9eff !important;
-            text-decoration: none;
-            border-bottom: 1px solid transparent;
-            transition: border-color 0.2s;
-            position: relative;
-        }}
-        
-        .component-text .text-content a:hover {{
-            border-bottom-color: #4a9eff;
-        }}
-        
-        .component-text .text-content a:visited {{
-            color: #4a9eff !important;
-        }}
-        
-        .link-preview {{
-            display: none;
-            position: fixed;
-            background: #2a2a2a;
-            border: 2px solid #4a9eff;
-            border-radius: 10px;
-            padding: 0;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
-            z-index: 10000;
-            max-width: 400px;
-            overflow: hidden;
-            animation: fadeInPreview 0.2s ease-out;
-        }}
-        
-        @keyframes fadeInPreview {{
-            from {{ opacity: 0; transform: translateY(-10px); }}
-            to {{ opacity: 1; transform: translateY(0); }}
-        }}
-        
-        .preview-header {{
-            background: linear-gradient(135deg, #4a9eff, #667eea);
-            padding: 12px 15px;
-            color: white;
-            font-size: 15px;
-            font-weight: bold;
-        }}
-        
-        .preview-content {{
-            padding: 15px;
-            color: #e0e0e0;
-            font-size: 13px;
-            line-height: 1.6;
-            max-height: 150px;
-            overflow-y: auto;
-        }}
-        
-        .preview-footer {{
-            padding: 10px 15px;
-            background: #1e1e1e;
-            color: #4a9eff;
-            font-size: 12px;
-            text-align: right;
-            border-top: 1px solid #333;
-        }}
-        
-        .component-image img {{ width: 100%; height: 100%; object-fit: contain; }}
-        .component-separator hr {{ border: none; border-top: 2px solid #666; margin: 0; }}
-        .component-shape {{ border-radius: 5px; }}
-        .component-video video {{ width: 100%; height: 100%; object-fit: cover; }}
-        .component-youtube iframe {{ width: 100%; height: 100%; border: none; }}
-        
-        .component-gallery {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            padding: 10px;
-        }}
-        
-        .component-gallery img {{
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }}
-        
-        .component-gallery img:hover {{ transform: scale(1.05); }}
-        
-        .component-table {{ overflow: auto; padding: 10px; }}
-        .component-table table {{ width: 100%; border-collapse: collapse; background: #252525; }}
-        .component-table th, .component-table td {{ padding: 12px; text-align: left; border: 1px solid #333; }}
-        .component-table th {{ background: #333; color: #4a9eff; font-weight: bold; }}
-        
-        @media (max-width: 768px) {{
-            .sidebar {{ transform: translateX(-100%); transition: transform 0.3s; }}
-            .sidebar.open {{ transform: translateX(0); }}
-            .content {{ margin-left: 0; }}
-        }}
-        
-        ::-webkit-scrollbar {{ width: 8px; height: 8px; }}
-        ::-webkit-scrollbar-track {{ background: #1a1a1a; }}
-        ::-webkit-scrollbar-thumb {{ background: #444; border-radius: 4px; }}
-        ::-webkit-scrollbar-thumb:hover {{ background: #555; }}
     </style>
 </head>
 <body>
@@ -1035,54 +773,6 @@ def generate_html(slug, layout):
     except Exception as e:
         print(f"❌ Erreur écriture HTML pour {slug}: {e}")
         raise
-
-def debug_metadata_generation():
-    """Script pour débugger la génération des métadonnées"""
-    print("\n🔍 DEBUG MÉTADONNÉES\n")
-    
-    inventory = load_inventory()
-    print(f"📄 Pages dans l'inventaire: {len(inventory)}")
-    
-    for page in inventory:
-        slug = page['slug']
-        layout_file = get_layout_file(slug)
-        
-        print(f"\n---  {page['title']} ({slug}) ---")
-        print(f"   Layout existe: {layout_file.exists()}")
-        
-        if layout_file.exists():
-            try:
-                with open(layout_file, 'r', encoding='utf-8') as f:
-                    layout = json.load(f)
-                print(f"   Composants: {len(layout)}")
-                
-                # Compter les composants texte
-                text_comps = [c for c in layout if c.get('type') == 'text']
-                print(f"   Composants texte: {len(text_comps)}")
-                
-                # Extraire preview
-                preview = extract_page_preview(slug)
-                print(f"   Preview ({len(preview)} chars): {preview[:100]}...")
-                
-            except Exception as e:
-                print(f"   ❌ Erreur: {e}")
-    
-    print("\n🔄 Génération pages-metadata.json...")
-    try:
-        metadata = generate_pages_metadata()
-        print(f"✅ {len(metadata)} pages dans les métadonnées")
-        
-        # Afficher un exemple
-        if metadata:
-            sample_slug = list(metadata.keys())[0]
-            print(f"\n📋 Exemple ({sample_slug}):")
-            print(json.dumps(metadata[sample_slug], indent=2, ensure_ascii=False))
-    
-    except Exception as e:
-        print(f"❌ Erreur: {e}")
-        import traceback
-        traceback.print_exc()
-
 
 def render_component_html_with_anchors(comp, slug):
     """Génère le HTML avec ancres sur les titres"""

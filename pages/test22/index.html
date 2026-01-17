@@ -4,307 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>test22</title>
+    
+    <!-- ✅ Chargement du CSS externe -->
+    <link rel="stylesheet" href="../../static/css/viewer.css">
+    
+    <!-- Styles spécifiques à la page (si nécessaire) -->
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0a0a0a;
-            color: #e0e0e0;
-            overflow-x: hidden;
-        }
-        
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 280px;
-            height: 100vh;
-            background: #1a1a1a;
-            border-right: 2px solid #333;
-            padding: 20px;
-            overflow-y: auto;
-            z-index: 1000;
-        }
-        
-        .sidebar-header {
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #4a9eff;
-        }
-        
-        .sidebar-header h2 {
-            color: #4a9eff;
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-        
-        .nav-toggle {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .nav-btn {
-            padding: 8px 12px;
-            background: #252525;
-            border: 2px solid #333;
-            color: #e0e0e0;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        
-        .nav-btn:hover {
-            background: #333;
-            border-color: #4a9eff;
-        }
-        
-        .nav-btn.active {
-            background: #4a9eff;
-            border-color: #4a9eff;
-            color: white;
-        }
-        
-        .nav-section {
-            margin-bottom: 25px;
-        }
-        
-        .nav-section-title {
-            color: #999;
-            font-size: 11px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            font-weight: bold;
-            letter-spacing: 0.5px;
-        }
-        
-        .sidebar-nav {
-            list-style: none;
-        }
-        
-        .sidebar-nav li {
-            margin-bottom: 8px;
-        }
-        
-        .sidebar-nav a {
-            display: block;
-            padding: 10px 12px;
-            color: #e0e0e0;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: all 0.2s;
-            font-size: 14px;
-            background: #252525;
-            border: 1px solid transparent;
-        }
-        
-        .sidebar-nav a:hover {
-            background: #333;
-            border-color: #4a9eff;
-            transform: translateX(3px);
-        }
-        
-        .sidebar-nav a.active {
-            background: #4a9eff;
-            color: white;
-        }
-        
-        /* Sommaire (table of contents) */
-        .toc-list {
-            list-style: none;
-        }
-        
-        .toc-list li {
-            margin-bottom: 6px;
-        }
-        
-        .toc-list a {
-            display: block;
-            padding: 8px 10px;
-            color: #e0e0e0;
-            text-decoration: none;
-            border-radius: 4px;
-            font-size: 13px;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-        }
-        
-        .toc-list a:hover {
-            background: #252525;
-            border-left-color: #4a9eff;
-            padding-left: 15px;
-        }
-        
-        .toc-list a.level-1 { font-weight: bold; }
-        .toc-list a.level-2 { padding-left: 20px; font-size: 12px; }
-        .toc-list a.level-3 { padding-left: 35px; font-size: 11px; color: #aaa; }
-        
-        /* CONTENU */
-        .content {
-            margin-left: 280px;
-            min-height: 100vh;
-            padding: 40px;
-        }
-        
+        /* Hauteur minimale du canvas */
         .canvas-container {
-            position: relative;
-            width: 100%;
-            background: #1a1a1a;
-            border-radius: 10px;
-            padding: 20px;
             min-height: 570px;
         }
-        
-        .component {
-            position: absolute;
-            overflow: hidden;
-        }
-        
-        .component-text .text-content {
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
-            padding: 15px;
-            line-height: 1.6;
-        }
-        
-        /* Ancres pour les titres */
-        .component-text .text-content h1,
-        .component-text .text-content h2,
-        .component-text .text-content h3 {
-            scroll-margin-top: 80px;
-        }
-        
-        /* LIENS - Toujours bleus même visités */
-        .component-text .text-content a {
-            color: #4a9eff !important;
-            text-decoration: none;
-            border-bottom: 1px solid transparent;
-            transition: border-color 0.2s;
-            position: relative;
-        }
-        
-        .component-text .text-content a:hover {
-            border-bottom-color: #4a9eff;
-        }
-        
-        .component-text .text-content a:visited {
-            color: #4a9eff !important;
-        }
-        
-        /* Preview des liens internes */
-        .link-preview {
-            display: none;
-            position: fixed;
-            background: #2a2a2a;
-            border: 2px solid #4a9eff;
-            border-radius: 10px;
-            padding: 0;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
-            z-index: 10000;
-            max-width: 400px;
-            overflow: hidden;
-            animation: fadeInPreview 0.2s ease-out;
-        }
-        
-        @keyframes fadeInPreview {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .preview-header {
-            background: linear-gradient(135deg, #4a9eff, #667eea);
-            padding: 12px 15px;
-            color: white;
-            font-size: 15px;
-            font-weight: bold;
-        }
-        
-        .preview-content {
-            padding: 15px;
-            color: #e0e0e0;
-            font-size: 13px;
-            line-height: 1.6;
-            max-height: 150px;
-            overflow-y: auto;
-        }
-        
-        .preview-footer {
-            padding: 10px 15px;
-            background: #1e1e1e;
-            color: #4a9eff;
-            font-size: 12px;
-            text-align: right;
-            border-top: 1px solid #333;
-        }
-        
-        .component-image img { width: 100%; height: 100%; object-fit: contain; }
-        .component-separator hr { border: none; border-top: 2px solid #666; margin: 0; }
-        .component-shape { border-radius: 5px; }
-        .component-video video { width: 100%; height: 100%; object-fit: cover; }
-        .component-youtube iframe { width: 100%; height: 100%; border: none; }
-        
-        .component-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            padding: 10px;
-        }
-        
-        .component-gallery img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        
-        .component-gallery img:hover { transform: scale(1.05); }
-        
-        .component-table { overflow: auto; padding: 10px; }
-        .component-table table { width: 100%; border-collapse: collapse; background: #252525; }
-        .component-table th, .component-table td { padding: 12px; text-align: left; border: 1px solid #333; }
-        .component-table th { background: #333; color: #4a9eff; font-weight: bold; }
-        
-        /* Mobile */
-        .mobile-toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(74, 158, 255, 0.95);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            z-index: 9999;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            font-size: 14px;
-            max-width: 90%;
-            animation: slideUp 0.3s ease-out;
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateX(-50%) translateY(100px); opacity: 0; }
-            to { transform: translateX(-50%) translateY(0); opacity: 1; }
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
-            .sidebar.open { transform: translateX(0); }
-            .content { margin-left: 0; }
-        }
-        
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #1a1a1a; }
-        ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #555; }
     </style>
 </head>
 <body>
@@ -318,7 +27,6 @@
             <button class="nav-btn" data-tab="toc">📋 Sommaire</button>
         </div>
         
-        <!-- Onglet Liens Wiki -->
         <div class="nav-content" id="nav-links">
             <div class="nav-section" id="internal-links-section" style="display:none;">
                 <div class="nav-section-title">Liens référencés</div>
@@ -331,7 +39,6 @@
             </div>
         </div>
         
-        <!-- Onglet Table des matières -->
         <div class="nav-content" id="nav-toc" style="display:none;">
             <ul class="toc-list" id="toc-list">
                 <li style="color: #666; font-size: 12px; padding: 10px;">Aucun titre trouvé</li>
@@ -345,18 +52,34 @@
 <div class="text-content"><p>Test</p></div>
 </div>
 <div class="component component-table" id="comp-2" style="left:650px;top:220px;width:400px;height:250px;z-index:1;">
-<table>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</table>
+
+                <table style="width: 100%; border-collapse: collapse; background: #252525;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #333; background: #333; color: #4a9eff;">Colonne 1</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #333; background: #333; color: #4a9eff;">Colonne 2</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #333; background: #333; color: #4a9eff;">Colonne 3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 12px; border: 1px solid #333;">Données</td>
+                            <td style="padding: 12px; border: 1px solid #333;">Données</td>
+                            <td style="padding: 12px; border: 1px solid #333;">Données</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border: 1px solid #333;">Données</td>
+                            <td style="padding: 12px; border: 1px solid #333;">Données</td>
+                            <td style="padding: 12px; border: 1px solid #333;">Données</td>
+                        </tr>
+                    </tbody>
+                </table>
+            
 </div>
 
         </div>
     </main>
     
-    <!-- Preview tooltip pour liens internes -->
     <div class="link-preview" id="link-preview">
         <div class="preview-header" id="preview-title"></div>
         <div class="preview-content" id="preview-content"></div>
@@ -367,8 +90,8 @@
         const PAGE_HEADINGS = [];
         const INTERNAL_LINKS = [];
         const CURRENT_SLUG = "test22";
+        const PAGES_METADATA = {"test": {"title": "test", "slug": "test", "preview": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean blandit justo in magna condimentum interdum. Duis felis tellus, consequat eget venenatis ac, auctor ac erat. Fusce suscipit, diam sed co...", "hidden_from_nav": false}, "test2": {"title": "test2", "slug": "test2", "preview": "test", "hidden_from_nav": false}, "test3": {"title": "test3", "slug": "test3", "preview": "test 2 , test 4", "hidden_from_nav": true}, "test4": {"title": "test4", "slug": "test4", "preview": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent placerat maximus erat non iaculis. Vivamus non interdum velit. Sed eleifend posuere tempus. Duis aliquet magna erat, at finibus dolor ...", "hidden_from_nav": false}, "test6": {"title": "test6", "slug": "test6", "preview": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent placerat maximus erat non iaculis. Vivamus non interdum velit. Sed eleifend posuere tempus. Duis aliquet magna erat, at finibus dolor ...", "hidden_from_nav": false}, "test7": {"title": "test7", "slug": "test7", "preview": "Titre Test ceci est encore un test test lien", "hidden_from_nav": false}, "test8": {"title": "test8", "slug": "test8", "preview": "Page sans texte", "hidden_from_nav": false}, "test9": {"title": "test9", "slug": "test9", "preview": "ABAAAA TEST", "hidden_from_nav": false}, "test10": {"title": "test10", "slug": "test10", "preview": "test", "hidden_from_nav": false}, "test11": {"title": "test11", "slug": "test11", "preview": "Page vide", "hidden_from_nav": false}, "ufb": {"title": "UFB", "slug": "ufb", "preview": "L’Union Fédérale Balte (UFB) est une organisation politique et militaire regroupant plusieurs États souverains d’Europe du Nord et de la région baltique. Fondée dans un contexte d’instabilité internat...", "hidden_from_nav": false}, "test12": {"title": "test12", "slug": "test12", "preview": "Page sans contenu", "hidden_from_nav": false}, "test13": {"title": "test13", "slug": "test13", "preview": "Page sans texte", "hidden_from_nav": false}, "test14": {"title": "test14", "slug": "test14", "preview": "test", "hidden_from_nav": false}, "test15": {"title": "test15", "slug": "test15", "preview": "Page vide", "hidden_from_nav": false}, "test16": {"title": "test16", "slug": "test16", "preview": "Page vide", "hidden_from_nav": false}, "test17": {"title": "test17", "slug": "test17", "preview": "test UFB test", "hidden_from_nav": false}, "test18": {"title": "test18", "slug": "test18", "preview": "Test je sais pus combien test 15 test", "hidden_from_nav": false}, "test18-18": {"title": "test18", "slug": "test18-18", "preview": "Page vide", "hidden_from_nav": false}, "test19": {"title": "test19", "slug": "test19", "preview": "test1 test2 test3", "hidden_from_nav": false}, "test20": {"title": "test20", "slug": "test20", "preview": "test test test", "hidden_from_nav": false}, "test21": {"title": "test21", "slug": "test21", "preview": "Test2 test2 test", "hidden_from_nav": false}, "test22": {"title": "test22", "slug": "test22", "preview": "Test", "hidden_from_nav": false}, "test23": {"title": "test23", "slug": "test23", "preview": "Page vide", "hidden_from_nav": false}, "test24": {"title": "test24", "slug": "test24", "preview": "Page vide", "hidden_from_nav": false}, "test25": {"title": "test25", "slug": "test25", "preview": "test test", "hidden_from_nav": false}, "test26": {"title": "test26", "slug": "test26", "preview": "Test", "hidden_from_nav": false}, "test27": {"title": "test27", "slug": "test27", "preview": "TEST 150 OU JSP COMBIEN testtst", "hidden_from_nav": false}, "test28": {"title": "test28", "slug": "test28", "preview": "test21", "hidden_from_nav": false}, "test29": {"title": "test29", "slug": "test29", "preview": "Test15", "hidden_from_nav": false}, "test30": {"title": "test30", "slug": "test30", "preview": "Test30 test40 Lorem ipsum", "hidden_from_nav": false}, "test31": {"title": "test31", "slug": "test31", "preview": "Page sans texte", "hidden_from_nav": false}, "test32": {"title": "test32", "slug": "test32", "preview": "Page sans texte", "hidden_from_nav": false}, "test33": {"title": "test33", "slug": "test33", "preview": "Test 1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ultricies lorem libero, et volutpat massa pharetra in. Nunc vehicula justo ac neque aliquet, id cursus felis malesuada. Donec...", "hidden_from_nav": false}};
         
-        // Charger navigation
         fetch('../../data/inventory.json')
             .then(res => res.json())
             .then(pages => {
@@ -384,7 +107,6 @@
                         const a = document.createElement('a');
                         a.href = `../${page.slug}/`;
                         a.textContent = page.title;
-                        a.dataset.slug = page.slug;
                         li.appendChild(a);
                         internalList.appendChild(li);
                     });
@@ -399,9 +121,9 @@
                     li.appendChild(a);
                     otherList.appendChild(li);
                 });
-            });
+            })
+            .catch(err => console.error('Erreur chargement navigation:', err));
         
-        // Table des matières
         if (PAGE_HEADINGS.length > 0) {
             const tocList = document.getElementById('toc-list');
             tocList.innerHTML = '';
@@ -421,7 +143,6 @@
             });
         }
         
-        // Toggle onglets
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -432,12 +153,44 @@
             });
         });
         
-        // ========== HOVER PREVIEW DES LIENS ==========
         const preview = document.getElementById('link-preview');
         let previewTimeout;
         let isOverPreview = false;
         
-        // Détecter tous les liens internes dans le contenu
+        function showLinkPreview(linkElement) {
+            const href = linkElement.getAttribute('href');
+            const match = href.match(/\.\.\/([^\/]+)\//);
+            if (!match) return;
+            
+            const targetSlug = match[1];
+            const metadata = PAGES_METADATA[targetSlug];
+            
+            if (!metadata) {
+                console.warn('Pas de métadonnées pour', targetSlug);
+                return;
+            }
+            
+            document.getElementById('preview-title').textContent = metadata.title;
+            document.getElementById('preview-content').textContent = metadata.preview;
+            
+            const rect = linkElement.getBoundingClientRect();
+            preview.style.display = 'block';
+            
+            let left = rect.right + 15;
+            let top = rect.top;
+            
+            if (left + 400 > window.innerWidth) {
+                left = rect.left - 415;
+            }
+            
+            if (top + 250 > window.innerHeight) {
+                top = window.innerHeight - 260;
+            }
+            
+            preview.style.left = left + 'px';
+            preview.style.top = top + 'px';
+        }
+        
         document.querySelectorAll('.text-content a[href*="../"]').forEach(link => {
             link.addEventListener('mouseenter', (e) => {
                 clearTimeout(previewTimeout);
@@ -465,79 +218,6 @@
             preview.style.display = 'none';
         });
         
-        async function showLinkPreview(linkElement) {
-            const href = linkElement.getAttribute('href');
-            const match = href.match(/\.\.\/([^\/]+)\//);
-            if (!match) return;
-            
-            const targetSlug = match[1];
-            
-            try {
-                // Charger l'inventaire pour trouver le titre
-                const pagesResponse = await fetch('../../data/inventory.json');
-                const pages = await pagesResponse.json();
-                const page = pages.find(p => p.slug === targetSlug);
-                
-                if (!page) return;
-                
-                // Afficher le titre immédiatement
-                document.getElementById('preview-title').textContent = page.title;
-                document.getElementById('preview-content').textContent = 'Chargement...';
-                
-                // Positionner la preview
-                const rect = linkElement.getBoundingClientRect();
-                preview.style.display = 'block';
-                
-                // Calculer position (à droite du lien)
-                let left = rect.right + 15;
-                let top = rect.top;
-                
-                // Si déborde à droite, placer à gauche
-                if (left + 400 > window.innerWidth) {
-                    left = rect.left - 415;
-                }
-                
-                // Si déborde en bas, ajuster
-                if (top + 250 > window.innerHeight) {
-                    top = window.innerHeight - 260;
-                }
-                
-                preview.style.left = left + 'px';
-                preview.style.top = top + 'px';
-                
-                // Charger le contenu de la page
-                const pageResponse = await fetch(`../${targetSlug}/`);
-                const html = await pageResponse.text();
-                
-                // Parser et extraire le texte
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                
-                // Chercher du texte dans les composants texte
-                const textContents = doc.querySelectorAll('.text-content');
-                let excerpt = '';
-                
-                for (let content of textContents) {
-                    const text = content.textContent.trim();
-                    if (text.length > 50) {
-                        excerpt = text.substring(0, 200) + '...';
-                        break;
-                    }
-                }
-                
-                if (!excerpt) {
-                    excerpt = 'Aucun aperçu disponible.';
-                }
-                
-                document.getElementById('preview-content').textContent = excerpt;
-                
-            } catch (error) {
-                console.error('Erreur preview:', error);
-                document.getElementById('preview-content').textContent = 'Impossible de charger l\'aperçu';
-            }
-        }
-        
-        // Lightbox galeries
         document.querySelectorAll('.component-gallery img').forEach(img => {
             img.addEventListener('click', () => {
                 const lightbox = document.createElement('div');
@@ -551,18 +231,24 @@
             });
         });
         
-        // Mobile toast
-        if (window.innerWidth < 768) {
-            const toast = document.createElement('div');
-            toast.className = 'mobile-toast';
-            toast.textContent = '📱 Optimisé pour ordinateur';
-            document.body.appendChild(toast);
-            setTimeout(() => {
-                toast.style.transition = 'opacity 0.3s';
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 5000);
-        }
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        
+        document.querySelectorAll('.component').forEach(component => {
+            component.style.opacity = '0';
+            component.style.transform = 'translateY(20px)';
+            component.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+            observer.observe(component);
+        });
+        
+        console.log('✅ Viewer initialisé');
+        console.log('📊 Métadonnées:', Object.keys(PAGES_METADATA).length, 'pages');
     </script>
 </body>
 </html>
