@@ -1,0 +1,31 @@
+[
+  {
+    "content": "<p>Test</p>",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 200,
+    "id": "comp-1",
+    "type": "text",
+    "w": 300,
+    "x": 50,
+    "y": 50,
+    "z": 0
+  },
+  {
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 315,
+    "id": "comp-2",
+    "images": [
+      "images/img_20260112_084819.png",
+      "images/img_20260112_084925.png",
+      "images/img_20260112_085018.png"
+    ],
+    "type": "gallery",
+    "w": 560,
+    "x": 520,
+    "y": 200,
+    "z": 1
+  }
+]

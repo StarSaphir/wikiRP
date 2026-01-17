@@ -1,0 +1,14 @@
+[
+  {
+    "id": "comp-1",
+    "type": "text",
+    "x": 90,
+    "y": 40,
+    "w": 300,
+    "h": 200,
+    "z": 0,
+    "content": "",
+    "custom_css": "",
+    "custom_js": ""
+  }
+]

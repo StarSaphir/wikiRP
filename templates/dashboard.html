@@ -88,7 +88,6 @@
             padding: 25px;
             border: 2px solid #333;
             transition: all 0.3s;
-            cursor: pointer;
         }
         
         .page-card:hover {
@@ -160,6 +159,7 @@
             text-align: center;
             padding: 60px 20px;
             color: #666;
+            grid-column: 1 / -1;
         }
         
         .empty-state h2 {
@@ -230,7 +230,6 @@
         <div class="actions">
             <button class="btn" onclick="showCreateModal()">➕ Nouvelle Page</button>
             <button class="btn btn-secondary" onclick="window.open('/wiki/', '_blank')">🏠 Accueil Wiki</button>
-            <button class="btn btn-secondary" onclick="exportStatic()">📦 Exporter pour GitHub Pages</button>
         </div>
         
         <div class="pages-grid" id="pages-grid">
@@ -240,7 +239,7 @@
                     <h3>{{ page.title }}</h3>
                     <div class="slug">{{ page.slug }}</div>
                     <div class="visibility">
-                        {% if page.hidden_from_nav %}
+                        {% if page.get('hidden_from_nav', False) %}
                         <span style="color: #ff9800;">🔒 Cachée de la navigation</span>
                         {% else %}
                         <span style="color: #5cb85c;">👁️ Visible</span>
@@ -249,8 +248,8 @@
                     <div class="page-actions">
                         <button class="edit-btn" onclick="editPage('{{ page.slug }}')">✏️ Éditer</button>
                         <button class="view-btn" onclick="viewPage('{{ page.slug }}')">👁️ Voir</button>
-                        <button class="toggle-btn" onclick="toggleVisibility('{{ page.slug }}', {{ 'false' if page.hidden_from_nav else 'true' }})">
-                            {% if page.hidden_from_nav %}👁️{% else %}🔒{% endif %}
+                        <button class="toggle-btn" onclick="toggleVisibility('{{ page.slug }}', {{ 'false' if page.get('hidden_from_nav', False) else 'true' }})">
+                            {% if page.get('hidden_from_nav', False) %}👁️{% else %}🔒{% endif %}
                         </button>
                         <button class="delete-btn" onclick="deletePage('{{ page.slug }}', '{{ page.title }}')">🗑️</button>
                     </div>
@@ -296,15 +295,23 @@
                 return;
             }
             
-            const response = await fetch('/api/pages', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title })
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                window.location.href = `/editor/${data.slug}`;
+            try {
+                const response = await fetch('/api/pages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    window.location.href = `/editor/${data.slug}`;
+                } else {
+                    const error = await response.json();
+                    alert('Erreur: ' + (error.error || 'Erreur inconnue'));
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur lors de la création de la page');
             }
         }
         
@@ -319,24 +326,18 @@
         async function deletePage(slug, title) {
             if (!confirm(`Supprimer la page "${title}" ?\n\nCette action est irréversible !`)) return;
             
-            console.log('Suppression de:', slug);
-            
             try {
+                // Route corrigée selon app.py
                 const response = await fetch(`/api/pages/${slug}`, {
                     method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+                    headers: { 'Content-Type': 'application/json' }
                 });
-                
-                console.log('Status:', response.status);
-                const data = await response.json();
-                console.log('Réponse:', data);
                 
                 if (response.ok) {
                     alert('✅ Page supprimée !');
                     location.reload();
                 } else {
+                    const data = await response.json();
                     alert('❌ Erreur: ' + (data.error || 'Erreur inconnue'));
                 }
             } catch (error) {
@@ -346,24 +347,32 @@
         }
         
         async function toggleVisibility(slug, hide) {
-            const response = await fetch(`/api/pages/${slug}/visibility`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ hidden: hide })
-            });
-            
-            if (response.ok) {
-                location.reload();
+            try {
+                const response = await fetch(`/api/pages/${slug}/visibility`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ hidden: hide })
+                });
+                
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Erreur lors du changement de visibilité');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur réseau');
             }
-        }
-        
-        function exportStatic() {
-            alert('Export en cours...\n\nCopiez le dossier "pages" et "data" vers votre repository GitHub.\nActivez GitHub Pages dans les paramètres du repository.');
         }
         
         // Gestion de la touche Entrée dans le modal
         document.getElementById('page-title').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') createPage();
+        });
+        
+        // Fermer modal au clic extérieur
+        document.getElementById('create-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'create-modal') closeModal();
         });
     </script>
 </body>

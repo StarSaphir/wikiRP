@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page non trouvée</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 800px;
+            padding: 40px 20px;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .error-code {
+            font-size: clamp(80px, 20vw, 180px);
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff4a4a, #f093fb, #4a9eff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .error-icon {
+            font-size: 120px;
+            margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        h1 {
+            font-size: clamp(28px, 6vw, 48px);
+            color: #e0e0e0;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        p {
+            font-size: clamp(16px, 3vw, 20px);
+            color: #999;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+        
+        .btn {
+            padding: 15px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4a9eff, #667eea);
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(74, 158, 255, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .suggestions {
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .suggestions h2 {
+            font-size: 24px;
+            color: #999;
+            margin-bottom: 30px;
+        }
+        
+        .suggestions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .suggestion-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: block;
+        }
+        
+        .suggestion-card:hover {
+            background: rgba(74, 158, 255, 0.1);
+            border-color: rgba(74, 158, 255, 0.3);
+            transform: translateY(-5px);
+        }
+        
+        .suggestion-card h3 {
+            color: #4a9eff;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        
+        .suggestion-card p {
+            color: #666;
+            font-size: 12px;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-icon">🔍</div>
+        <div class="error-code">404</div>
+        <h1>Oups ! Page introuvable</h1>
+        <p>La page que vous recherchez n'existe pas ou a été déplacée.</p>
+        
+        <div class="actions">
+            <a href="/wiki/" class="btn btn-primary">
+                🏠 Retour à l'accueil
+            </a>
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                ← Retour
+            </a>
+        </div>
+
+        <div class="suggestions">
+            <h2>Pages qui pourraient vous intéresser</h2>
+            <div class="suggestions-grid">
+
+                <a href="/pages/test32/" class="suggestion-card">
+                    <h3>test32</h3>
+                    <p>test32</p>
+                </a>
+
+                <a href="/pages/test31/" class="suggestion-card">
+                    <h3>test31</h3>
+                    <p>test31</p>
+                </a>
+
+                <a href="/pages/test16/" class="suggestion-card">
+                    <h3>test16</h3>
+                    <p>test16</p>
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

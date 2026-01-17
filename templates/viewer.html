@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ slug }} - Wiki</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='./viewer.css') }}">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>Wiki Navigator</h2>
+        </div>
+        <ul class="sidebar-nav" id="nav-list">
+            <!-- Sera rempli par viewer.js -->
+        </ul>
+    </nav>
+    
+    <!-- Contenu Principal -->
+    <main class="content">
+        <div class="canvas-container" id="canvas">
+            <!-- Les composants seront générés ici -->
+            {% for component in layout %}
+            <div class="component component-{{ component.type }}" 
+                 id="{{ component.id }}"
+                 style="position: absolute; 
+                        left: {{ component.x }}px; 
+                        top: {{ component.y }}px; 
+                        width: {{ component.w }}px; 
+                        height: {{ component.h }}px; 
+                        z-index: {{ component.get('z', 0) }};">
+                
+                {% if component.type == 'text' %}
+                    <div class="text-content">{{ component.get('content', '')|safe }}</div>
+                
+                {% elif component.type == 'image' %}
+                    <img src="{{ component.get('image_path', '') }}" alt="Image">
+                
+                {% elif component.type == 'gallery' %}
+                    {% if component.get('images', []) %}
+                    <div class="gallery-viewer">
+                        <button class="gallery-prev">‹</button>
+                        {% for img in component.images %}
+                        <img class="gallery-img" 
+                             src="{{ img }}" 
+                             style="{% if loop.index0 > 0 %}display:none;{% endif %} width:100%; height:100%; object-fit:cover;"
+                             data-index="{{ loop.index0 }}">
+                        {% endfor %}
+                        <button class="gallery-next">›</button>
+                        <div class="gallery-dots">
+                            {% for img in component.images %}
+                            <span class="gallery-dot {% if loop.index0 == 0 %}active{% endif %}" 
+                                  data-index="{{ loop.index0 }}"></span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                
+                {% elif component.type == 'video' %}
+                    {% if component.get('video_path') %}
+                    <video src="{{ component.video_path }}" 
+                           controls 
+                           style="width:100%; height:100%;">
+                    </video>
+                    {% endif %}
+                
+                {% elif component.type == 'youtube' %}
+                    {% if component.get('youtube_id') %}
+                    <iframe src="https://www.youtube.com/embed/{{ component.youtube_id }}"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                            style="width:100%; height:100%;">
+                    </iframe>
+                    {% endif %}
+                
+                {% elif component.type == 'shape' %}
+                    <div class="shape" 
+                         style="background: {{ component.get('bg_color', '#333') }}; 
+                                width:100%; 
+                                height:100%; 
+                                border-radius: {{ component.get('border_radius', 0) }}px;">
+                    </div>
+                
+                {% elif component.type == 'table' %}
+                    <div class="table-content">{{ component.get('content', '')|safe }}</div>
+                
+                {% elif component.type == 'separator' %}
+                    <hr style="border: none; 
+                               border-top: {{ component.get('separator_thickness', 2) }}px 
+                               {{ component.get('separator_style', 'solid') }} 
+                               {{ component.get('separator_color', '#666') }};">
+                
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+    
+    <!-- Avertissement Mobile -->
+    <div class="mobile-warning" id="mobile-warning">
+        <div class="mobile-warning-content">
+            <p>📱 Ce Wiki est optimisé pour une consultation sur ordinateur</p>
+            <button onclick="this.parentElement.parentElement.style.display='none'">Continuer</button>
+        </div>
+    </div>
+    
+    <!-- Script Viewer -->
+    <script src="{{ url_for('static', filename='viewer.js') }}"></script>
+</body>
+</html>

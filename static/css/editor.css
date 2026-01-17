@@ -1,0 +1,811 @@
+/* ==================== RESET ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    overflow: hidden;
+}
+
+/* ==================== LAYOUT ==================== */
+.editor-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* ==================== TOOLBAR GAUCHE ==================== */
+.toolbar {
+    width: 280px;
+    background: #1a1a1a;
+    border-right: 2px solid #333;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.toolbar-header {
+    padding: 20px;
+    border-bottom: 2px solid #333;
+}
+
+.toolbar-tabs {
+    display: flex;
+    gap: 10px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    background: #252525;
+    border: none;
+    color: #e0e0e0;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.tab-btn:hover {
+    background: #333;
+}
+
+.tab-btn.active {
+    background: #4a9eff;
+    color: white;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tool-btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: #252525;
+    border: 2px solid #333;
+    color: #e0e0e0;
+    cursor: move;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: left;
+    transition: all 0.3s;
+}
+
+.tool-btn:hover {
+    background: #333;
+    border-color: #4a9eff;
+    transform: translateX(5px);
+}
+
+.toolbar-section {
+    padding: 20px;
+    border-top: 2px solid #333;
+}
+
+.toolbar-section h4 {
+    color: #4a9eff;
+    margin-bottom: 15px;
+}
+
+.action-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: #4a9eff;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.action-btn:hover {
+    background: #3a8eef;
+    transform: scale(1.02);
+}
+
+/* ==================== CANVAS ==================== */
+.canvas-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #0a0a0a;
+}
+
+.canvas-toolbar {
+    height: 60px;
+    background: #1a1a1a;
+    border-bottom: 2px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.back-btn {
+    padding: 10px 20px;
+    background: #333;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.back-btn:hover {
+    background: #4a9eff;
+}
+
+.page-title {
+    font-size: 20px;
+    color: #4a9eff;
+    font-weight: bold;
+}
+
+.canvas-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.mode-toggle {
+    display: flex;
+    gap: 5px;
+}
+
+.mode-btn {
+    padding: 8px 15px;
+    background: #252525;
+    border: 2px solid #333;
+    color: #e0e0e0;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 13px;
+    transition: all 0.3s;
+}
+
+.mode-btn:hover {
+    border-color: #4a9eff;
+}
+
+.mode-btn.active {
+    background: #4a9eff;
+    border-color: #4a9eff;
+    color: white;
+}
+
+#grid-size {
+    width: 60px;
+    padding: 5px;
+    background: #252525;
+    border: 1px solid #333;
+    color: white;
+    border-radius: 3px;
+}
+
+#preview-btn {
+    padding: 8px 15px;
+    background: #4a9eff;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+#preview-btn:hover {
+    background: #3a8eef;
+}
+
+.canvas {
+    flex: 1;
+    overflow: auto;
+    background: #0a0a0a;
+}
+
+.canvas-inner {
+    position: relative;
+    min-height: 1200px;
+    background: #1a1a1a;
+    margin: 20px;
+    border-radius: 10px;
+}
+
+/* Grille */
+.canvas.grid-enabled .canvas-inner {
+    background-image: 
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 10px 10px;
+}
+
+/* ==================== COMPOSANTS ==================== */
+.component {
+    position: absolute;
+    border: 2px solid transparent;
+    cursor: move;
+    background: #252525;
+    border-radius: 5px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none; /* CRITIQUE pour interact.js */
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.component:hover {
+    border-color: rgba(74, 158, 255, 0.5);
+}
+
+.component.selected {
+    border-color: #4a9eff;
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.3);
+}
+
+.component.is-dragging {
+    opacity: 0.8;
+    cursor: grabbing !important;
+    z-index: 9999 !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* Contrôles de composants */
+.component-controls {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    display: none;
+    gap: 5px;
+    background: rgba(0,0,0,0.95);
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+.component.selected .component-controls {
+    display: flex;
+}
+
+.ctrl-btn {
+    background: #333;
+    border: 1px solid #555;
+    color: white;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.ctrl-btn:hover {
+    background: #4a9eff;
+    transform: scale(1.1);
+}
+
+/* Types de composants */
+.component-text {
+    background: #252525;
+}
+
+.component-text .text-content {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.component-image {
+    overflow: hidden;
+}
+
+.component-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.component-shape {
+    border-radius: 5px;
+}
+
+.component-separator {
+    background: transparent !important;
+}
+
+.component-separator hr {
+    border: none;
+    border-top: 2px solid #666;
+    margin: 0;
+}
+
+/* ==================== PANNEAU PROPRIÉTÉS ==================== */
+.properties-panel {
+    width: 320px;
+    background: #1a1a1a;
+    border-left: 2px solid #333;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    /* 🔧 FIX CRITIQUE: Toujours autoriser les clics dans le panneau */
+    pointer-events: all !important;
+    z-index: 1000;
+}
+
+.properties-header {
+    padding: 20px;
+    border-bottom: 2px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* 🔧 FIX: Autoriser les clics */
+    pointer-events: all !important;
+}
+
+.properties-header h3 {
+    color: #4a9eff;
+}
+
+#close-props {
+    background: #333;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    /* 🔧 FIX: Autoriser les clics */
+    pointer-events: all !important;
+}
+
+#close-props:hover {
+    background: #f44336;
+}
+
+#properties-content {
+    padding: 20px;
+    /* 🔧 FIX: Autoriser les clics */
+    pointer-events: all !important;
+}
+
+.no-selection {
+    color: #666;
+    text-align: center;
+    margin-top: 50px;
+}
+
+/* Formulaires de propriétés */
+.prop-group {
+    margin-bottom: 20px;
+}
+
+.prop-group label {
+    display: block;
+    color: #4a9eff;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.prop-group input,
+.prop-group textarea,
+.prop-group select {
+    width: 100%;
+    padding: 10px;
+    background: #252525;
+    border: 1px solid #333;
+    color: white;
+    border-radius: 5px;
+    /* 🔧 FIX: Autoriser les clics */
+    pointer-events: all !important;
+}
+
+.prop-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.prop-group button {
+    width: 100%;
+    padding: 10px;
+    background: #4a9eff;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-top: 10px;
+    /* 🔧 FIX CRITIQUE: Autoriser les clics sur les boutons */
+    pointer-events: all !important;
+}
+
+.prop-group button:hover {
+    background: #3a8eef;
+}
+
+/* Éditeur de texte Quill dans le panneau */
+.text-editor-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    /* 🔧 FIX: Autoriser les clics */
+    pointer-events: all !important;
+}
+
+.quill-toolbar-panel {
+    background: #252525;
+    border-radius: 5px;
+    padding: 15px;
+    /* 🔧 FIX: Autoriser les clics */
+    pointer-events: all !important;
+}
+
+.toolbar-section {
+    margin-bottom: 15px;
+}
+
+.toolbar-section:last-child {
+    margin-bottom: 0;
+}
+
+.toolbar-section label {
+    display: block;
+    color: #999;
+    font-size: 12px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.toolbar-buttons {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.quill-toolbar-panel button,
+.quill-toolbar-panel select {
+    padding: 8px 12px;
+    background: #333;
+    border: 1px solid #444;
+    color: white;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+    /* 🔧 FIX: Autoriser les clics */
+    pointer-events: all !important;
+}
+
+.quill-toolbar-panel button:hover {
+    background: #4a9eff;
+}
+
+.quill-toolbar-panel select {
+    min-width: 120px;
+}
+
+/* 🔧 FIX CRITIQUE: Boutons de fin d'édition */
+#finish-edit-btn,
+#finish-table-edit-btn,
+#apply-props,
+.save-gallery-btn {
+    pointer-events: all !important;
+    cursor: pointer !important;
+    z-index: 10001 !important;
+}
+
+/* ==================== LISTE COMPOSANTS ==================== */
+#components-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.component-list-item {
+    padding: 12px;
+    background: #252525;
+    border: 2px solid #333;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.component-list-item:hover {
+    background: #333;
+    border-color: #4a9eff;
+    transform: translateX(5px);
+}
+
+.component-list-item.selected {
+    background: #4a9eff;
+    border-color: #4a9eff;
+    color: white;
+}
+
+/* ==================== MODALES ==================== */
+.modal {
+    display: none; /* Caché par défaut */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease-out;
+    /* 🔧 FIX: Autoriser les clics */
+    pointer-events: all !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background: #1a1a1a;
+    border: 2px solid #4a9eff;
+    border-radius: 10px;
+    padding: 30px;
+    min-width: 400px;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    animation: slideUp 0.3s ease-out;
+    position: relative;
+    /* 🔧 FIX: Autoriser les clics */
+    pointer-events: all !important;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-content h3 {
+    color: #4a9eff;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="file"],
+.modal-content select,
+.modal-content textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    background: #252525;
+    border: 1px solid #333;
+    color: white;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+    /* 🔧 FIX: Autoriser les clics */
+    pointer-events: all !important;
+}
+
+.modal-content input[type="text"]:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+    outline: none;
+    border-color: #4a9eff;
+}
+
+.modal-content input[type="file"] {
+    cursor: pointer;
+    padding: 10px;
+}
+
+.modal-content button {
+    padding: 12px 24px;
+    background: #4a9eff;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: all 0.3s;
+    /* 🔧 FIX CRITIQUE: Autoriser les clics */
+    pointer-events: all !important;
+}
+
+.modal-content button:hover {
+    background: #3a8eef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 158, 255, 0.4);
+}
+
+.modal-content button:disabled {
+    background: #555;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.modal-content .cancel-btn {
+    background: #666;
+}
+
+.modal-content .cancel-btn:hover {
+    background: #777;
+}
+
+/* Scrollbar dans les modales */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #4a9eff;
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #3a8eef;
+}
+
+/* Styles spécifiques pour les résultats de recherche (link-modal) */
+#page-search-results {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+#page-search-results::-webkit-scrollbar {
+    width: 6px;
+}
+
+#page-search-results::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+#page-search-results::-webkit-scrollbar-thumb {
+    background: #4a9eff;
+    border-radius: 3px;
+}
+
+.page-result {
+    padding: 12px;
+    background: #2a2a2a;
+    margin: 8px 0;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+    /* 🔧 FIX: Autoriser les clics */
+    pointer-events: all !important;
+}
+
+.page-result:hover {
+    background: #333;
+    border-color: #4a9eff;
+}
+
+/* Styles pour les containers de galerie */
+.gallery-images-container {
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 15px 0;
+    padding: 10px;
+    background: #1a1a1a;
+    border-radius: 5px;
+    /* 🔧 FIX: Autoriser les clics */
+    pointer-events: all !important;
+}
+
+.gallery-images-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.gallery-images-container::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+.gallery-images-container::-webkit-scrollbar-thumb {
+    background: #4a9eff;
+    border-radius: 3px;
+}
+
+/* Preview d'images/vidéos dans les modales */
+.image-preview,
+.video-preview,
+.youtube-preview,
+.files-preview {
+    margin: 15px 0;
+    text-align: center;
+    padding: 10px;
+    background: #1a1a1a;
+    border-radius: 5px;
+}
+
+.image-preview img,
+.video-preview video,
+.youtube-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.video-preview video {
+    width: 100%;
+}
+
+/* ==================== SCROLLBARS GLOBALES ==================== */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #4a9eff;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1200px) {
+    .toolbar {
+        width: 250px;
+    }
+    
+    .properties-panel {
+        width: 280px;
+    }
+}
+
+@media (max-width: 768px) {
+    .editor-container {
+        flex-direction: column;
+    }
+    
+    .toolbar,
+    .properties-panel {
+        width: 100%;
+        height: auto;
+        max-height: 300px;
+    }
+    
+    .modal-content {
+        min-width: 90%;
+        max-width: 90%;
+        padding: 20px;
+    }
+}

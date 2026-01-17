@@ -1,0 +1,26 @@
+[
+  {
+    "content": "<p>test test</p>",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 200,
+    "id": "comp-1",
+    "type": "text",
+    "w": 300,
+    "x": 30,
+    "y": 50,
+    "z": 0
+  },
+  {
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 290,
+    "id": "comp-2",
+    "type": "table",
+    "w": 400,
+    "x": 620,
+    "y": 110,
+    "z": 1
+  }
+]

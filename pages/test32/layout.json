@@ -1,0 +1,39 @@
+[
+  {
+    "id": "comp-1",
+    "type": "text",
+    "x": 530,
+    "y": 280,
+    "w": 300,
+    "h": 200,
+    "z": 0,
+    "content": "",
+    "custom_css": "",
+    "custom_js": ""
+  },
+  {
+    "id": "comp-2",
+    "type": "image",
+    "x": 40,
+    "y": 40,
+    "w": 300,
+    "h": 200,
+    "z": 1,
+    "content": "",
+    "custom_css": "",
+    "custom_js": ""
+  },
+  {
+    "id": "comp-3",
+    "type": "shape",
+    "x": 1020,
+    "y": 80,
+    "w": 300,
+    "h": 200,
+    "z": 2,
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "bg_color": "#333333"
+  }
+]

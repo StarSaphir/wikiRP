@@ -1,0 +1,52 @@
+[
+  {
+    "content": "<h1>test1 </h1><h2>test2</h2><p><a href=\"../ufb/\" rel=\"noopener noreferrer\" target=\"_blank\">test3</a></p>",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 200,
+    "id": "comp-1",
+    "type": "text",
+    "w": 300,
+    "x": 590,
+    "y": 100,
+    "z": 0
+  },
+  {
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 200,
+    "id": "comp-2",
+    "image_path": "images/img_20260110_200902.png",
+    "type": "image",
+    "w": 300,
+    "x": 80,
+    "y": 30,
+    "z": 1
+  },
+  {
+    "bg_color": "#333333",
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 200,
+    "id": "comp-3",
+    "type": "shape",
+    "w": 300,
+    "x": 1020,
+    "y": 70,
+    "z": 2
+  },
+  {
+    "id": "comp-4",
+    "type": "video",
+    "x": 70,
+    "y": 360,
+    "w": 560,
+    "h": 315,
+    "z": 3,
+    "content": "",
+    "custom_css": "",
+    "custom_js": ""
+  }
+]

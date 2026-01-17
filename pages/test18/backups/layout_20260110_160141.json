@@ -1,0 +1,14 @@
+[
+  {
+    "id": "comp-1",
+    "type": "text",
+    "x": 50,
+    "y": 50,
+    "w": 300,
+    "h": 200,
+    "z": 0,
+    "content": "<p><a href=\"../ufb/\" rel=\"noopener noreferrer\" target=\"_blank\">Test je sais pus combien</a></p><p>test 15</p><p><br></p><h1>test </h1>",
+    "custom_css": "",
+    "custom_js": ""
+  }
+]
