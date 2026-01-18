@@ -89,6 +89,7 @@ def regenerate_wiki_pages():
             [sys.executable, 'generate_wiki_pages.py'],
             capture_output=True,
             text=True,
+            encoding='utf-8',
             timeout=30
         )
         
@@ -545,14 +546,46 @@ def generate_html(slug, layout):
         .canvas-container {{
             min-height: {max_bottom + 100}px;
         }}
+        
+        /* Style du bouton d'accueil */
+        .home-btn {{
+            display: block;
+            width: calc(100% - 4px); /* Légèrement plus petit pour éviter le débordement */
+            padding: 10px;
+            background: linear-gradient(135deg, #4a9eff, #667eea);
+            border: none;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            font-size: 13px;
+            margin: 12px 0 0 0; /* Retirer les marges latérales */
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(74, 158, 255, 0.3);
+        }}
+        
+        .home-btn:hover {{
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(74, 158, 255, 0.5);
+        }}
+        
+        /* Ajustement de la sidebar header pour un meilleur espacement */
+        .sidebar-header {{
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #4a9eff;
+        }}
     </style>
 </head>
 <body>
     <nav class="sidebar">
         <div class="sidebar-header">
             <h2>📚 {title}</h2>
+            <a href="../../wiki/" class="home-btn">
+                🏠 Retour à l'accueil
+            </a>
         </div>
-        
         <div class="nav-toggle">
             <button class="nav-btn active" data-tab="links">🔗 Liens</button>
             <button class="nav-btn" data-tab="toc">📋 Sommaire</button>
@@ -603,6 +636,18 @@ def generate_html(slug, layout):
         const INTERNAL_LINKS = {internal_links_json};
         const CURRENT_SLUG = "{slug}";
         const PAGES_METADATA = {pages_metadata_json};
+
+        const homeBtn = document.querySelector('.home-btn');
+        if (homeBtn) {{
+            homeBtn.addEventListener('mouseenter', () => {{
+                homeBtn.style.transform = 'translateY(-2px)';
+                homeBtn.style.boxShadow = '0 4px 15px rgba(74, 158, 255, 0.5)';
+            }});
+            homeBtn.addEventListener('mouseleave', () => {{
+                homeBtn.style.transform = 'translateY(0)';
+                homeBtn.style.boxShadow = '0 2px 8px rgba(74, 158, 255, 0.3)';
+            }});
+        }}
         
         fetch('../../data/inventory.json')
             .then(res => res.json())

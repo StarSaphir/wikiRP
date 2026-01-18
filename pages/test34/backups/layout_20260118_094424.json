@@ -1,0 +1,70 @@
+[
+  {
+    "content": "<p>Test 4</p>",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 420,
+    "id": "comp-1",
+    "type": "text",
+    "w": 1250,
+    "x": 50,
+    "y": 50,
+    "z": 2
+  },
+  {
+    "content": "<p>Test5</p>",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 200,
+    "id": "comp-2",
+    "type": "text",
+    "w": 300,
+    "x": 90,
+    "y": 520,
+    "z": 1
+  },
+  {
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 315,
+    "id": "comp-3",
+    "images": [
+      "images/img_20260117_144721_061973.png",
+      "images/img_20260117_144721_321213.png",
+      "images/img_20260117_144721_381223.png",
+      "images/img_20260117_144721_647246.png"
+    ],
+    "type": "gallery",
+    "w": 560,
+    "x": 710,
+    "y": 500,
+    "z": 2
+  },
+  {
+    "id": "comp-4",
+    "type": "shape",
+    "x": 40,
+    "y": 30,
+    "w": 300,
+    "h": 200,
+    "z": 1,
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "bg_color": "#333333"
+  },
+  {
+    "id": "comp-5",
+    "type": "youtube",
+    "x": 50,
+    "y": 780,
+    "w": 560,
+    "h": 315,
+    "z": 4,
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "youtube_id": "TG_ZEovDDKk"
+  }
+]

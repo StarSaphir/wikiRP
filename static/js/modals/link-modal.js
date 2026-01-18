@@ -64,21 +64,31 @@ export async function showPageLinkModal(quill) {
             return;
         }
 
-        // Vérifier que c'est une URL valide
         if (!isValidUrl(url)) {
             if (!confirm('⚠️ L\'URL ne semble pas valide.\n\nContinuer quand même ?')) {
                 return;
             }
         }
 
-        // Appliquer le lien
-        quill.formatText(selection.index, selection.length, 'link', url);
-        cleanup();
-    };
+        console.log('✅ Ajout lien externe:', url);
 
-    // Gestionnaire d'annulation
-    const handleCancel = () => {
-        cleanup();
+        // 🔧 FIX: Application compatible
+        try {
+            if (quill.formatText && typeof quill.formatText === 'function') {
+                quill.formatText(selection.index, selection.length, 'link', url);
+            } else if (quill.format && typeof quill.format === 'function') {
+                quill.format('link', url);
+            } else if (quill.insertText && typeof quill.insertText === 'function') {
+                const text = quill.getText ? quill.getText() : '';
+                quill.insertText(selection.index, text, { link: url });
+            } else {
+                throw new Error('Aucune méthode compatible');
+            }
+            cleanup();
+        } catch (error) {
+            console.error('❌ Erreur:', error);
+            alert('❌ Erreur: ' + error.message);
+        }
     };
 
     // Nettoyage
@@ -95,7 +105,7 @@ export async function showPageLinkModal(quill) {
     addExternalBtn.addEventListener('click', handleAddExternal);
     cancelBtn.addEventListener('click', handleCancel);
 
-    // Entrée = recherche ou ajout externe
+   // Entrée = recherche ou ajout externe
     searchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             const term = searchInput.value.toLowerCase();
@@ -105,12 +115,23 @@ export async function showPageLinkModal(quill) {
             );
 
             if (matches.length === 1) {
-                // Si une seule correspondance, l'ajouter directement
                 const linkUrl = `../${matches[0].slug}/`;
-                quill.formatText(selection.index, selection.length, 'link', linkUrl);
-                cleanup();
+                
+                // 🔧 FIX: Application compatible
+                try {
+                    if (quill.formatText && typeof quill.formatText === 'function') {
+                        quill.formatText(selection.index, selection.length, 'link', linkUrl);
+                    } else if (quill.format && typeof quill.format === 'function') {
+                        quill.format('link', linkUrl);
+                    } else if (quill.insertText && typeof quill.insertText === 'function') {
+                        const text = quill.getText ? quill.getText() : '';
+                        quill.insertText(selection.index, text, { link: linkUrl });
+                    }
+                    cleanup();
+                } catch (error) {
+                    console.error('❌ Erreur:', error);
+                }
             } else if (isValidUrl(term)) {
-                // Si c'est une URL, l'ajouter comme lien externe
                 handleAddExternal();
             }
         }
@@ -201,8 +222,26 @@ function displayPageResults(term, resultsContainer, quill, modal, selection) {
 
         result.addEventListener('click', () => {
             const linkUrl = `../${page.slug}/`;
-            quill.formatText(selection.index, selection.length, 'link', linkUrl);
-            modal.style.display = 'none';
+            
+            console.log('✅ Ajout lien interne:', linkUrl);
+            
+            // 🔧 FIX: Application compatible
+            try {
+                if (quill.formatText && typeof quill.formatText === 'function') {
+                    quill.formatText(selection.index, selection.length, 'link', linkUrl);
+                } else if (quill.format && typeof quill.format === 'function') {
+                    quill.format('link', linkUrl);
+                } else if (quill.insertText && typeof quill.insertText === 'function') {
+                    const text = quill.getText ? quill.getText() : '';
+                    quill.insertText(selection.index, text, { link: linkUrl });
+                } else {
+                    throw new Error('Aucune méthode compatible');
+                }
+                modal.style.display = 'none';
+            } catch (error) {
+                console.error('❌ Erreur:', error);
+                alert('❌ Erreur: ' + error.message);
+            }
         });
 
         resultsContainer.appendChild(result);

@@ -6,9 +6,14 @@ Peut être appelé directement ou par app.py
 """
 
 import json
+import sys
 import random
 from pathlib import Path
 from datetime import datetime
+
+if sys.platform.startswith('win'):
+    sys.stdout.reconfigure(encoding='utf-8')
+    sys.stderr.reconfigure(encoding='utf-8')
 
 # Configuration des chemins (relatifs au script)
 BASE_DIR = Path(__file__).parent
@@ -795,7 +800,7 @@ def generate_404_page():
 def main():
     """Point d'entrée principal"""
     print("\n" + "="*70)
-    print("🚀 GÉNÉRATION DES PAGES WIKI STATIQUES")
+    print("GÉNÉRATION DES PAGES WIKI STATIQUES")
     print("="*70)
     
     # Vérifications

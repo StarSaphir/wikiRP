@@ -341,61 +341,178 @@ export class TableComponent extends BaseComponent {
     attachLinkHandlers(component, tableEl) {
         // Créer un objet similaire à Quill pour les modales
         const pseudoQuill = {
+            // Stocker la sélection actuelle
+            savedSelection: null,
+            
             getSelection: () => {
                 const selection = window.getSelection();
-                if (!selection || selection.rangeCount === 0) return null;
+                if (!selection || selection.rangeCount === 0 || selection.toString().length === 0) {
+                    return null;
+                }
                 
                 const range = selection.getRangeAt(0);
+                
+                // Sauvegarder la sélection
+                pseudoQuill.savedSelection = {
+                    range: range.cloneRange(),
+                    text: selection.toString()
+                };
+                
                 return {
                     index: 0,
                     length: range.toString().length
                 };
             },
+            
             getText: (index, length) => {
+                if (pseudoQuill.savedSelection) {
+                    return pseudoQuill.savedSelection.text;
+                }
                 const selection = window.getSelection();
                 if (!selection || selection.rangeCount === 0) return '';
                 return selection.toString();
             },
+            
             insertText: (index, text, formats) => {
-                // Insérer du texte avec formatage
-                const selection = window.getSelection();
-                if (!selection || selection.rangeCount === 0) return;
+                console.log('📝 insertText appelé:', { text, formats });
                 
-                const range = selection.getRangeAt(0);
+                // Utiliser la sélection sauvegardée si disponible
+                let range;
+                if (pseudoQuill.savedSelection) {
+                    range = pseudoQuill.savedSelection.range;
+                    
+                    // Restaurer la sélection
+                    const selection = window.getSelection();
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                } else {
+                    const selection = window.getSelection();
+                    if (!selection || selection.rangeCount === 0) {
+                        console.warn('⚠️ Pas de sélection disponible');
+                        return;
+                    }
+                    range = selection.getRangeAt(0);
+                }
+                
+                // Supprimer le contenu sélectionné
                 range.deleteContents();
                 
                 if (formats && formats.link) {
+                    // Créer le lien
                     const link = document.createElement('a');
                     link.href = formats.link;
                     link.textContent = text;
-                    link.style.color = '#4a9eff';
-                    link.style.textDecoration = 'none';
-                    link.style.borderBottom = '1px solid transparent';
+                    link.style.cssText = `
+                        color: #4a9eff;
+                        text-decoration: none;
+                        border-bottom: 1px solid transparent;
+                        transition: border-color 0.2s;
+                    `;
+                    
+                    // Ajouter effet hover
+                    link.addEventListener('mouseenter', () => {
+                        link.style.borderBottomColor = '#4a9eff';
+                    });
+                    link.addEventListener('mouseleave', () => {
+                        link.style.borderBottomColor = 'transparent';
+                    });
+                    
                     range.insertNode(link);
+                    
+                    // Déplacer le curseur après le lien
+                    range.setStartAfter(link);
+                    range.collapse(true);
+                    
+                    const selection = window.getSelection();
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                    
+                    console.log('✅ Lien créé avec succès');
                 } else {
                     const textNode = document.createTextNode(text);
                     range.insertNode(textNode);
                 }
                 
+                // Nettoyer la sélection sauvegardée
+                pseudoQuill.savedSelection = null;
+                
+                // Sauvegarder automatiquement
                 this.scheduleAutoSave();
             },
+            
             format: (name, value) => {
+                console.log('🎨 format appelé:', { name, value });
+                
                 if (name === 'link') {
-                    if (value) {
-                        document.execCommand('createLink', false, value);
-                        // Styler le lien créé
+                    // Utiliser la sélection sauvegardée si disponible
+                    let range, selectedText;
+                    
+                    if (pseudoQuill.savedSelection) {
+                        range = pseudoQuill.savedSelection.range;
+                        selectedText = pseudoQuill.savedSelection.text;
+                        
+                        // Restaurer la sélection
                         const selection = window.getSelection();
-                        if (selection && selection.anchorNode) {
-                            const parent = selection.anchorNode.parentElement;
-                            if (parent && parent.tagName === 'A') {
-                                parent.style.color = '#4a9eff';
-                                parent.style.textDecoration = 'none';
-                                parent.style.borderBottom = '1px solid transparent';
-                            }
-                        }
+                        selection.removeAllRanges();
+                        selection.addRange(range);
                     } else {
+                        const selection = window.getSelection();
+                        if (!selection || selection.rangeCount === 0) {
+                            console.warn('⚠️ Pas de sélection pour format');
+                            return;
+                        }
+                        
+                        range = selection.getRangeAt(0);
+                        selectedText = range.toString();
+                    }
+                    
+                    if (selectedText.length === 0) {
+                        console.warn('⚠️ Pas de texte sélectionné');
+                        return;
+                    }
+                    
+                    if (value) {
+                        // Créer le lien
+                        range.deleteContents();
+                        
+                        const link = document.createElement('a');
+                        link.href = value;
+                        link.textContent = selectedText;
+                        link.style.cssText = `
+                            color: #4a9eff;
+                            text-decoration: none;
+                            border-bottom: 1px solid transparent;
+                            transition: border-color 0.2s;
+                        `;
+                        
+                        // Ajouter effet hover
+                        link.addEventListener('mouseenter', () => {
+                            link.style.borderBottomColor = '#4a9eff';
+                        });
+                        link.addEventListener('mouseleave', () => {
+                            link.style.borderBottomColor = 'transparent';
+                        });
+                        
+                        range.insertNode(link);
+                        
+                        // Déplacer le curseur après le lien
+                        range.setStartAfter(link);
+                        range.collapse(true);
+                        
+                        const selection = window.getSelection();
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                        
+                        console.log('✅ Lien formaté avec succès');
+                    } else {
+                        // Supprimer le lien
                         document.execCommand('unlink', false, null);
                     }
+                    
+                    // Nettoyer la sélection sauvegardée
+                    pseudoQuill.savedSelection = null;
+                    
+                    // Sauvegarder automatiquement
                     this.scheduleAutoSave();
                 }
             }
@@ -406,10 +523,37 @@ export class TableComponent extends BaseComponent {
         if (linkExternalBtn) {
             linkExternalBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                if (!this.editingCell) {
-                    alert('Veuillez d\'abord sélectionner une cellule');
+                
+                console.log('🔗 Clic sur bouton lien externe');
+                
+                // Vérifier qu'il y a du texte sélectionné
+                const selection = window.getSelection();
+                const selectedText = selection ? selection.toString() : '';
+                
+                console.log('📝 Texte sélectionné:', selectedText);
+                
+                if (!selection || selectedText.length === 0) {
+                    alert('⚠️ Veuillez d\'abord sélectionner du texte dans une cellule');
                     return;
                 }
+                
+                // Vérifier que la sélection est dans une cellule du tableau
+                const anchorNode = selection.anchorNode;
+                const cell = anchorNode.nodeType === Node.TEXT_NODE 
+                    ? anchorNode.parentElement.closest('td, th')
+                    : anchorNode.closest('td, th');
+                
+                if (!cell || !tableEl.contains(cell)) {
+                    alert('⚠️ Veuillez sélectionner du texte dans une cellule du tableau');
+                    return;
+                }
+                
+                console.log('✅ Sélection valide, ouverture de la modale');
+                
+                // Sauvegarder la sélection avant d'ouvrir la modale
+                pseudoQuill.getSelection();
+                
+                // Ouvrir la modale
                 showExternalLinkModal(pseudoQuill);
             });
 
@@ -426,10 +570,37 @@ export class TableComponent extends BaseComponent {
         if (linkPageBtn) {
             linkPageBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                if (!this.editingCell) {
-                    alert('Veuillez d\'abord sélectionner une cellule');
+                
+                console.log('📄 Clic sur bouton lien interne');
+                
+                // Vérifier qu'il y a du texte sélectionné
+                const selection = window.getSelection();
+                const selectedText = selection ? selection.toString() : '';
+                
+                console.log('📝 Texte sélectionné:', selectedText);
+                
+                if (!selection || selectedText.length === 0) {
+                    alert('⚠️ Veuillez d\'abord sélectionner du texte dans une cellule');
                     return;
                 }
+                
+                // Vérifier que la sélection est dans une cellule du tableau
+                const anchorNode = selection.anchorNode;
+                const cell = anchorNode.nodeType === Node.TEXT_NODE 
+                    ? anchorNode.parentElement.closest('td, th')
+                    : anchorNode.closest('td, th');
+                
+                if (!cell || !tableEl.contains(cell)) {
+                    alert('⚠️ Veuillez sélectionner du texte dans une cellule du tableau');
+                    return;
+                }
+                
+                console.log('✅ Sélection valide, ouverture de la modale');
+                
+                // Sauvegarder la sélection avant d'ouvrir la modale
+                pseudoQuill.getSelection();
+                
+                // Ouvrir la modale
                 showPageLinkModal(pseudoQuill);
             });
 
@@ -441,6 +612,7 @@ export class TableComponent extends BaseComponent {
             });
         }
     }
+
 
     attachTableActions(tableEl, autoSave) {
         document.getElementById('add-row-btn')?.addEventListener('click', () => {

@@ -1,0 +1,26 @@
+[
+  {
+    "content": "<p><a href=\"../test34/\" rel=\"noopener noreferrer\" target=\"_blank\">Test</a></p>",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 200,
+    "id": "comp-1",
+    "type": "text",
+    "w": 300,
+    "x": 50,
+    "y": 50,
+    "z": 0
+  },
+  {
+    "id": "comp-2",
+    "type": "table",
+    "x": 520,
+    "y": 240,
+    "w": 400,
+    "h": 250,
+    "z": 1,
+    "content": "\n                \n                    <table style=\"width: 100%; border-collapse: collapse; background: #252525;\">\n                        <thead>\n                            <tr>\n                                <th style=\"padding: 12px; text-align: left; border: 1px solid rgb(51, 51, 51); background: rgb(51, 51, 51); color: rgb(74, 158, 255); cursor: text; outline: none;\" contenteditable=\"true\">Test 1</th>\n                                <th style=\"padding: 12px; text-align: left; border: 1px solid rgb(51, 51, 51); background: rgb(51, 51, 51); color: rgb(74, 158, 255); cursor: text; outline: none;\" contenteditable=\"true\">Test 2</th>\n                                <th style=\"padding: 12px; text-align: left; border: 1px solid rgb(51, 51, 51); background: rgb(51, 51, 51); color: rgb(74, 158, 255); cursor: text; outline: none;\" contenteditable=\"true\">Test 3</th>\n                            </tr>\n                        </thead>\n                        <tbody>\n                            <tr>\n                                <td style=\"padding: 12px; border: 1px solid rgb(51, 51, 51); cursor: text; outline: none;\" contenteditable=\"true\">Données</td>\n                                <td style=\"padding: 12px; border: 1px solid rgb(51, 51, 51); cursor: text; outline: none;\" contenteditable=\"true\">Données</td>\n                                <td style=\"padding: 12px; border: 1px solid rgb(51, 51, 51); cursor: text; outline: none;\" contenteditable=\"true\">Données</td>\n                            </tr>\n                            <tr>\n                                <td style=\"padding: 12px; border: 1px solid rgb(51, 51, 51); cursor: text; outline: none;\" contenteditable=\"true\">Données</td>\n                                <td style=\"padding: 12px; border: 1px solid rgb(51, 51, 51); cursor: text; outline: none;\" contenteditable=\"true\">Données</td>\n                                <td style=\"padding: 12px; border: 1px solid rgb(51, 51, 51); cursor: text; outline: none;\" contenteditable=\"true\">Données</td>\n                            </tr>\n                        </tbody>\n                    </table>\n                \n            ",
+    "custom_css": "",
+    "custom_js": ""
+  }
+]

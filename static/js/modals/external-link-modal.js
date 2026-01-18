@@ -5,39 +5,69 @@
  * @param {Quill} quill - Instance Quill
  */
 export function showExternalLinkModal(quill) {
-    // Vérifier s'il y a une sélection
-    const range = quill.getSelection();
-    if (!range) {
-        alert('Veuillez sélectionner du texte avant d\'insérer un lien');
+    console.log('🔗 showExternalLinkModal appelé');
+    
+    const selection = quill.getSelection();
+    if (!selection) {
+        alert('⚠️ Veuillez sélectionner du texte avant d\'insérer un lien');
         return;
     }
 
-    const selectedText = quill.getText(range.index, range.length);
+    // Récupérer le texte sélectionné
+    let selectedText = '';
+    try {
+        if (quill.getText && typeof quill.getText === 'function') {
+            selectedText = quill.getText(selection.index, selection.length);
+        } else if (quill.getText) {
+            selectedText = quill.getText();
+        }
+    } catch (e) {
+        selectedText = window.getSelection().toString();
+    }
     
-    // Créer la modale
+    console.log('📝 Texte sélectionné:', selectedText);
+    
     const modal = createLinkModal(selectedText, (url, text) => {
         if (!url) {
-            alert('Veuillez entrer une URL');
+            alert('⚠️ Veuillez entrer une URL');
             return;
         }
 
-        // Ajouter https:// si pas de protocole
-        if (!url.match(/^https?:\/\//i)) {
+        // Ajouter https:// si nécessaire
+        if (!url.match(/^https?:\/\//i) && !url.match(/^mailto:/i)) {
             url = 'https://' + url;
         }
 
-        // Insérer le lien
-        if (selectedText) {
-            // Remplacer la sélection par un lien
-            quill.deleteText(range.index, range.length);
-            quill.insertText(range.index, text || selectedText, 'link', url);
-        } else {
-            // Insérer nouveau texte + lien
-            quill.insertText(range.index, text || url, 'link', url);
-        }
+        console.log('✅ Création du lien:', { url, text, selectedText });
 
-        // Déplacer le curseur après le lien
-        quill.setSelection(range.index + (text || selectedText || url).length);
+        // 🔧 FIX: Détection du type de Quill et application appropriée
+        const finalText = text || selectedText;
+        
+        try {
+            if (quill.deleteText && quill.insertText && typeof quill.deleteText === 'function') {
+                // Quill natif (composant texte)
+                quill.deleteText(selection.index, selection.length);
+                quill.insertText(selection.index, finalText, 'link', url);
+                if (quill.setSelection) {
+                    quill.setSelection(selection.index + finalText.length);
+                }
+                console.log('✅ Lien appliqué (Quill natif)');
+            } else if (quill.insertText && typeof quill.insertText === 'function') {
+                // PseudoQuill (tableaux)
+                quill.insertText(selection.index, finalText, { link: url });
+                console.log('✅ Lien appliqué (PseudoQuill insertText)');
+            } else if (quill.format && typeof quill.format === 'function') {
+                // PseudoQuill alternatif
+                quill.format('link', url);
+                console.log('✅ Lien appliqué (PseudoQuill format)');
+            } else {
+                console.error('❌ Aucune méthode compatible');
+                alert('❌ Erreur: impossible de créer le lien');
+            }
+        } catch (error) {
+            console.error('❌ Erreur:', error);
+            alert('❌ Erreur: ' + error.message);
+        }
     });
 
     document.body.appendChild(modal);
