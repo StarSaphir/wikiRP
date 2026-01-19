@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📚 Wiki - Accueil</title>
-    <meta name="description" content="Explorez toutes les pages du wiki - 35 pages disponibles">
+    <meta name="description" content="Explorez toutes les pages du wiki - 37 pages disponibles">
     <style>
         * {
             margin: 0;
@@ -322,6 +322,108 @@
         ::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(135deg, #5ab0ff, #7790ff);
         }
+
+        .filter-bar {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .filter-title {
+            color: #4a9eff;
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .tags-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .tag-filter {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            color: #e0e0e0;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .tag-filter:hover {
+            background: rgba(74, 158, 255, 0.2);
+            border-color: #4a9eff;
+            transform: translateY(-2px);
+        }
+        
+        .tag-filter.active {
+            background: linear-gradient(135deg, #4a9eff, #667eea);
+            border-color: #4a9eff;
+            color: white;
+        }
+        
+        .tag-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .clear-filters {
+            padding: 8px 16px;
+            background: #d9534f;
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .clear-filters:hover {
+            background: #c9302c;
+            transform: translateY(-2px);
+        }
+        
+        .page-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 15px;
+        }
+        
+        .page-tag {
+            padding: 4px 10px;
+            background: linear-gradient(135deg, #4a9eff, #667eea);
+            color: white;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .page-card.hidden {
+            display: none;
+        }
+        
+        .results-count {
+            text-align: center;
+            color: #999;
+            margin: 20px 0;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -337,332 +439,384 @@
                     <span class="stat-number" id="page-count">0</span>
                     <span class="stat-label">Pages</span>
                 </div>
+                <div class="stat-badge">
+                    <span class="stat-number">3</span>
+                    <span class="stat-label">Tags</span>
+                </div>
             </div>
         </header>
         
         <div id="pages-container">
-            <div class="pages-grid">
-                <a href="../pages/test/" class="page-card">
-                    <div class="page-icon">📄</div>
-                    <h3 class="page-title">test</h3>
-                    <p class="page-preview">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean blandit justo in magna condimentum interdum. Duis felis tellus, consequat eget venenatis ac, auctor ac erat. Fusce suscipit, diam sed co...</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test2/" class="page-card">
-                    <div class="page-icon">📝</div>
-                    <h3 class="page-title">test2</h3>
-                    <p class="page-preview">test</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test2</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test4/" class="page-card">
-                    <div class="page-icon">📋</div>
-                    <h3 class="page-title">test4</h3>
-                    <p class="page-preview">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent placerat maximus erat non iaculis. Vivamus non interdum velit. Sed eleifend posuere tempus. Duis aliquet magna erat, at finibus dolor ...</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test4</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test6/" class="page-card">
-                    <div class="page-icon">📑</div>
-                    <h3 class="page-title">test6</h3>
-                    <p class="page-preview">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent placerat maximus erat non iaculis. Vivamus non interdum velit. Sed eleifend posuere tempus. Duis aliquet magna erat, at finibus dolor ...</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test6</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test7/" class="page-card">
-                    <div class="page-icon">📖</div>
-                    <h3 class="page-title">test7</h3>
-                    <p class="page-preview">Titre Test ceci est encore un test test lien</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test7</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test8/" class="page-card">
-                    <div class="page-icon">📚</div>
-                    <h3 class="page-title">test8</h3>
-                    <p class="page-preview">Page sans texte</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test8</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test9/" class="page-card">
-                    <div class="page-icon">🗂️</div>
-                    <h3 class="page-title">test9</h3>
-                    <p class="page-preview">ABAAAA TEST</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test9</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test10/" class="page-card">
-                    <div class="page-icon">📌</div>
-                    <h3 class="page-title">test10</h3>
-                    <p class="page-preview">test</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test10</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test11/" class="page-card">
-                    <div class="page-icon">📄</div>
-                    <h3 class="page-title">test11</h3>
-                    <p class="page-preview">Page vide</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test11</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/ufb/" class="page-card">
-                    <div class="page-icon">📝</div>
-                    <h3 class="page-title">UFB</h3>
-                    <p class="page-preview">L’Union Fédérale Balte (UFB) est une organisation politique et militaire regroupant plusieurs États souverains d’Europe du Nord et de la région baltique. Fondée dans un contexte d’instabilité internat...</p>
-                    <div class="page-meta">
-                        <span class="page-slug">ufb</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test12/" class="page-card">
-                    <div class="page-icon">📋</div>
-                    <h3 class="page-title">test12</h3>
-                    <p class="page-preview">Page sans contenu</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test12</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test13/" class="page-card">
-                    <div class="page-icon">📑</div>
-                    <h3 class="page-title">test13</h3>
-                    <p class="page-preview">Page sans texte</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test13</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test14/" class="page-card">
-                    <div class="page-icon">📖</div>
-                    <h3 class="page-title">test14</h3>
-                    <p class="page-preview">test</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test14</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test15/" class="page-card">
-                    <div class="page-icon">📚</div>
-                    <h3 class="page-title">test15</h3>
-                    <p class="page-preview">Page vide</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test15</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test16/" class="page-card">
-                    <div class="page-icon">🗂️</div>
-                    <h3 class="page-title">test16</h3>
-                    <p class="page-preview">Page vide</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test16</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test17/" class="page-card">
-                    <div class="page-icon">📌</div>
-                    <h3 class="page-title">test17</h3>
-                    <p class="page-preview">test UFB test</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test17</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test18/" class="page-card">
-                    <div class="page-icon">📄</div>
-                    <h3 class="page-title">test18</h3>
-                    <p class="page-preview">Test je sais pus combien test 15 test</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test18</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test18-18/" class="page-card">
-                    <div class="page-icon">📝</div>
-                    <h3 class="page-title">test18</h3>
-                    <p class="page-preview">Page vide</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test18-18</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test19/" class="page-card">
-                    <div class="page-icon">📋</div>
-                    <h3 class="page-title">test19</h3>
-                    <p class="page-preview">test1 test2 test3</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test19</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test20/" class="page-card">
-                    <div class="page-icon">📑</div>
-                    <h3 class="page-title">test20</h3>
-                    <p class="page-preview">test test test</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test20</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test21/" class="page-card">
-                    <div class="page-icon">📖</div>
-                    <h3 class="page-title">test21</h3>
-                    <p class="page-preview">Test2 test2 test</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test21</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test22/" class="page-card">
-                    <div class="page-icon">📚</div>
-                    <h3 class="page-title">test22</h3>
-                    <p class="page-preview">Test</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test22</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test23/" class="page-card">
-                    <div class="page-icon">🗂️</div>
-                    <h3 class="page-title">test23</h3>
-                    <p class="page-preview">Page vide</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test23</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test24/" class="page-card">
-                    <div class="page-icon">📌</div>
-                    <h3 class="page-title">test24</h3>
-                    <p class="page-preview">Page vide</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test24</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test25/" class="page-card">
-                    <div class="page-icon">📄</div>
-                    <h3 class="page-title">test25</h3>
-                    <p class="page-preview">test test</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test25</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test26/" class="page-card">
-                    <div class="page-icon">📝</div>
-                    <h3 class="page-title">test26</h3>
-                    <p class="page-preview">Test</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test26</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test27/" class="page-card">
-                    <div class="page-icon">📋</div>
-                    <h3 class="page-title">test27</h3>
-                    <p class="page-preview">TEST 150 OU JSP COMBIEN testtst</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test27</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test28/" class="page-card">
-                    <div class="page-icon">📑</div>
-                    <h3 class="page-title">test28</h3>
-                    <p class="page-preview">test21</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test28</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test29/" class="page-card">
-                    <div class="page-icon">📖</div>
-                    <h3 class="page-title">test29</h3>
-                    <p class="page-preview">Test15</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test29</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test30/" class="page-card">
-                    <div class="page-icon">📚</div>
-                    <h3 class="page-title">test30</h3>
-                    <p class="page-preview">Test30 test40 Lorem ipsum</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test30</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test31/" class="page-card">
-                    <div class="page-icon">🗂️</div>
-                    <h3 class="page-title">test31</h3>
-                    <p class="page-preview">Page sans texte</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test31</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test32/" class="page-card">
-                    <div class="page-icon">📌</div>
-                    <h3 class="page-title">test32</h3>
-                    <p class="page-preview">Page sans texte</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test32</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test33/" class="page-card">
-                    <div class="page-icon">📄</div>
-                    <h3 class="page-title">test33</h3>
-                    <p class="page-preview">Test 1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ultricies lorem libero, et volutpat massa pharetra in. Nunc vehicula justo ac neque aliquet, id cursus felis malesuada. Donec...</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test33</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test34/" class="page-card">
-                    <div class="page-icon">📝</div>
-                    <h3 class="page-title">test34</h3>
-                    <p class="page-preview">Test 4 Test5</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test34</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
-                <a href="../pages/test35/" class="page-card">
-                    <div class="page-icon">📋</div>
-                    <h3 class="page-title">test35</h3>
-                    <p class="page-preview">Test</p>
-                    <div class="page-meta">
-                        <span class="page-slug">test35</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
+
+        <div class="filter-bar">
+            <div class="filter-title">🏷️ Filtrer par tags</div>
+            <div class="tags-cloud" id="tags-cloud">
+
+                <button class="tag-filter" data-tag="test3">
+                    test3
+                    <span class="tag-count">1</span>
+                </button>
+
+                <button class="tag-filter" data-tag="test4">
+                    test4
+                    <span class="tag-count">1</span>
+                </button>
+
+                <button class="tag-filter" data-tag="test5">
+                    test5
+                    <span class="tag-count">1</span>
+                </button>
+
             </div>
+            <button class="clear-filters" id="clear-filters" style="display: none;">
+                ✕ Effacer les filtres
+            </button>
+            <div class="results-count" id="results-count"></div>
+        </div>
+<div id="pages-container">    <div class="pages-grid" id="pages-grid">
+        <a href="../pages/test/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📄</div>
+            <h3 class="page-title">test</h3>
+            <p class="page-preview">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean blandit justo in magna condimentum interdum. Duis felis tellus, consequat eget venenatis ac, auctor ac erat. Fusce suscipit, diam sed co...</p>
+            <div class="page-meta">
+                <span class="page-slug">test</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test2/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📖</div>
+            <h3 class="page-title">test2</h3>
+            <p class="page-preview">test</p>
+            <div class="page-meta">
+                <span class="page-slug">test2</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test4/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📋</div>
+            <h3 class="page-title">test4</h3>
+            <p class="page-preview">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent placerat maximus erat non iaculis. Vivamus non interdum velit. Sed eleifend posuere tempus. Duis aliquet magna erat, at finibus dolor ...</p>
+            <div class="page-meta">
+                <span class="page-slug">test4</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test6/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📑</div>
+            <h3 class="page-title">test6</h3>
+            <p class="page-preview">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent placerat maximus erat non iaculis. Vivamus non interdum velit. Sed eleifend posuere tempus. Duis aliquet magna erat, at finibus dolor ...</p>
+            <div class="page-meta">
+                <span class="page-slug">test6</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test7/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📗</div>
+            <h3 class="page-title">test7</h3>
+            <p class="page-preview">Titre Test ceci est encore un test test lien</p>
+            <div class="page-meta">
+                <span class="page-slug">test7</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test8/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📚</div>
+            <h3 class="page-title">test8</h3>
+            <p class="page-preview">Page sans texte</p>
+            <div class="page-meta">
+                <span class="page-slug">test8</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test9/" class="page-card" data-tags='[]'>
+            <div class="page-icon">🗂️</div>
+            <h3 class="page-title">test9</h3>
+            <p class="page-preview">ABAAAA TEST</p>
+            <div class="page-meta">
+                <span class="page-slug">test9</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test10/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📌</div>
+            <h3 class="page-title">test10</h3>
+            <p class="page-preview">test</p>
+            <div class="page-meta">
+                <span class="page-slug">test10</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test11/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📄</div>
+            <h3 class="page-title">test11</h3>
+            <p class="page-preview">Page vide</p>
+            <div class="page-meta">
+                <span class="page-slug">test11</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/ufb/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📖</div>
+            <h3 class="page-title">UFB</h3>
+            <p class="page-preview">L’Union Fédérale Balte (UFB) est une organisation politique et militaire regroupant plusieurs États souverains d’Europe du Nord et de la région baltique. Fondée dans un contexte d’instabilité internat...</p>
+            <div class="page-meta">
+                <span class="page-slug">ufb</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test12/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📋</div>
+            <h3 class="page-title">test12</h3>
+            <p class="page-preview">Page sans contenu</p>
+            <div class="page-meta">
+                <span class="page-slug">test12</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test13/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📑</div>
+            <h3 class="page-title">test13</h3>
+            <p class="page-preview">Page sans texte</p>
+            <div class="page-meta">
+                <span class="page-slug">test13</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test14/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📗</div>
+            <h3 class="page-title">test14</h3>
+            <p class="page-preview">test</p>
+            <div class="page-meta">
+                <span class="page-slug">test14</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test15/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📚</div>
+            <h3 class="page-title">test15</h3>
+            <p class="page-preview">Page vide</p>
+            <div class="page-meta">
+                <span class="page-slug">test15</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test16/" class="page-card" data-tags='[]'>
+            <div class="page-icon">🗂️</div>
+            <h3 class="page-title">test16</h3>
+            <p class="page-preview">Page vide</p>
+            <div class="page-meta">
+                <span class="page-slug">test16</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test17/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📌</div>
+            <h3 class="page-title">test17</h3>
+            <p class="page-preview">test UFB test</p>
+            <div class="page-meta">
+                <span class="page-slug">test17</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test18/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📄</div>
+            <h3 class="page-title">test18</h3>
+            <p class="page-preview">Test je sais pus combien test 15 test</p>
+            <div class="page-meta">
+                <span class="page-slug">test18</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test18-18/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📖</div>
+            <h3 class="page-title">test18</h3>
+            <p class="page-preview">Page vide</p>
+            <div class="page-meta">
+                <span class="page-slug">test18-18</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test19/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📋</div>
+            <h3 class="page-title">test19</h3>
+            <p class="page-preview">test1 test2 test3</p>
+            <div class="page-meta">
+                <span class="page-slug">test19</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test20/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📑</div>
+            <h3 class="page-title">test20</h3>
+            <p class="page-preview">test test test</p>
+            <div class="page-meta">
+                <span class="page-slug">test20</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test21/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📗</div>
+            <h3 class="page-title">test21</h3>
+            <p class="page-preview">Test2 test2 test</p>
+            <div class="page-meta">
+                <span class="page-slug">test21</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test22/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📚</div>
+            <h3 class="page-title">test22</h3>
+            <p class="page-preview">Test</p>
+            <div class="page-meta">
+                <span class="page-slug">test22</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test23/" class="page-card" data-tags='[]'>
+            <div class="page-icon">🗂️</div>
+            <h3 class="page-title">test23</h3>
+            <p class="page-preview">Page vide</p>
+            <div class="page-meta">
+                <span class="page-slug">test23</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test24/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📌</div>
+            <h3 class="page-title">test24</h3>
+            <p class="page-preview">Page vide</p>
+            <div class="page-meta">
+                <span class="page-slug">test24</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test25/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📄</div>
+            <h3 class="page-title">test25</h3>
+            <p class="page-preview">test test</p>
+            <div class="page-meta">
+                <span class="page-slug">test25</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test26/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📖</div>
+            <h3 class="page-title">test26</h3>
+            <p class="page-preview">Test</p>
+            <div class="page-meta">
+                <span class="page-slug">test26</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test27/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📋</div>
+            <h3 class="page-title">test27</h3>
+            <p class="page-preview">TEST 150 OU JSP COMBIEN testtst</p>
+            <div class="page-meta">
+                <span class="page-slug">test27</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test28/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📑</div>
+            <h3 class="page-title">test28</h3>
+            <p class="page-preview">test21</p>
+            <div class="page-meta">
+                <span class="page-slug">test28</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test29/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📗</div>
+            <h3 class="page-title">test29</h3>
+            <p class="page-preview">Test15</p>
+            <div class="page-meta">
+                <span class="page-slug">test29</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test30/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📚</div>
+            <h3 class="page-title">test30</h3>
+            <p class="page-preview">Test30 test40 Lorem ipsum</p>
+            <div class="page-meta">
+                <span class="page-slug">test30</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test31/" class="page-card" data-tags='[]'>
+            <div class="page-icon">🗂️</div>
+            <h3 class="page-title">test31</h3>
+            <p class="page-preview">Page sans texte</p>
+            <div class="page-meta">
+                <span class="page-slug">test31</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test32/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📌</div>
+            <h3 class="page-title">test32</h3>
+            <p class="page-preview">Page sans texte</p>
+            <div class="page-meta">
+                <span class="page-slug">test32</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test33/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📄</div>
+            <h3 class="page-title">test33</h3>
+            <p class="page-preview">Test 1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ultricies lorem libero, et volutpat massa pharetra in. Nunc vehicula justo ac neque aliquet, id cursus felis malesuada. Donec...</p>
+            <div class="page-meta">
+                <span class="page-slug">test33</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test34/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📖</div>
+            <h3 class="page-title">test34</h3>
+            <p class="page-preview">Test 4 Test5</p>
+            <div class="page-meta">
+                <span class="page-slug">test34</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test35/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📋</div>
+            <h3 class="page-title">test35</h3>
+            <p class="page-preview">Test</p>
+            <div class="page-meta">
+                <span class="page-slug">test35</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test36/" class="page-card" data-tags='["test3", "test5", "test4"]'>
+            <div class="page-icon">📑</div>
+            <h3 class="page-title">test36</h3>
+            <p class="page-preview">Test15</p>
+            <div class="page-tags">
+                <span class="page-tag">test3</span>
+                <span class="page-tag">test5</span>
+                <span class="page-tag">test4</span>
+            </div>
+            <div class="page-meta">
+                <span class="page-slug">test36</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+        <a href="../pages/test37/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📗</div>
+            <h3 class="page-title">test37</h3>
+            <p class="page-preview">Test 36</p>
+            <div class="page-meta">
+                <span class="page-slug">test37</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
         </div>
         
         <footer class="footer">
-            <p>✨ Wiki généré avec Architect • 35 page(s) disponible(s)</p>
-            <p style="margin-top: 10px; font-size: 12px;">Dernière mise à jour : 18/01/2026 à 16:29</p>
+            <p>✨ Wiki généré avec Architect • <span id="visible-count"></span> page(s) affichée(s)</p>
+            <p style="margin-top: 10px; font-size: 12px;">Dernière mise à jour : 19/01/2026 à 22:49</p>
         </footer>
     </div>
     
@@ -686,7 +840,7 @@
         }
         
         // Compteur animé
-        const pageCount = 35;
+        const pageCount = 37;
         const counter = document.getElementById('page-count');
         let current = 0;
         const increment = Math.ceil(pageCount / 50);
@@ -711,7 +865,85 @@
             }, 100 * index);
         });
         
-        console.log('✨ Wiki home chargé: 35 pages');
+        console.log('✨ Wiki home chargé: 37 pages');
+
+        // Données des pages
+        const pagesData = [{"slug": "test", "title": "test", "tags": []}, {"slug": "test2", "title": "test2", "tags": []}, {"slug": "test4", "title": "test4", "tags": []}, {"slug": "test6", "title": "test6", "tags": []}, {"slug": "test7", "title": "test7", "tags": []}, {"slug": "test8", "title": "test8", "tags": []}, {"slug": "test9", "title": "test9", "tags": []}, {"slug": "test10", "title": "test10", "tags": []}, {"slug": "test11", "title": "test11", "tags": []}, {"slug": "ufb", "title": "UFB", "tags": []}, {"slug": "test12", "title": "test12", "tags": []}, {"slug": "test13", "title": "test13", "tags": []}, {"slug": "test14", "title": "test14", "tags": []}, {"slug": "test15", "title": "test15", "tags": []}, {"slug": "test16", "title": "test16", "tags": []}, {"slug": "test17", "title": "test17", "tags": []}, {"slug": "test18", "title": "test18", "tags": []}, {"slug": "test18-18", "title": "test18", "tags": []}, {"slug": "test19", "title": "test19", "tags": []}, {"slug": "test20", "title": "test20", "tags": []}, {"slug": "test21", "title": "test21", "tags": []}, {"slug": "test22", "title": "test22", "tags": []}, {"slug": "test23", "title": "test23", "tags": []}, {"slug": "test24", "title": "test24", "tags": []}, {"slug": "test25", "title": "test25", "tags": []}, {"slug": "test26", "title": "test26", "tags": []}, {"slug": "test27", "title": "test27", "tags": []}, {"slug": "test28", "title": "test28", "tags": []}, {"slug": "test29", "title": "test29", "tags": []}, {"slug": "test30", "title": "test30", "tags": []}, {"slug": "test31", "title": "test31", "tags": []}, {"slug": "test32", "title": "test32", "tags": []}, {"slug": "test33", "title": "test33", "tags": []}, {"slug": "test34", "title": "test34", "tags": []}, {"slug": "test35", "title": "test35", "tags": []}, {"slug": "test36", "title": "test36", "tags": ["test3", "test5", "test4"]}, {"slug": "test37", "title": "test37", "tags": []}];
+        
+        // État du filtrage
+        let activeTags = new Set();
+        
+        // Initialisation
+        const allCards = document.querySelectorAll('.page-card');
+        const tagButtons = document.querySelectorAll('.tag-filter');
+        const clearBtn = document.getElementById('clear-filters');
+        const resultsCount = document.getElementById('results-count');
+        const visibleCountSpan = document.getElementById('visible-count');
+        
+        // Fonction de filtrage
+        function filterPages() {
+            let visibleCount = 0;
+            
+            allCards.forEach(card => {
+                const cardTags = JSON.parse(card.dataset.tags || '[]');
+                
+                if (activeTags.size === 0) {
+                    // Aucun filtre actif = tout afficher
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    // Vérifier si la carte a au moins un des tags actifs
+                    const hasTag = [...activeTags].some(tag => cardTags.includes(tag));
+                    
+                    if (hasTag) {
+                        card.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                }
+            });
+            
+            // Mettre à jour les compteurs
+            if (activeTags.size > 0) {
+                resultsCount.textContent = `${visibleCount} page(s) trouvée(s)`;
+                clearBtn.style.display = 'inline-block';
+            } else {
+                resultsCount.textContent = '';
+                clearBtn.style.display = 'none';
+            }
+            
+            visibleCountSpan.textContent = visibleCount;
+        }
+        
+        // Gestionnaires d'événements
+        tagButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tag = btn.dataset.tag;
+                
+                if (activeTags.has(tag)) {
+                    activeTags.delete(tag);
+                    btn.classList.remove('active');
+                } else {
+                    activeTags.add(tag);
+                    btn.classList.add('active');
+                }
+                
+                filterPages();
+            });
+        });
+        
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                activeTags.clear();
+                tagButtons.forEach(btn => btn.classList.remove('active'));
+                filterPages();
+            });
+        }
+        
+        // Initialisation
+        filterPages();
+        
     </script>
 </body>
 </html>

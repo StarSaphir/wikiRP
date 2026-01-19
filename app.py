@@ -227,7 +227,8 @@ def create_page():
         "title": title,
         "slug": slug,
         "hidden_from_nav": False,
-        "created_at": datetime.now().isoformat()
+        "created_at": datetime.now().isoformat(),
+        "tags": []
     }
     
     inventory.append(new_page)
@@ -446,7 +447,8 @@ def generate_pages_metadata():
             'title': page['title'],
             'slug': slug,
             'preview': extract_page_preview(slug),
-            'hidden_from_nav': page.get('hidden_from_nav', False)
+            'hidden_from_nav': page.get('hidden_from_nav', False),
+            'tags': page.get('tags', [])
         }
     
     metadata_file = DATA_DIR / 'pages-metadata.json'
@@ -468,6 +470,7 @@ def generate_html(slug, layout):
     inventory = load_inventory()
     page_info = next((p for p in inventory if p['slug'] == slug), {})
     title = page_info.get('title', slug)
+    is_hidden = page_info.get('hidden_from_nav', False)
     
     # Calculer hauteur et extraire les titres
     max_bottom = 0
@@ -807,6 +810,206 @@ def generate_html(slug, layout):
         console.log('✅ Viewer initialisé');
         console.log('📊 Métadonnées:', Object.keys(PAGES_METADATA).length, 'pages');
     </script>
+    '''
+    html += f'''
+    
+    <!-- Pop-in d'avertissement pour pages cachées -->
+    {'<div id="hidden-page-warning" class="hidden-warning-overlay">' if is_hidden else '<!-- Page publique -->'}
+        <div class="hidden-warning-modal">
+            <div class="warning-icon">⚠️</div>
+            <h2>Page à accès restreint</h2>
+            <p class="warning-text">
+                Les informations contenues dans cette page <strong>ne sont pas publiques en RP</strong>.
+            </p>
+            <p class="warning-subtext">
+                Elles ne peuvent être exploitées sans l'accord explicite d'un <strong>Maître de Jeu</strong> 
+                ou du <strong>joueur du pays concerné</strong>.
+            </p>
+            <div class="warning-actions">
+                <button id="accept-warning" class="btn-accept">
+                    J'ai compris
+                </button>
+            </div>
+        </div>
+    {'</div>' if is_hidden else ''}
+    
+    <style>
+        .hidden-warning-overlay {{
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease-out;
+        }}
+        
+        @keyframes fadeIn {{
+            from {{ opacity: 0; }}
+            to {{ opacity: 1; }}
+        }}
+        
+        .hidden-warning-modal {{
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+            border: 2px solid #ff6b6b;
+            border-radius: 20px;
+            padding: 50px 40px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(255, 107, 107, 0.3);
+            animation: slideUp 0.4s ease-out;
+        }}
+        
+        @keyframes slideUp {{
+            from {{
+                opacity: 0;
+                transform: translateY(50px);
+            }}
+            to {{
+                opacity: 1;
+                transform: translateY(0);
+            }}
+        }}
+        
+        .warning-icon {{
+            font-size: 80px;
+            margin-bottom: 25px;
+            animation: pulse 2s ease-in-out infinite;
+        }}
+        
+        @keyframes pulse {{
+            0%, 100% {{ transform: scale(1); }}
+            50% {{ transform: scale(1.1); }}
+        }}
+        
+        .hidden-warning-modal h2 {{
+            color: #ff6b6b;
+            font-size: 32px;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }}
+        
+        .warning-text {{
+            color: #e0e0e0;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }}
+        
+        .warning-text strong {{
+            color: #ff6b6b;
+            font-weight: 700;
+        }}
+        
+        .warning-subtext {{
+            color: #999;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 35px;
+            padding: 20px;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #ff6b6b;
+        }}
+        
+        .warning-subtext strong {{
+            color: #4a9eff;
+        }}
+        
+        .warning-actions {{
+            margin-top: 30px;
+        }}
+        
+        .btn-accept {{
+            background: linear-gradient(135deg, #4a9eff, #667eea);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3);
+        }}
+        
+        .btn-accept:hover {{
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(74, 158, 255, 0.5);
+        }}
+        
+        .btn-accept:active {{
+            transform: translateY(-1px);
+        }}
+        
+        @media (max-width: 768px) {{
+            .hidden-warning-modal {{
+                margin: 20px;
+                padding: 40px 30px;
+            }}
+            
+            .warning-icon {{
+                font-size: 60px;
+            }}
+            
+            .hidden-warning-modal h2 {{
+                font-size: 24px;
+            }}
+            
+            .warning-text {{
+                font-size: 16px;
+            }}
+        }}
+    </style>
+    
+    <script>
+        // Gestion de la pop-in d'avertissement
+        const warningOverlay = document.getElementById('hidden-page-warning');
+        const acceptBtn = document.getElementById('accept-warning');
+        
+        if (warningOverlay && acceptBtn) {{
+            // Empêcher le scroll en arrière-plan
+            document.body.style.overflow = 'hidden';
+            
+            acceptBtn.addEventListener('click', () => {{
+                warningOverlay.style.animation = 'fadeOut 0.3s ease-out';
+                
+                setTimeout(() => {{
+                    warningOverlay.remove();
+                    document.body.style.overflow = '';
+                }}, 300);
+            }});
+            
+            // Empêcher la fermeture en cliquant à côté
+            warningOverlay.addEventListener('click', (e) => {{
+                if (e.target === warningOverlay) {{
+                    // Animation de secousse pour indiquer qu'on doit cliquer sur le bouton
+                    const modal = warningOverlay.querySelector('.hidden-warning-modal');
+                    modal.style.animation = 'shake 0.5s ease-in-out';
+                    setTimeout(() => {{
+                        modal.style.animation = '';
+                    }}, 500);
+                }}
+            }});
+        }}
+    </script>
+    
+    <style>
+        @keyframes fadeOut {{
+            from {{ opacity: 1; }}
+            to {{ opacity: 0; }}
+        }}
+        
+        @keyframes shake {{
+            0%, 100% {{ transform: translateX(0); }}
+            25% {{ transform: translateX(-10px); }}
+            75% {{ transform: translateX(10px); }}
+        }}
+    </style>
 </body>
 </html>'''
     
@@ -1012,6 +1215,46 @@ def serve_inventory():
 def serve_image(slug, filename):
     page_dir = get_page_dir(slug) / 'images'
     return send_from_directory(page_dir, filename)
+
+@app.route('/api/pages/<slug>/tags', methods=['PUT'])
+def update_tags(slug):
+    """Met à jour les tags d'une page"""
+    data = request.json
+    tags = data.get('tags', [])
+    
+    # Nettoyer les tags (lowercase, trim, dédupliquer)
+    tags = list(set([t.strip().lower() for t in tags if t.strip()]))
+    
+    inventory = load_inventory()
+    for page in inventory:
+        if page['slug'] == slug:
+            page['tags'] = tags
+            break
+    
+    save_inventory(inventory)
+    generate_pages_metadata()
+    
+    return jsonify({"success": True, "tags": tags})
+
+@app.route('/api/tags', methods=['GET'])
+def get_all_tags():
+    """Retourne tous les tags uniques avec leur comptage"""
+    inventory = load_inventory()
+    tags_count = {}
+    
+    for page in inventory:
+        for tag in page.get('tags', []):
+            tags_count[tag] = tags_count.get(tag, 0) + 1
+    
+    # Trier par popularité puis alphabétiquement
+    sorted_tags = sorted(
+        tags_count.items(), 
+        key=lambda x: (-x[1], x[0])
+    )
+    
+    return jsonify({
+        "tags": [{"name": tag, "count": count} for tag, count in sorted_tags]
+    })
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

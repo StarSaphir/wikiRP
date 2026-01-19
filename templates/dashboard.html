@@ -218,6 +218,109 @@
             cursor: pointer;
             font-size: 16px;
         }
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 10px 0;
+            min-height: 24px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: linear-gradient(135deg, #4a9eff, #667eea);
+            color: white;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .no-tags {
+            color: #666;
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        .tag-btn {
+            background: #ff9800 !important;
+        }
+
+        #tags-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-suggestion {
+            padding: 6px 12px;
+            background: #333;
+            border: 1px solid #444;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag-suggestion:hover {
+            background: #4a9eff;
+            border-color: #4a9eff;
+            color: white;
+        }
+
+        /* Aperçu des tags dans la modale */
+    #tags-preview {
+        min-height: 50px;
+    }
+
+    .preview-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: linear-gradient(135deg, #4a9eff, #667eea);
+        color: white;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 600;
+        animation: tagPop 0.3s ease-out;
+    }
+
+    @keyframes tagPop {
+        0% {
+            transform: scale(0);
+            opacity: 0;
+        }
+        50% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .preview-tag .remove-tag {
+        cursor: pointer;
+        padding: 2px 6px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        font-size: 10px;
+        transition: all 0.2s;
+    }
+
+    .preview-tag .remove-tag:hover {
+        background: rgba(255, 255, 255, 0.4);
+        transform: scale(1.2);
+    }
+
+    .empty-preview {
+        color: #666;
+        font-size: 12px;
+        font-style: italic;
+    }
     </style>
 </head>
 <body>
@@ -245,9 +348,19 @@
                         <span style="color: #5cb85c;">👁️ Visible</span>
                         {% endif %}
                     </div>
+                    <div class="tags" id="tags-{{ page.slug }}">
+                        {% if page.get('tags') %}
+                            {% for tag in page.tags %}
+                            <span class="tag">{{ tag }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="no-tags">Aucun tag</span>
+                        {% endif %}
+                    </div>
                     <div class="page-actions">
                         <button class="edit-btn" onclick="editPage('{{ page.slug }}')">✏️ Éditer</button>
                         <button class="view-btn" onclick="viewPage('{{ page.slug }}')">👁️ Voir</button>
+                        <button class="tag-btn" onclick="editTags('{{ page.slug }}')">🏷️</button>
                         <button class="toggle-btn" onclick="toggleVisibility('{{ page.slug }}', {{ 'false' if page.get('hidden_from_nav', False) else 'true' }})">
                             {% if page.get('hidden_from_nav', False) %}👁️{% else %}🔒{% endif %}
                         </button>
@@ -275,6 +388,50 @@
             </div>
         </div>
     </div>
+
+    <div class="modal" id="tags-modal">
+        <div class="modal-content" style="min-width: 500px;">
+            <h2>🏷️ Gérer les Tags</h2>
+            
+            <div style="background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="color: #4a9eff; margin-bottom: 10px; font-size: 14px;">💡 Comment ajouter plusieurs tags ?</h4>
+                <ul style="color: #999; font-size: 12px; line-height: 1.8; padding-left: 20px;">
+                    <li>Séparez chaque tag par une <strong style="color: #4a9eff;">virgule</strong></li>
+                    <li>Exemple : <code style="background: #252525; padding: 2px 6px; border-radius: 3px;">personnage, guerrier, humain</code></li>
+                    <li>Cliquez sur les suggestions ci-dessous pour ajouter rapidement</li>
+                </ul>
+            </div>
+            
+            <input 
+                type="text" 
+                id="tags-input" 
+                placeholder="personnage, lieu, événement, faction, ..."
+                style="font-size: 14px; font-family: 'Segoe UI', sans-serif;"
+            >
+            
+            <!-- Aperçu des tags saisis -->
+            <div id="tags-preview" style="
+                min-height: 40px;
+                padding: 10px;
+                background: #1a1a1a;
+                border-radius: 8px;
+                margin: 15px 0;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                align-items: center;
+            ">
+                <span style="color: #666; font-size: 12px;">Aperçu des tags :</span>
+            </div>
+            
+            <div id="tags-suggestions"></div>
+            
+            <div class="modal-actions">
+                <button class="btn" onclick="saveTags()">💾 Sauvegarder <span id="tag-count"></span></button>
+                <button class="btn btn-secondary" onclick="closeTagsModal()">Annuler</button>
+            </div>
+        </div>
+    </div>
     
     <script>
         function showCreateModal() {
@@ -287,7 +444,184 @@
             document.getElementById('page-title').value = '';
         }
         
+
+
+        // Fonction de mise à jour de l'aperçu
+        function updateTagsPreview() {
+            const input = document.getElementById('tags-input');
+            const preview = document.getElementById('tags-preview');
+            const tagCount = document.getElementById('tag-count');
+            
+            const inputValue = input.value.trim();
+            const tags = inputValue.split(',').map(t => t.trim()).filter(t => t);
+            
+            if (tags.length === 0) {
+                preview.innerHTML = '<span class="empty-preview">Aucun tag saisi</span>';
+                tagCount.textContent = '';
+                return;
+            }
+            
+            preview.innerHTML = '';
+            
+            tags.forEach((tag, index) => {
+                const tagEl = document.createElement('span');
+                tagEl.className = 'preview-tag';
+                tagEl.innerHTML = `
+                    ${tag}
+                    <span class="remove-tag" onclick="removeTagFromInput(${index})" title="Retirer ce tag">✕</span>
+                `;
+                preview.appendChild(tagEl);
+            });
+            
+            tagCount.textContent = `(${tags.length})`;
+        }
+
+        function removeTagFromInput(index) {
+            const input = document.getElementById('tags-input');
+            const tags = input.value.split(',').map(t => t.trim()).filter(t => t);
+            tags.splice(index, 1);
+            input.value = tags.join(', ');
+            updateTagsPreview();
+        }
+
+        async function editTags(slug) {
+            currentEditingSlug = slug;
+            
+            try {
+                // Charger les tags actuels
+                const response = await fetch(`/api/pages/${slug}`);
+                const page = await response.json();
+                
+                const tagsInput = document.getElementById('tags-input');
+                tagsInput.value = (page.tags || []).join(', ');
+                
+                document.getElementById('tags-modal').style.display = 'flex';
+                
+                // Mettre à jour l'aperçu
+                updateTagsPreview();
+                
+                // Charger les suggestions
+                await loadTagSuggestions();
+                
+                tagsInput.focus();
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors du chargement des tags');
+            }
+        }
+
+        async function loadTagSuggestions() {
+            try {
+                const response = await fetch('/api/tags');
+                const data = await response.json();
+                
+                const container = document.getElementById('tags-suggestions');
+                
+                if (data.tags && data.tags.length > 0) {
+                    container.innerHTML = `
+                        <div style="border-top: 1px solid #333; padding-top: 15px; margin-top: 15px;">
+                            <p style="color: #999; font-size: 12px; margin-bottom: 10px;">
+                                💡 Tags existants (${data.total} au total) - Cliquez pour ajouter :
+                            </p>
+                        </div>
+                    `;
+                    
+                    data.tags.slice(0, 20).forEach(tag => {
+                        const btn = document.createElement('span');
+                        btn.className = 'tag-suggestion';
+                        btn.innerHTML = `${tag.name} <span style="opacity: 0.6;">(${tag.count})</span>`;
+                        btn.onclick = () => {
+                            const input = document.getElementById('tags-input');
+                            const current = input.value.split(',').map(t => t.trim()).filter(t => t);
+                            
+                            if (!current.includes(tag.name)) {
+                                current.push(tag.name);
+                                input.value = current.join(', ');
+                                updateTagsPreview();
+                                
+                                // Animation de feedback
+                                btn.style.background = '#28a745';
+                                btn.style.color = 'white';
+                                setTimeout(() => {
+                                    btn.style.background = '';
+                                    btn.style.color = '';
+                                }, 300);
+                            }
+                        };
+                        container.appendChild(btn);
+                    });
+                } else {
+                    container.innerHTML = '<p style="color: #666; font-size: 12px; text-align: center; padding: 20px;">Aucun tag existant - Soyez le premier à en créer !</p>';
+                }
+            } catch (error) {
+                console.error('Erreur chargement suggestions:', error);
+            }
+        }
+
+        async function saveTags() {
+            const input = document.getElementById('tags-input').value;
+            const tags = input.split(',').map(t => t.trim()).filter(t => t);
+            
+            if (tags.length === 0) {
+                if (!confirm('Aucun tag saisi. Voulez-vous supprimer tous les tags de cette page ?')) {
+                    return;
+                }
+            }
+            
+            try {
+                const response = await fetch(`/api/pages/${currentEditingSlug}/tags`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tags })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`✅ ${tags.length} tag(s) sauvegardé(s) !`);
+                    location.reload();
+                } else {
+                    const error = await response.json();
+                    alert('❌ Erreur: ' + (error.error || 'Erreur inconnue'));
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors de la sauvegarde');
+            }
+        }
+
+        function closeTagsModal() {
+            document.getElementById('tags-modal').style.display = 'none';
+            document.getElementById('tags-input').value = '';
+            document.getElementById('tags-preview').innerHTML = '<span class="empty-preview">Aucun tag saisi</span>';
+            document.getElementById('tag-count').textContent = '';
+            currentEditingSlug = null;
+        }
+
+        // Écouter les changements dans l'input
+        document.getElementById('tags-input').addEventListener('input', updateTagsPreview);
+
+        // Fermer la modale au clic extérieur
+        document.getElementById('tags-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'tags-modal') closeTagsModal();
+        });
+
+        // Touche Entrée pour sauvegarder
+        document.getElementById('tags-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                saveTags();
+            }
+        });
+
+        // Touche Échap pour fermer
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('tags-modal').style.display === 'flex') {
+                closeTagsModal();
+            }
+        });
+
         async function createPage() {
+            let currentEditingSlug = null;
             const title = document.getElementById('page-title').value.trim();
             
             if (!title) {

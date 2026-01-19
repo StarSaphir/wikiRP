@@ -52,8 +52,16 @@ def generate_wiki_home():
     inventory = load_inventory()
     visible_pages = [p for p in inventory if not p.get('hidden_from_nav', False)]
     pages_metadata = load_metadata()
+
+    all_tags = {}
+    for page in visible_pages:
+        for tag in page.get('tags', []):
+            all_tags[tag] = all_tags.get(tag, 0) + 1
+    
+    sorted_tags = sorted(all_tags.items(), key=lambda x: (-x[1], x[0]))
     
     page_count = len(visible_pages)
+
     
     # Template HTML complet avec CSS inline
     html = f'''<!DOCTYPE html>
@@ -380,6 +388,108 @@ def generate_wiki_home():
         ::-webkit-scrollbar-thumb:hover {{
             background: linear-gradient(135deg, #5ab0ff, #7790ff);
         }}
+
+        .filter-bar {{
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 40px;
+        }}
+        
+        .filter-title {{
+            color: #4a9eff;
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }}
+        
+        .tags-cloud {{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }}
+        
+        .tag-filter {{
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            color: #e0e0e0;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }}
+        
+        .tag-filter:hover {{
+            background: rgba(74, 158, 255, 0.2);
+            border-color: #4a9eff;
+            transform: translateY(-2px);
+        }}
+        
+        .tag-filter.active {{
+            background: linear-gradient(135deg, #4a9eff, #667eea);
+            border-color: #4a9eff;
+            color: white;
+        }}
+        
+        .tag-count {{
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: bold;
+        }}
+        
+        .clear-filters {{
+            padding: 8px 16px;
+            background: #d9534f;
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }}
+        
+        .clear-filters:hover {{
+            background: #c9302c;
+            transform: translateY(-2px);
+        }}
+        
+        .page-tags {{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 15px;
+        }}
+        
+        .page-tag {{
+            padding: 4px 10px;
+            background: linear-gradient(135deg, #4a9eff, #667eea);
+            color: white;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }}
+        
+        .page-card.hidden {{
+            display: none;
+        }}
+        
+        .results-count {{
+            text-align: center;
+            color: #999;
+            margin: 20px 0;
+            font-size: 14px;
+        }}
     </style>
 </head>
 <body>
@@ -395,11 +505,40 @@ def generate_wiki_home():
                     <span class="stat-number" id="page-count">0</span>
                     <span class="stat-label">Pages</span>
                 </div>
+                <div class="stat-badge">
+                    <span class="stat-number">{len(sorted_tags)}</span>
+                    <span class="stat-label">Tags</span>
+                </div>
             </div>
         </header>
         
         <div id="pages-container">
 '''
+    
+       # Barre de filtrage par tags
+    if sorted_tags:
+        html += '''
+        <div class="filter-bar">
+            <div class="filter-title">🏷️ Filtrer par tags</div>
+            <div class="tags-cloud" id="tags-cloud">
+'''
+        for tag, count in sorted_tags:
+            html += f'''
+                <button class="tag-filter" data-tag="{tag}">
+                    {tag}
+                    <span class="tag-count">{count}</span>
+                </button>
+'''
+        html += '''
+            </div>
+            <button class="clear-filters" id="clear-filters" style="display: none;">
+                ✕ Effacer les filtres
+            </button>
+            <div class="results-count" id="results-count"></div>
+        </div>
+'''
+    # Grille de pages
+    html += '<div id="pages-container">'
     
     if len(visible_pages) == 0:
         html += '''
@@ -410,25 +549,43 @@ def generate_wiki_home():
             </div>
 '''
     else:
-        html += '            <div class="pages-grid">\n'
+        html += '    <div class="pages-grid" id="pages-grid">\n'
         
-        icons = ['📄', '📝', '📋', '📑', '📖', '📚', '🗂️', '📌']
+        icons = ['📄', '📖', '📋', '📑', '📗', '📚', '🗂️', '📌']
         
         for idx, page in enumerate(visible_pages):
             slug = page['slug']
             title = page['title']
             icon = icons[idx % len(icons)]
             preview = pages_metadata.get(slug, {}).get('preview', 'Aucune description disponible')
+            tags = page.get('tags', [])
+            tags_data = json.dumps(tags)
             
-            html += f'''                <a href="../pages/{slug}/" class="page-card">
-                    <div class="page-icon">{icon}</div>
-                    <h3 class="page-title">{title}</h3>
-                    <p class="page-preview">{preview}</p>
-                    <div class="page-meta">
-                        <span class="page-slug">{slug}</span>
-                        <span class="read-more">Lire →</span>
-                    </div>
-                </a>
+            html += f'''        <a href="../pages/{slug}/" class="page-card" data-tags='{tags_data}'>
+            <div class="page-icon">{icon}</div>
+            <h3 class="page-title">{title}</h3>
+            <p class="page-preview">{preview}</p>
+'''
+            if tags:
+                html += '            <div class="page-tags">\n'
+                for tag in tags:
+                    html += f'                <span class="page-tag">{tag}</span>\n'
+                html += '            </div>\n'
+            
+            html += f'''            <div class="page-meta">
+                <span class="page-slug">{slug}</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
+'''
+    
+    if len(visible_pages) == 0:
+        html += '''
+            <div class="empty-state">
+                <div class="empty-icon">📄</div>
+                <h2 class="empty-title">Aucune page disponible</h2>
+                <p class="empty-text">Créez votre première page depuis l'éditeur</p>
+            </div>
 '''
         
         html += '            </div>\n'
@@ -436,7 +593,7 @@ def generate_wiki_home():
     html += f'''        </div>
         
         <footer class="footer">
-            <p>✨ Wiki généré avec Architect • {page_count} page(s) disponible(s)</p>
+            <p>✨ Wiki généré avec Architect • <span id="visible-count"></span> page(s) affichée(s)</p>
             <p style="margin-top: 10px; font-size: 12px;">Dernière mise à jour : {datetime.now().strftime("%d/%m/%Y à %H:%M")}</p>
         </footer>
     </div>
@@ -487,6 +644,88 @@ def generate_wiki_home():
         }});
         
         console.log('✨ Wiki home chargé: {page_count} pages');
+
+        // Données des pages
+        const pagesData = ''' + json.dumps([{
+            'slug': p['slug'],
+            'title': p['title'],
+            'tags': p.get('tags', [])
+        } for p in visible_pages], ensure_ascii=False) + ''';
+        
+        // État du filtrage
+        let activeTags = new Set();
+        
+        // Initialisation
+        const allCards = document.querySelectorAll('.page-card');
+        const tagButtons = document.querySelectorAll('.tag-filter');
+        const clearBtn = document.getElementById('clear-filters');
+        const resultsCount = document.getElementById('results-count');
+        const visibleCountSpan = document.getElementById('visible-count');
+        
+        // Fonction de filtrage
+        function filterPages() {
+            let visibleCount = 0;
+            
+            allCards.forEach(card => {
+                const cardTags = JSON.parse(card.dataset.tags || '[]');
+                
+                if (activeTags.size === 0) {
+                    // Aucun filtre actif = tout afficher
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    // Vérifier si la carte a au moins un des tags actifs
+                    const hasTag = [...activeTags].some(tag => cardTags.includes(tag));
+                    
+                    if (hasTag) {
+                        card.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                }
+            });
+            
+            // Mettre à jour les compteurs
+            if (activeTags.size > 0) {
+                resultsCount.textContent = `${visibleCount} page(s) trouvée(s)`;
+                clearBtn.style.display = 'inline-block';
+            } else {
+                resultsCount.textContent = '';
+                clearBtn.style.display = 'none';
+            }
+            
+            visibleCountSpan.textContent = visibleCount;
+        }
+        
+        // Gestionnaires d'événements
+        tagButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tag = btn.dataset.tag;
+                
+                if (activeTags.has(tag)) {
+                    activeTags.delete(tag);
+                    btn.classList.remove('active');
+                } else {
+                    activeTags.add(tag);
+                    btn.classList.add('active');
+                }
+                
+                filterPages();
+            });
+        });
+        
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                activeTags.clear();
+                tagButtons.forEach(btn => btn.classList.remove('active'));
+                filterPages();
+            });
+        }
+        
+        // Initialisation
+        filterPages();
+        
     </script>
 </body>
 </html>'''

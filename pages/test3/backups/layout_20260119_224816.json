@@ -1,6 +1,6 @@
 [
   {
-    "content": "<p><a href=\"../test2/\" rel=\"noopener noreferrer\" target=\"_blank\">test 2</a>, test 4</p>",
+    "content": "<h1><a href=\"../test2/\" rel=\"noopener noreferrer\" target=\"_blank\">test 2</a>, </h1><p>test 4</p>",
     "custom_css": "",
     "custom_js": "",
     "h": 170,
@@ -31,20 +31,8 @@
     "id": "comp-3",
     "type": "table",
     "w": 300,
-    "x": 120,
-    "y": 260,
+    "x": 50,
+    "y": 210,
     "z": 2
-  },
-  {
-    "content": "TitreA",
-    "custom_css": "",
-    "custom_js": "",
-    "h": 200,
-    "id": "comp-4",
-    "type": "title",
-    "w": 300,
-    "x": 650,
-    "y": 290,
-    "z": 3
   }
 ]

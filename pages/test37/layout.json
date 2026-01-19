@@ -1,0 +1,14 @@
+[
+  {
+    "id": "comp-1",
+    "type": "text",
+    "x": 50,
+    "y": 50,
+    "w": 300,
+    "h": 200,
+    "z": 0,
+    "content": "<p><a href=\"../test36/\" rel=\"noopener noreferrer\" target=\"_blank\">Test 36</a></p>",
+    "custom_css": "",
+    "custom_js": ""
+  }
+]

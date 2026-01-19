@@ -197,3 +197,25 @@ if (typeof window !== 'undefined') {
         componentsList
     };
 }
+
+document.getElementById('edit-tags-btn')?.addEventListener('click', async () => {
+    const response = await fetch(`/api/pages/${SLUG}`);
+    const page = await response.json();
+    
+    const tags = prompt(
+        'Tags (séparés par des virgules):',
+        (page.tags || []).join(', ')
+    );
+    
+    if (tags !== null) {
+        const tagList = tags.split(',').map(t => t.trim()).filter(t => t);
+        
+        await fetch(`/api/pages/${SLUG}/tags`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tags: tagList })
+        });
+        
+        alert('✅ Tags sauvegardés !');
+    }
+});
