@@ -340,6 +340,7 @@ def toggle_visibility(slug):
     
     save_inventory(inventory)
     generate_pages_metadata()
+    regenerate_wiki_pages()
     return jsonify({"success": True})
 
 @app.route('/api/upload/<slug>', methods=['POST'])
@@ -525,6 +526,7 @@ def generate_html(slug, layout):
     if not pages_metadata:
         print("⚠️ Métadonnées vides, génération...")
         pages_metadata = generate_pages_metadata()
+    #regenerate_wiki_pages()
     
     # Convertir en JSON pour JavaScript
     headings_json = json.dumps(page_headings, ensure_ascii=False)
@@ -540,10 +542,8 @@ def generate_html(slug, layout):
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
     
-    <!-- ✅ Chargement du CSS externe -->
     <link rel="stylesheet" href="../../static/css/viewer.css">
     
-    <!-- Styles spécifiques à la page (si nécessaire) -->
     <style>
         /* Hauteur minimale du canvas */
         .canvas-container {{
@@ -578,6 +578,58 @@ def generate_html(slug, layout):
             margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 2px solid #4a9eff;
+        }}
+
+        /* 🎨 BANNIÈRE DE PAGE SIMPLIFIÉE */
+        .page-header {{
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-bottom: 3px solid #4a9eff;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }}
+        
+        .page-header-content {{
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 30px;
+        }}
+        
+        .page-icon {{
+            font-size: 42px;
+            animation: float 3s ease-in-out infinite;
+        }}
+        
+        @keyframes float {{
+            0%, 100% {{ transform: translateY(0); }}
+            50% {{ transform: translateY(-8px); }}
+        }}
+        
+        .page-main-title {{
+            font-size: 28px;
+            color: #e0e0e0;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #4a9eff, #667eea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }}
+        
+        /* 📱 RESPONSIVE */
+        @media (max-width: 768px) {{
+            .page-header-content {{
+                padding: 15px 20px;
+            }}
+            
+            .page-icon {{
+                font-size: 32px;
+            }}
+            
+            .page-main-title {{
+                font-size: 22px;
+            }}
         }}
     </style>
 </head>
@@ -614,6 +666,14 @@ def generate_html(slug, layout):
     </nav>
     
     <main class="content">
+        <!-- 🎨 BANNIÈRE SIMPLIFIÉE -->
+        <div class="page-header">
+            <div class="page-header-content">
+                <div class="page-icon">🗺️</div>
+                <h1 class="page-main-title">{title}</h1>
+            </div>
+        </div>
+        
         <div class="canvas-container">
 '''
     
@@ -811,10 +871,13 @@ def generate_html(slug, layout):
         console.log('📊 Métadonnées:', Object.keys(PAGES_METADATA).length, 'pages');
     </script>
     '''
-    html += f'''
-    
-    <!-- Pop-in d'avertissement pour pages cachées -->
-    {'<div id="hidden-page-warning" class="hidden-warning-overlay">' if is_hidden else '<!-- Page publique -->'}
+
+    # --- CORRECTION ICI --- 
+    # Gestion correcte de l'affichage conditionnel de la pop-in
+    warning_html = ""
+    if is_hidden:
+        warning_html = '''
+    <div id="hidden-page-warning" class="hidden-warning-overlay">
         <div class="hidden-warning-modal">
             <div class="warning-icon">⚠️</div>
             <h2>Page à accès restreint</h2>
@@ -831,8 +894,15 @@ def generate_html(slug, layout):
                 </button>
             </div>
         </div>
-    {'</div>' if is_hidden else ''}
-    
+    </div>
+    '''
+    else:
+        warning_html = "\n    \n"
+        
+    html += warning_html
+
+    # Ajout du CSS/JS restant
+    html += f'''
     <style>
         .hidden-warning-overlay {{
             position: fixed;
@@ -1233,6 +1303,7 @@ def update_tags(slug):
     
     save_inventory(inventory)
     generate_pages_metadata()
+    regenerate_wiki_pages()
     
     return jsonify({"success": True, "tags": tags})
 

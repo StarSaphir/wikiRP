@@ -577,17 +577,7 @@ def generate_wiki_home():
                 <span class="read-more">Lire →</span>
             </div>
         </a>
-'''
-    
-    if len(visible_pages) == 0:
-        html += '''
-            <div class="empty-state">
-                <div class="empty-icon">📄</div>
-                <h2 class="empty-title">Aucune page disponible</h2>
-                <p class="empty-text">Créez votre première page depuis l'éditeur</p>
-            </div>
-'''
-        
+'''        
         html += '            </div>\n'
     
     html += f'''        </div>

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Union Fédérale Balte (UFB)</title>
+    
+    <link rel="stylesheet" href="../../static/css/viewer.css">
+    
+    <style>
+        /* Hauteur minimale du canvas */
+        .canvas-container {
+            min-height: 1340px;
+        }
+        
+        /* Style du bouton d'accueil */
+        .home-btn {
+            display: block;
+            width: calc(100% - 4px); /* Légèrement plus petit pour éviter le débordement */
+            padding: 10px;
+            background: linear-gradient(135deg, #4a9eff, #667eea);
+            border: none;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            font-size: 13px;
+            margin: 12px 0 0 0; /* Retirer les marges latérales */
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(74, 158, 255, 0.3);
+        }
+        
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(74, 158, 255, 0.5);
+        }
+        
+        /* Ajustement de la sidebar header pour un meilleur espacement */
+        .sidebar-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #4a9eff;
+        }
+
+        /* 🎨 BANNIÈRE DE PAGE SIMPLIFIÉE */
+        .page-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-bottom: 3px solid #4a9eff;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .page-header-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 30px;
+        }
+        
+        .page-icon {
+            font-size: 42px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        .page-main-title {
+            font-size: 28px;
+            color: #e0e0e0;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #4a9eff, #667eea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* 📱 RESPONSIVE */
+        @media (max-width: 768px) {
+            .page-header-content {
+                padding: 15px 20px;
+            }
+            
+            .page-icon {
+                font-size: 32px;
+            }
+            
+            .page-main-title {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>📚 Union Fédérale Balte (UFB)</h2>
+            <a href="../../wiki/" class="home-btn">
+                🏠 Retour à l'accueil
+            </a>
+        </div>
+        <div class="nav-toggle">
+            <button class="nav-btn active" data-tab="links">🔗 Liens</button>
+            <button class="nav-btn" data-tab="toc">📋 Sommaire</button>
+        </div>
+        
+        <div class="nav-content" id="nav-links">
+            <div class="nav-section" id="internal-links-section" style="display:none;">
+                <div class="nav-section-title">Liens référencés</div>
+                <ul class="sidebar-nav" id="internal-links-list"></ul>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Autres pages</div>
+                <ul class="sidebar-nav" id="other-pages-list"></ul>
+            </div>
+        </div>
+        
+        <div class="nav-content" id="nav-toc" style="display:none;">
+            <ul class="toc-list" id="toc-list">
+                <li style="color: #666; font-size: 12px; padding: 10px;">Aucun titre trouvé</li>
+            </ul>
+        </div>
+    </nav>
+    
+    <main class="content">
+        <!-- 🎨 BANNIÈRE SIMPLIFIÉE -->
+        <div class="page-header">
+            <div class="page-header-content">
+                <div class="page-icon">🗺️</div>
+                <h1 class="page-main-title">Union Fédérale Balte (UFB)</h1>
+            </div>
+        </div>
+        
+        <div class="canvas-container">
+<div class="component component-text" id="comp-1" style="left:30px;top:60px;width:1130px;height:250px;z-index:0;">
+<div class="text-content"><h1 id="presentation-generale">Présentation générale</h1><p><strong>L’Union Fédérale Balte (UFB) </strong>est un État fédéral situé en Europe du Nord-Est, structuré autour du bassin de la mer Baltique. Elle regroupe plusieurs peuples et territoires historiquement, culturellement et politiquement distincts au sein d’un même cadre institutionnel.</p><p><strong>L’UFB </strong>se caractérise par une forte orientation maritime, une organisation fédérale affirmée et une identité collective fondée sur la coopération entre ses composantes. Son existence repose sur la volonté de garantir la stabilité régionale, la sécurité collective et la continuité des traditions propres aux peuples qui la composent.</p></div>
+</div>
+<div class="component component-shape" id="comp-2" style="left:1180px;top:60px;width:310px;height:330px;z-index:1;">
+<div style="width:100%;height:100%;background:#333333;border-radius:5px;"></div>
+</div>
+<div class="component component-text" id="comp-3" style="left:1230px;top:40px;width:280px;height:50px;z-index:2;">
+<div class="text-content"><p><strong>L’Union Fédérale Balte</strong></p></div>
+</div>
+<div class="component component-separator" id="comp-4" style="left:1180px;top:303px;width:300px;height:10px;z-index:3;">
+<hr />
+</div>
+<div class="component component-image" id="comp-5" style="left:1190px;top:110px;width:270px;height:170px;z-index:4;">
+<img src="images/img_20260121_135126_206310.png" alt="Image" />
+</div>
+<div class="component component-separator" id="comp-1768999956445" style="left:1180px;top:100px;width:300px;height:10px;z-index:4;">
+<hr />
+</div>
+<div class="component component-text" id="comp-6" style="left:1250px;top:251px;width:150px;height:60px;z-index:5;">
+<div class="text-content"><p>Drapeau de l'UFB</p></div>
+</div>
+<div class="component component-separator" id="comp-1768999956446" style="left:30px;top:310px;width:1130px;height:10px;z-index:7;">
+<hr />
+</div>
+<div class="component component-text" id="comp-1768999956447" style="left:30px;top:320px;width:1150px;height:260px;z-index:8;">
+<div class="text-content"><h1 id="geographie-et-positionnement-regional">Géographie et positionnement régional</h1><p>L’Union Fédérale Balte s’étend sur des territoires riverains et proches de la mer Baltique. Cette position géographique confère à l’État un rôle central dans les échanges maritimes, les flux commerciaux et les équilibres stratégiques de la région.</p><p>Le territoire fédéral comprend des zones côtières, des espaces forestiers et des régions urbaines historiquement développées autour du commerce, de l’industrie et des infrastructures portuaires. La mer Baltique constitue un élément structurant de l’espace politique, économique et culturel de <strong>l’UFB</strong>.</p></div>
+</div>
+<div class="component component-separator" id="comp-1768999956448" style="left:30px;top:585px;width:1130px;height:2px;z-index:9;">
+<hr />
+</div>
+<div class="component component-text" id="comp-1768999956449" style="left:25px;top:595px;width:1160px;height:255px;z-index:10;">
+<div class="text-content"><h1 id="population-et-peuples-constitutifs">Population et peuples constitutifs</h1><p>La population de l’Union Fédérale Balte est composée principalement de peuples baltes, polonais et allemands. Ces groupes présentent des héritages linguistiques, culturels et historiques distincts, qui coexistent au sein du cadre fédéral.</p><p>La diversité démographique de <strong>l’UFB </strong>est reconnue comme un fondement de l’État. Les identités locales et nationales sont préservées, tandis qu’une identité fédérale commune s’est progressivement développée autour de valeurs partagées telles que la solidarité, la résilience collective et la défense du territoire commun.</p></div>
+</div>
+<div class="component component-separator" id="comp-1768999956450" style="left:30px;top:860px;width:1130px;height:2px;z-index:11;">
+<hr />
+</div>
+<div class="component component-text" id="comp-1768999956451" style="left:25px;top:870px;width:1165px;height:370px;z-index:12;">
+<div class="text-content"><h1 id="organisation-politique-et-administrative">Organisation politique et administrative</h1><p><strong>L’UFB</strong> est organisée selon un modèle fédéral, reposant sur la répartition des compétences entre un pouvoir central et des entités fédérées disposant d’une autonomie institutionnelle.</p><p>Le pouvoir fédéral est chargé des domaines relevant de l’intérêt commun, notamment la politique étrangère, la défense, la sécurité maritime et la coordination générale. Les entités fédérées exercent leurs compétences dans les domaines internes, selon des modalités définies par les accords fédéraux.</p><p>Ce système vise à concilier unité politique et pluralité des traditions administratives. Les institutions fédérales jouent un rôle d’arbitrage et de coordination entre les différentes composantes de l’Union.</p></div>
+</div>
+
+        </div>
+    </main>
+    
+    <div class="link-preview" id="link-preview">
+        <div class="preview-header" id="preview-title"></div>
+        <div class="preview-content" id="preview-content"></div>
+        <div class="preview-footer">Cliquez pour ouvrir →</div>
+    </div>
+    
+    <script>
+        const PAGE_HEADINGS = [{"level": 1, "text": "Présentation générale", "id": "presentation-generale"}, {"level": 1, "text": "Géographie et positionnement régional", "id": "geographie-et-positionnement-regional"}, {"level": 1, "text": "Population et peuples constitutifs", "id": "population-et-peuples-constitutifs"}, {"level": 1, "text": "Organisation politique et administrative", "id": "organisation-politique-et-administrative"}];
+        const INTERNAL_LINKS = [];
+        const CURRENT_SLUG = "union-federale-balte-ufb";
+        const PAGES_METADATA = {"union-federale-balte-ufb": {"title": "Union Fédérale Balte (UFB)", "slug": "union-federale-balte-ufb", "preview": "Présentation générale L’Union Fédérale Balte (UFB) est un État fédéral situé en Europe du Nord-Est, structuré autour du bassin de la mer Baltique. Elle regroupe plusieurs peuples et territoires histor...", "hidden_from_nav": false, "tags": []}};
+
+        const homeBtn = document.querySelector('.home-btn');
+        if (homeBtn) {
+            homeBtn.addEventListener('mouseenter', () => {
+                homeBtn.style.transform = 'translateY(-2px)';
+                homeBtn.style.boxShadow = '0 4px 15px rgba(74, 158, 255, 0.5)';
+            });
+            homeBtn.addEventListener('mouseleave', () => {
+                homeBtn.style.transform = 'translateY(0)';
+                homeBtn.style.boxShadow = '0 2px 8px rgba(74, 158, 255, 0.3)';
+            });
+        }
+        
+        fetch('../../data/inventory.json')
+            .then(res => res.json())
+            .then(pages => {
+                const visiblePages = pages.filter(p => !p.hidden_from_nav);
+                const referencedPages = visiblePages.filter(p => INTERNAL_LINKS.includes(p.slug) && p.slug !== CURRENT_SLUG);
+                const otherPages = visiblePages.filter(p => !INTERNAL_LINKS.includes(p.slug) && p.slug !== CURRENT_SLUG);
+                
+                if (referencedPages.length > 0) {
+                    document.getElementById('internal-links-section').style.display = 'block';
+                    const internalList = document.getElementById('internal-links-list');
+                    referencedPages.forEach(page => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.href = `../${page.slug}/`;
+                        a.textContent = page.title;
+                        li.appendChild(a);
+                        internalList.appendChild(li);
+                    });
+                }
+                
+                const otherList = document.getElementById('other-pages-list');
+                otherPages.forEach(page => {
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = `../${page.slug}/`;
+                    a.textContent = page.title;
+                    li.appendChild(a);
+                    otherList.appendChild(li);
+                });
+            })
+            .catch(err => console.error('Erreur chargement navigation:', err));
+        
+        if (PAGE_HEADINGS.length > 0) {
+            const tocList = document.getElementById('toc-list');
+            tocList.innerHTML = '';
+            PAGE_HEADINGS.forEach(heading => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `#${heading.id}`;
+                a.textContent = heading.text;
+                a.classList.add(`level-${heading.level}`);
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const target = document.getElementById(heading.id);
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+                li.appendChild(a);
+                tocList.appendChild(li);
+            });
+        }
+        
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const tab = btn.dataset.tab;
+                document.getElementById('nav-links').style.display = tab === 'links' ? 'block' : 'none';
+                document.getElementById('nav-toc').style.display = tab === 'toc' ? 'block' : 'none';
+            });
+        });
+        
+        const preview = document.getElementById('link-preview');
+        let previewTimeout;
+        let isOverPreview = false;
+        
+        function showLinkPreview(linkElement) {
+            const href = linkElement.getAttribute('href');
+            const match = href.match(/\.\.\/([^\/]+)\//);
+            if (!match) return;
+            
+            const targetSlug = match[1];
+            const metadata = PAGES_METADATA[targetSlug];
+            
+            if (!metadata) {
+                console.warn('Pas de métadonnées pour', targetSlug);
+                return;
+            }
+            
+            document.getElementById('preview-title').textContent = metadata.title;
+            document.getElementById('preview-content').textContent = metadata.preview;
+            
+            const rect = linkElement.getBoundingClientRect();
+            preview.style.display = 'block';
+            
+            let left = rect.right + 15;
+            let top = rect.top;
+            
+            if (left + 400 > window.innerWidth) {
+                left = rect.left - 415;
+            }
+            
+            if (top + 250 > window.innerHeight) {
+                top = window.innerHeight - 260;
+            }
+            
+            preview.style.left = left + 'px';
+            preview.style.top = top + 'px';
+        }
+        
+        document.querySelectorAll('.text-content a[href*="../"]').forEach(link => {
+            link.addEventListener('mouseenter', (e) => {
+                clearTimeout(previewTimeout);
+                previewTimeout = setTimeout(() => {
+                    showLinkPreview(e.target);
+                }, 300);
+            });
+            
+            link.addEventListener('mouseleave', () => {
+                clearTimeout(previewTimeout);
+                setTimeout(() => {
+                    if (!isOverPreview) {
+                        preview.style.display = 'none';
+                    }
+                }, 200);
+            });
+        });
+        
+        preview.addEventListener('mouseenter', () => {
+            isOverPreview = true;
+        });
+        
+        preview.addEventListener('mouseleave', () => {
+            isOverPreview = false;
+            preview.style.display = 'none';
+        });
+        
+        document.querySelectorAll('.component-gallery img').forEach(img => {
+            img.addEventListener('click', () => {
+                const lightbox = document.createElement('div');
+                lightbox.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:10000;cursor:pointer';
+                const enlargedImg = document.createElement('img');
+                enlargedImg.src = img.src;
+                enlargedImg.style.cssText = 'max-width:90%;max-height:90%;object-fit:contain';
+                lightbox.appendChild(enlargedImg);
+                lightbox.onclick = () => lightbox.remove();
+                document.body.appendChild(lightbox);
+            });
+        });
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        
+        document.querySelectorAll('.component').forEach(component => {
+            component.style.opacity = '0';
+            component.style.transform = 'translateY(20px)';
+            component.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+            observer.observe(component);
+        });
+        
+        console.log('✅ Viewer initialisé');
+        console.log('📊 Métadonnées:', Object.keys(PAGES_METADATA).length, 'pages');
+    </script>
+    
+    
+
+    <style>
+        .hidden-warning-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .hidden-warning-modal {
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+            border: 2px solid #ff6b6b;
+            border-radius: 20px;
+            padding: 50px 40px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(255, 107, 107, 0.3);
+            animation: slideUp 0.4s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .warning-icon {
+            font-size: 80px;
+            margin-bottom: 25px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .hidden-warning-modal h2 {
+            color: #ff6b6b;
+            font-size: 32px;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+        
+        .warning-text {
+            color: #e0e0e0;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .warning-text strong {
+            color: #ff6b6b;
+            font-weight: 700;
+        }
+        
+        .warning-subtext {
+            color: #999;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 35px;
+            padding: 20px;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #ff6b6b;
+        }
+        
+        .warning-subtext strong {
+            color: #4a9eff;
+        }
+        
+        .warning-actions {
+            margin-top: 30px;
+        }
+        
+        .btn-accept {
+            background: linear-gradient(135deg, #4a9eff, #667eea);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3);
+        }
+        
+        .btn-accept:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(74, 158, 255, 0.5);
+        }
+        
+        .btn-accept:active {
+            transform: translateY(-1px);
+        }
+        
+        @media (max-width: 768px) {
+            .hidden-warning-modal {
+                margin: 20px;
+                padding: 40px 30px;
+            }
+            
+            .warning-icon {
+                font-size: 60px;
+            }
+            
+            .hidden-warning-modal h2 {
+                font-size: 24px;
+            }
+            
+            .warning-text {
+                font-size: 16px;
+            }
+        }
+    </style>
+    
+    <script>
+        // Gestion de la pop-in d'avertissement
+        const warningOverlay = document.getElementById('hidden-page-warning');
+        const acceptBtn = document.getElementById('accept-warning');
+        
+        if (warningOverlay && acceptBtn) {
+            // Empêcher le scroll en arrière-plan
+            document.body.style.overflow = 'hidden';
+            
+            acceptBtn.addEventListener('click', () => {
+                warningOverlay.style.animation = 'fadeOut 0.3s ease-out';
+                
+                setTimeout(() => {
+                    warningOverlay.remove();
+                    document.body.style.overflow = '';
+                }, 300);
+            });
+            
+            // Empêcher la fermeture en cliquant à côté
+            warningOverlay.addEventListener('click', (e) => {
+                if (e.target === warningOverlay) {
+                    // Animation de secousse pour indiquer qu'on doit cliquer sur le bouton
+                    const modal = warningOverlay.querySelector('.hidden-warning-modal');
+                    modal.style.animation = 'shake 0.5s ease-in-out';
+                    setTimeout(() => {
+                        modal.style.animation = '';
+                    }, 500);
+                }
+            });
+        }
+    </script>
+    
+    <style>
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+    </style>
+</body>
+</html>
