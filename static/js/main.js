@@ -139,8 +139,13 @@ async function handleSave() {
     try {
         // 🔧 FIX: Récupérer les composants à jour depuis le state
         const components = state.getComponents();
+
+        const canvasElement = document.getElementById('canvas-inner') || document.getElementById('canvas');
+        const canvasWidth = canvasElement.offsetWidth || 1920;
+        const canvasHeight = canvasElement.offsetHeight || 1080;
         
         console.log('💾 Sauvegarde de', components.length, 'composants');
+        console.log(`📐 Taille du canvas: ${canvasWidth}x${canvasHeight}`);
         console.log('📊 Contenu des composants:', components.map(c => ({
             id: c.id,
             type: c.type,
@@ -148,7 +153,7 @@ async function handleSave() {
             contentLength: c.content ? c.content.length : 0
         })));
         
-        await API.savePage(SLUG, components);
+        await API.savePage(SLUG, components, canvasWidth, canvasHeight);
         alert('✅ Sauvegardé avec succès !');
     } catch (error) {
         console.error('Erreur lors de la sauvegarde:', error);

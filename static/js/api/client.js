@@ -72,16 +72,22 @@ export class API {
      * Sauvegarder le layout d'une page
      * @param {string} slug - Slug de la page
      * @param {Array} layout - Layout (liste des composants)
+     * @param {number} canvasWidth - Largeur du canvas éditeur
+     * @param {number} canvasHeight - Hauteur du canvas éditeur
      * @returns {Promise<Object>}
      */
-    static async savePage(slug, layout) {
+    static async savePage(slug, layout, canvasWidth = 1920, canvasHeight = 1080) {
         try {
             const response = await fetch(`/api/pages/${slug}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ layout })
+                body: JSON.stringify({ 
+                    layout,
+                    canvas_width: canvasWidth,   // ✅ NOUVEAU
+                    canvas_height: canvasHeight  // ✅ NOUVEAU
+                })
             });
 
             if (!response.ok) {

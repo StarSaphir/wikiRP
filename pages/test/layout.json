@@ -1,0 +1,39 @@
+[
+  {
+    "id": "comp-1",
+    "type": "text",
+    "x": 50,
+    "y": 50,
+    "w": 300,
+    "h": 200,
+    "z": 0,
+    "content": "<p>Lorem ipsum</p>",
+    "custom_css": "",
+    "custom_js": ""
+  },
+  {
+    "id": "comp-2",
+    "type": "shape",
+    "x": 1160,
+    "y": 40,
+    "w": 300,
+    "h": 200,
+    "z": 1,
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "bg_color": "#333333"
+  },
+  {
+    "id": "comp-3",
+    "type": "text",
+    "x": 1160,
+    "y": 60,
+    "w": 300,
+    "h": 200,
+    "z": 2,
+    "content": "<p>Titre</p>",
+    "custom_css": "",
+    "custom_js": ""
+  }
+]

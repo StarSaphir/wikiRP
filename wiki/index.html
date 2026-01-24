@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📚 Wiki - Accueil</title>
-    <meta name="description" content="Explorez toutes les pages du wiki - 1 pages disponibles">
+    <meta name="description" content="Explorez toutes les pages du wiki - 2 pages disponibles">
     <style>
         * {
             margin: 0;
@@ -476,12 +476,21 @@
                 <span class="read-more">Lire →</span>
             </div>
         </a>
+        <a href="../pages/test/" class="page-card" data-tags='[]'>
+            <div class="page-icon">📖</div>
+            <h3 class="page-title">test</h3>
+            <p class="page-preview">Lorem ipsum Titre</p>
+            <div class="page-meta">
+                <span class="page-slug">test</span>
+                <span class="read-more">Lire →</span>
+            </div>
+        </a>
             </div>
         </div>
         
         <footer class="footer">
             <p>✨ Wiki généré avec Architect • <span id="visible-count"></span> page(s) affichée(s)</p>
-            <p style="margin-top: 10px; font-size: 12px;">Dernière mise à jour : 21/01/2026 à 14:04</p>
+            <p style="margin-top: 10px; font-size: 12px;">Dernière mise à jour : 24/01/2026 à 23:38</p>
         </footer>
     </div>
     
@@ -505,7 +514,7 @@
         }
         
         // Compteur animé
-        const pageCount = 1;
+        const pageCount = 2;
         const counter = document.getElementById('page-count');
         let current = 0;
         const increment = Math.ceil(pageCount / 50);
@@ -530,10 +539,10 @@
             }, 100 * index);
         });
         
-        console.log('✨ Wiki home chargé: 1 pages');
+        console.log('✨ Wiki home chargé: 2 pages');
 
         // Données des pages
-        const pagesData = [{"slug": "union-federale-balte-ufb", "title": "Union Fédérale Balte (UFB)", "tags": ["pays"]}];
+        const pagesData = [{"slug": "union-federale-balte-ufb", "title": "Union Fédérale Balte (UFB)", "tags": ["pays"]}, {"slug": "test", "title": "test", "tags": []}];
         
         // État du filtrage
         let activeTags = new Set();

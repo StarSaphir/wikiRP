@@ -7,5 +7,12 @@
     "tags": [
       "pays"
     ]
+  },
+  "test": {
+    "title": "test",
+    "slug": "test",
+    "preview": "Lorem ipsum Titre",
+    "hidden_from_nav": false,
+    "tags": []
   }
 }

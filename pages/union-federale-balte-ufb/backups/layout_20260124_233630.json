@@ -101,10 +101,10 @@
     "content": "<h1>Géographie et positionnement régional</h1><p>L’Union Fédérale Balte s’étend sur des territoires riverains et proches de la mer Baltique. Cette position géographique confère à l’État un rôle central dans les échanges maritimes, les flux commerciaux et les équilibres stratégiques de la région.</p><p>Le territoire fédéral comprend des zones côtières, des espaces forestiers et des régions urbaines historiquement développées autour du commerce, de l’industrie et des infrastructures portuaires. La mer Baltique constitue un élément structurant de l’espace politique, économique et culturel de <strong>l’UFB</strong>.</p>",
     "custom_css": "",
     "custom_js": "",
-    "h": 250,
+    "h": 260,
     "id": "comp-1768999956447",
     "type": "text",
-    "w": 1130,
+    "w": 1150,
     "x": 30,
     "y": 320,
     "z": 8
