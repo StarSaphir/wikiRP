@@ -263,6 +263,8 @@ def update_page(slug):
     """Sauvegarde le layout d'une page"""
     data = request.json
     layout = data.get('layout', [])
+    canvas_width = data.get('canvas_width', 1400)
+    canvas_height = data.get('canvas_height', 1080)
     
     # Créer un backup
     create_backup(slug)
@@ -271,6 +273,14 @@ def update_page(slug):
     layout_file = get_layout_file(slug)
     with open(layout_file, 'w', encoding='utf-8') as f:
         json.dump(layout, f, indent=2, ensure_ascii=False)
+
+    inventory = load_inventory()
+    for page in inventory:
+        if page['slug'] == slug:
+            page['canvas_width'] = canvas_width
+            page['canvas_height'] = canvas_height
+            break
+    save_inventory(inventory)
     
     # Générer le HTML
     generate_html(slug, layout)
@@ -472,6 +482,9 @@ def generate_html(slug, layout):
     page_info = next((p for p in inventory if p['slug'] == slug), {})
     title = page_info.get('title', slug)
     is_hidden = page_info.get('hidden_from_nav', False)
+
+    canvas_width = page_info.get('canvas_width', 1400)
+    canvas_height = page_info.get('canvas_height', 1080)
     
     # Calculer hauteur et extraire les titres
     max_bottom = 0
@@ -527,6 +540,28 @@ def generate_html(slug, layout):
         print("⚠️ Métadonnées vides, génération...")
         pages_metadata = generate_pages_metadata()
     #regenerate_wiki_pages()
+
+
+    try:
+        debug_js_path = STATIC_DIR / 'js' / 'utils' / 'debug.js'
+        with open(debug_js_path, 'r', encoding='utf-8') as f:
+            debug_js_content = f.read()
+    except:
+        debug_js_content = "console.warn('debug.js non trouvé');"
+    # 🔧 NOUVEAU : Charger les scripts JS pour le responsive
+    try:
+        viewer_js_path = STATIC_DIR / 'viewer.js'
+        with open(viewer_js_path, 'r', encoding='utf-8') as f:
+            viewer_js_content = f.read()
+    except:
+        viewer_js_content = "console.warn('viewer.js non trouvé');"
+    
+    try:
+        responsive_js_path = STATIC_DIR / 'js' / 'utils' / 'responsive-layout.js'
+        with open(responsive_js_path, 'r', encoding='utf-8') as f:
+            responsive_js_content = f.read()
+    except:
+        responsive_js_content = "console.warn('responsive-layout.js non trouvé');"
     
     # Convertir en JSON pour JavaScript
     headings_json = json.dumps(page_headings, ensure_ascii=False)
@@ -541,7 +576,17 @@ def generate_html(slug, layout):
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
+
+    <meta name="editor-canvas-width" content="{canvas_width}">
+    <meta name="editor-canvas-height" content="{canvas_height}">
     
+     <!-- Quill CSS : nécessaire pour .ql-align-*, .ql-indent-*, .ql-size-* -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.css">
+    
+    <!-- Styles partagés composants (identiques à l'éditeur) -->
+    <link rel="stylesheet" href="../../static/css/shared-components.css">
+    
+    <!-- Viewer CSS (sidebar, navigation, mise en page) -->
     <link rel="stylesheet" href="../../static/css/viewer.css">
     
     <style>
@@ -870,6 +915,10 @@ def generate_html(slug, layout):
         console.log('✅ Viewer initialisé');
         console.log('📊 Métadonnées:', Object.keys(PAGES_METADATA).length, 'pages');
     </script>
+    <script>
+        {responsive_js_content}
+        {debug_js_content}
+    </script>
     '''
 
     # --- CORRECTION ICI --- 
@@ -1083,6 +1132,7 @@ def generate_html(slug, layout):
 </body>
 </html>'''
     
+    
     # Écrire le fichier
     try:
         with open(page_dir / 'index.html', 'w', encoding='utf-8') as f:
@@ -1100,7 +1150,7 @@ def render_component_html_with_anchors(comp, slug):
     if comp.get('custom_css'):
         style += comp['custom_css']
     
-    html = f'<div class="component component-{comp["type"]}" id="{comp["id"]}" style="{style}">\n'
+    html = f'<div class="component component-{comp["type"]}" id="{comp["id"]}" data-type="{comp["type"]}" style="{style}">\n'
     
     comp_type = comp['type']
     

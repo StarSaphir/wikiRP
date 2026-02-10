@@ -1,0 +1,52 @@
+[
+  {
+    "content": "<p>Lorem ipsum</p>",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 200,
+    "id": "comp-1",
+    "type": "text",
+    "w": 300,
+    "x": 50,
+    "y": 50,
+    "z": 0
+  },
+  {
+    "bg_color": "#333333",
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 200,
+    "id": "comp-2",
+    "type": "shape",
+    "w": 300,
+    "x": 1160,
+    "y": 40,
+    "z": 1
+  },
+  {
+    "content": "<p>Titre</p>",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 200,
+    "id": "comp-3",
+    "type": "text",
+    "w": 300,
+    "x": 1160,
+    "y": 60,
+    "z": 2
+  },
+  {
+    "id": "comp-4",
+    "type": "youtube",
+    "x": 50,
+    "y": 360,
+    "w": 560,
+    "h": 315,
+    "z": 3,
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "youtube_id": "mPTCq3LiZSE"
+  }
+]

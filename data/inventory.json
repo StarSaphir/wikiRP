@@ -6,6 +6,26 @@
     "created_at": "2026-01-21T13:15:12.096406",
     "tags": [
       "pays"
-    ]
+    ],
+    "canvas_width": 1400,
+    "canvas_height": 1540
+  },
+  {
+    "title": "test",
+    "slug": "test",
+    "hidden_from_nav": false,
+    "created_at": "2026-01-24T12:42:53.257471",
+    "tags": [],
+    "canvas_width": 1483,
+    "canvas_height": 1530
+  },
+  {
+    "title": "test2",
+    "slug": "test2",
+    "hidden_from_nav": false,
+    "created_at": "2026-01-29T09:27:46.189898",
+    "tags": [],
+    "canvas_width": 1067,
+    "canvas_height": 580
   }
 ]

@@ -221,9 +221,15 @@ body {
 
 .canvas-inner {
     position: relative;
+    /* ⚠️  LARGEUR CANONIQUE FIXE — ne pas changer sans
+       mettre à jour viewer.css et la valeur par défaut
+       de canvas_width dans app.py (chercher 1400).
+       Cette valeur garantit que les positions px des
+       composants sont identiques en éditeur et en viewer. */
+    width: 1400px;
     min-height: 1200px;
     background: #1a1a1a;
-    margin: 20px;
+    margin: 20px auto;
     border-radius: 10px;
 }
 
@@ -238,22 +244,28 @@ body {
 /* ==================== COMPOSANTS ==================== */
 .component {
     position: absolute;
-    border: 2px solid transparent;
+    /* Utiliser outline au lieu de border : outline ne prend pas de place
+       dans le modèle de boîte, donc les dimensions/positions des composants
+       correspondent exactement à celles enregistrées dans le layout.json.
+       En viewer, les composants n'ont pas de border, donc pas de décalage. */
+    outline: 2px solid transparent;
+    outline-offset: -1px;
     cursor: move;
     background: #252525;
     border-radius: 5px;
     user-select: none;
     -webkit-user-select: none;
     touch-action: none; /* CRITIQUE pour interact.js */
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: outline-color 0.2s, box-shadow 0.2s;
+    border: none;
 }
 
 .component:hover {
-    border-color: rgba(74, 158, 255, 0.5);
+    outline-color: rgba(74, 158, 255, 0.5);
 }
 
 .component.selected {
-    border-color: #4a9eff;
+    outline-color: #4a9eff;
     box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.3);
 }
 
@@ -302,12 +314,8 @@ body {
     background: #252525;
 }
 
-.component-text .text-content {
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    padding: 15px;
-}
+/* Les styles du contenu texte (h1, h2, p, a, etc.) sont dans shared-components.css
+   pour être identiques entre l'éditeur et les pages générées. */
 
 .component-image {
     overflow: hidden;

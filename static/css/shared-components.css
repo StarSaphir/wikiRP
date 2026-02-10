@@ -1,0 +1,329 @@
+/* ==============================================
+   SHARED-COMPONENTS.CSS
+   Styles partagés entre l'éditeur et les pages générées.
+   
+   À importer dans :
+     - templates/editor.html
+     - generate_html() dans app.py (via <link> dans le <head>)
+   
+   Principe : tout ce qui concerne l'apparence du CONTENU
+   des composants doit vivre ici, pas dans editor.css
+   ou viewer.css séparément.
+   ============================================== */
+
+/* ------------------------------------------
+   TEXTE RICHE
+   ------------------------------------------ */
+
+.component-text .text-content {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #e0e0e0;
+    padding: 15px;
+    letter-spacing: 0.2px;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.component-text .text-content h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #4a9eff, #667eea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    scroll-margin-top: 80px;
+}
+
+.component-text .text-content h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #e0e0e0;
+    margin-bottom: 15px;
+    scroll-margin-top: 80px;
+}
+
+.component-text .text-content h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #e0e0e0;
+    margin-bottom: 10px;
+    scroll-margin-top: 80px;
+}
+
+.component-text .text-content p {
+    margin-bottom: 15px;
+    color: #e0e0e0;
+}
+
+.component-text .text-content a {
+    color: #4a9eff !important;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.component-text .text-content a:hover {
+    border-bottom-color: #4a9eff;
+}
+
+.component-text .text-content a:visited {
+    color: #4a9eff !important;
+}
+
+.component-text .text-content strong {
+    color: #fff;
+    font-weight: 600;
+}
+
+.component-text .text-content em {
+    color: #ccc;
+}
+
+.component-text .text-content blockquote {
+    border-left: 4px solid #4a9eff;
+    padding-left: 20px;
+    margin: 20px 0;
+    color: #aaa;
+    font-style: italic;
+}
+
+.component-text .text-content code {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    color: #f093fb;
+}
+
+.component-text .text-content pre {
+    background: #0a0a0a;
+    padding: 15px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 20px 0;
+    border: 1px solid #333;
+}
+
+.component-text .text-content pre code {
+    background: none;
+    padding: 0;
+}
+
+.component-text .text-content ol,
+.component-text .text-content ul {
+    margin-left: 25px;
+    margin-bottom: 15px;
+}
+
+.component-text .text-content li {
+    margin-bottom: 8px;
+}
+
+/* ------------------------------------------
+   CLASSES QUILL — nécessaires dans le viewer
+   car quill.snow.css n'y est pas chargé.
+   Toujours garder ces règles ici même si
+   quill.snow.css est aussi importé (elles
+   précisent le comportement dans notre contexte).
+   ------------------------------------------ */
+
+/* Alignement */
+.component-text .text-content .ql-align-center  { text-align: center !important; }
+.component-text .text-content .ql-align-right   { text-align: right !important; }
+.component-text .text-content .ql-align-justify { text-align: justify !important; }
+
+/* Indentation */
+.component-text .text-content .ql-indent-1 { padding-left: 3em; }
+.component-text .text-content .ql-indent-2 { padding-left: 6em; }
+.component-text .text-content .ql-indent-3 { padding-left: 9em; }
+.component-text .text-content .ql-indent-4 { padding-left: 12em; }
+.component-text .text-content .ql-indent-5 { padding-left: 15em; }
+.component-text .text-content .ql-indent-6 { padding-left: 18em; }
+.component-text .text-content .ql-indent-7 { padding-left: 21em; }
+.component-text .text-content .ql-indent-8 { padding-left: 24em; }
+
+/* Tailles Quill → correspondances px cohérentes avec notre système */
+.component-text .text-content .ql-size-small  { font-size: 11px; }
+.component-text .text-content .ql-size-large  { font-size: 22px; }
+.component-text .text-content .ql-size-huge   { font-size: 38px; }
+
+/* Couleur de fond sur le texte (highlight Quill) */
+.component-text .text-content [style*="background-color"] {
+    border-radius: 2px;
+    padding: 0 2px;
+}
+
+/* ------------------------------------------
+   IMAGE
+   ------------------------------------------ */
+
+.component-image {
+    overflow: hidden;
+}
+
+.component-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* ------------------------------------------
+   FORME (SHAPE)
+   ------------------------------------------ */
+
+.component-shape {
+    border-radius: 5px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* ------------------------------------------
+   SÉPARATEUR
+   ------------------------------------------ */
+
+.component-separator {
+    background: transparent !important;
+    display: flex;
+    align-items: center;
+}
+
+.component-separator hr {
+    border: none;
+    border-top: 2px solid #666;
+    width: 100%;
+    margin: 0;
+}
+
+/* ------------------------------------------
+   VIDÉO
+   ------------------------------------------ */
+
+.component-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* ------------------------------------------
+   YOUTUBE
+   ------------------------------------------ */
+
+.component-youtube iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 8px;
+}
+
+/* ------------------------------------------
+   TABLEAU
+   ------------------------------------------ */
+
+.component-table {
+    overflow: auto;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.component-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #252525;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.component-table th,
+.component-table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #333;
+    color: #e0e0e0;
+    font-size: 14px;
+}
+
+.component-table th {
+    background: #333;
+    color: #4a9eff;
+    font-weight: bold;
+}
+
+.component-table tr:hover {
+    background: rgba(74, 158, 255, 0.05);
+}
+
+.component-table tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* ------------------------------------------
+   GALERIE
+   ------------------------------------------ */
+
+.component-gallery {
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.gallery-carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.gallery-prev,
+.gallery-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 24px;
+    z-index: 10;
+    transition: all 0.3s;
+}
+
+.gallery-prev:hover,
+.gallery-next:hover {
+    background: rgba(74, 158, 255, 0.8);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.gallery-prev { left: 10px; }
+.gallery-next { right: 10px; }
+
+.gallery-indicators {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.gallery-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.gallery-indicator:hover {
+    background: #4a9eff;
+    transform: scale(1.2);
+}

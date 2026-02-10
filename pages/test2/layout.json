@@ -1,0 +1,27 @@
+[
+  {
+    "content": "<p><a href=\"../union-federale-balte-ufb/\" rel=\"noopener noreferrer\" target=\"_blank\">Test 12</a></p>",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 200,
+    "id": "comp-1",
+    "type": "text",
+    "w": 300,
+    "x": 670,
+    "y": 80,
+    "z": 0
+  },
+  {
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "h": 200,
+    "id": "comp-2",
+    "image_path": "images/img_20260129_092831_118713.png",
+    "type": "image",
+    "w": 300,
+    "x": 50,
+    "y": 50,
+    "z": 1
+  }
+]
