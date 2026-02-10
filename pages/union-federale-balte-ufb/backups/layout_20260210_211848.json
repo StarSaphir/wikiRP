@@ -3,7 +3,7 @@
     "content": "<h1>Présentation générale</h1><p><strong>L’Union Fédérale Balte (UFB) </strong>est un État fédéral situé en Europe du Nord-Est, structuré autour du bassin de la mer Baltique. Elle regroupe plusieurs peuples et territoires historiquement, culturellement et politiquement distincts au sein d’un même cadre institutionnel.</p><p><strong>L’UFB </strong>se caractérise par une forte orientation maritime, une organisation fédérale affirmée et une identité collective fondée sur la coopération entre ses composantes. Son existence repose sur la volonté de garantir la stabilité régionale, la sécurité collective et la continuité des traditions propres aux peuples qui la composent.</p>",
     "custom_css": "",
     "custom_js": "",
-    "h": 250,
+    "h": 260,
     "id": "comp-1",
     "type": "text",
     "w": 1130,
@@ -28,12 +28,12 @@
     "content": "<p><strong>L’Union Fédérale Balte</strong></p>",
     "custom_css": "",
     "custom_js": "",
-    "h": 50,
+    "h": 30,
     "id": "comp-3",
     "type": "text",
     "w": 280,
     "x": 1200,
-    "y": 40,
+    "y": 65,
     "z": 2
   },
   {
@@ -45,7 +45,7 @@
     "type": "separator",
     "w": 300,
     "x": 1180,
-    "y": 303,
+    "y": 290,
     "z": 3
   },
   {
@@ -68,16 +68,16 @@
     "h": 60,
     "id": "comp-6",
     "type": "text",
-    "w": 150,
-    "x": 1250,
-    "y": 251,
+    "w": 190,
+    "x": 1240,
+    "y": 290,
     "z": 5
   },
   {
     "content": "",
     "custom_css": "",
     "custom_js": "",
-    "h": 10,
+    "h": 3,
     "id": "comp-1768999956445",
     "type": "separator",
     "w": 300,
@@ -94,19 +94,19 @@
     "type": "separator",
     "w": 1130,
     "x": 30,
-    "y": 310,
+    "y": 320,
     "z": 7
   },
   {
     "content": "<h1>Géographie et positionnement régional</h1><p>L’Union Fédérale Balte s’étend sur des territoires riverains et proches de la mer Baltique. Cette position géographique confère à l’État un rôle central dans les échanges maritimes, les flux commerciaux et les équilibres stratégiques de la région.</p><p>Le territoire fédéral comprend des zones côtières, des espaces forestiers et des régions urbaines historiquement développées autour du commerce, de l’industrie et des infrastructures portuaires. La mer Baltique constitue un élément structurant de l’espace politique, économique et culturel de <strong>l’UFB</strong>.</p>",
     "custom_css": "",
     "custom_js": "",
-    "h": 260,
+    "h": 250,
     "id": "comp-1768999956447",
     "type": "text",
-    "w": 1150,
+    "w": 1130,
     "x": 30,
-    "y": 320,
+    "y": 330,
     "z": 8
   },
   {

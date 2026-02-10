@@ -8,7 +8,10 @@
     <!-- Quill CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.css">
     
-    <!-- Editor CSS -->
+    <!-- CSS partagé éditeur/viewer (styles des composants) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/shared-components.css') }}">
+    
+    <!-- Editor CSS (layout de l'interface uniquement) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='./css/editor.css') }}">
 </head>
 <body>
@@ -98,83 +101,6 @@
         window.INITIAL_LAYOUT = {{ layout|tojson|safe }};
     </script>
     
-    <script>
-        // DEBUG: Script à ajouter temporairement dans editor.html AVANT main.js
-
-        console.log('🔍 Script de débogage des clics activé');
-
-        // Tracer TOUS les clics
-        document.addEventListener('click', (e) => {
-            console.log('🖱️ CLIC détecté:', {
-                target: e.target,
-                tagName: e.target.tagName,
-                className: e.target.className,
-                id: e.target.id,
-                isButton: e.target.tagName === 'BUTTON',
-                hasStopPropagation: e.cancelBubble,
-                defaultPrevented: e.defaultPrevented,
-                composedPath: e.composedPath().map(el => el.tagName || el.nodeName)
-            });
-        }, true); // Capture phase
-
-        // Tracer les arrêts de propagation
-        const originalStopPropagation = Event.prototype.stopPropagation;
-        Event.prototype.stopPropagation = function() {
-            console.warn('⛔ stopPropagation() appelé par:', this.target, 'Type:', this.type);
-            console.trace();
-            originalStopPropagation.call(this);
-        };
-
-        // Tracer les preventDefault
-        const originalPreventDefault = Event.prototype.preventDefault;
-        Event.prototype.preventDefault = function() {
-            console.warn('🚫 preventDefault() appelé par:', this.target, 'Type:', this.type);
-            originalPreventDefault.call(this);
-        };
-
-        // Vérifier l'état d'édition
-        setInterval(() => {
-            const isEditing = window.ArchitectEditor?.state?.isEditingTextMode();
-            const editingId = window.ArchitectEditor?.state?.currentEditingTextId;
-            
-            if (isEditing) {
-                console.log('📝 Mode édition actif:', editingId);
-                
-                // Vérifier si le bouton "Terminer" existe
-                const finishBtn = document.getElementById('finish-edit-btn') || 
-                                document.getElementById('finish-table-edit-btn');
-                
-                if (finishBtn) {
-                    console.log('✅ Bouton Terminer trouvé:', {
-                        display: window.getComputedStyle(finishBtn).display,
-                        pointerEvents: window.getComputedStyle(finishBtn).pointerEvents,
-                        visibility: window.getComputedStyle(finishBtn).visibility,
-                        zIndex: window.getComputedStyle(finishBtn).zIndex,
-                        disabled: finishBtn.disabled
-                    });
-                } else {
-                    console.error('❌ Bouton Terminer NON TROUVÉ');
-                }
-            }
-        }, 2000);
-
-        // Vérifier le panneau de propriétés
-        setInterval(() => {
-            const panel = document.getElementById('properties-panel');
-            const content = document.getElementById('properties-content');
-            
-            if (panel) {
-                console.log('📋 Panneau propriétés:', {
-                    active: panel.classList.contains('active'),
-                    pointerEvents: window.getComputedStyle(panel).pointerEvents,
-                    contentPointerEvents: content ? window.getComputedStyle(content).pointerEvents : 'N/A'
-                });
-            }
-        }, 3000);
-
-        console.log('🔍 Débogage prêt. Ouvrez la console et testez les clics.');
-    </script>
-
     <!-- Application principale (module ES6) -->
     <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>

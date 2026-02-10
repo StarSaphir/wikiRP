@@ -37,28 +37,16 @@
     "z": 2
   },
   {
+    "id": "comp-4",
+    "type": "youtube",
+    "x": 50,
+    "y": 360,
+    "w": 560,
+    "h": 315,
+    "z": 3,
     "content": "",
     "custom_css": "",
     "custom_js": "",
-    "h": 315,
-    "id": "comp-4",
-    "type": "youtube",
-    "w": 560,
-    "x": 50,
-    "y": 360,
-    "youtube_id": "mPTCq3LiZSE",
-    "z": 3
-  },
-  {
-    "id": "comp-5",
-    "type": "text",
-    "x": 110,
-    "y": 1030,
-    "w": 300,
-    "h": 200,
-    "z": 4,
-    "content": "<p>Text 2</p>",
-    "custom_css": "",
-    "custom_js": ""
+    "youtube_id": "mPTCq3LiZSE"
   }
 ]

@@ -5,15 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>test</title>
 
-    <meta name="editor-canvas-width" content="1920">
-    <meta name="editor-canvas-height" content="1080">
+    <meta name="editor-canvas-width" content="1483">
+    <meta name="editor-canvas-height" content="1530">
     
+     <!-- Quill CSS : nécessaire pour .ql-align-*, .ql-indent-*, .ql-size-* -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.css">
+    
+    <!-- Styles partagés composants (identiques à l'éditeur) -->
+    <link rel="stylesheet" href="../../static/css/shared-components.css">
+    
+    <!-- Viewer CSS (sidebar, navigation, mise en page) -->
     <link rel="stylesheet" href="../../static/css/viewer.css">
     
     <style>
         /* Hauteur minimale du canvas */
         .canvas-container {
-            min-height: 360px;
+            min-height: 1330px;
         }
         
         /* Style du bouton d'accueil */
@@ -150,6 +157,12 @@
 <div class="component component-text" id="comp-3" data-type="text" style="left:1160px;top:60px;width:300px;height:200px;z-index:2;">
 <div class="text-content"><p>Titre</p></div>
 </div>
+<div class="component component-youtube" id="comp-4" data-type="youtube" style="left:50px;top:360px;width:560px;height:315px;z-index:3;">
+<iframe src="https://www.youtube.com/embed/mPTCq3LiZSE" allowfullscreen></iframe>
+</div>
+<div class="component component-text" id="comp-5" data-type="text" style="left:110px;top:1030px;width:300px;height:200px;z-index:4;">
+<div class="text-content"><p>Text 2</p></div>
+</div>
 
         </div>
     </main>
@@ -164,7 +177,7 @@
         const PAGE_HEADINGS = [];
         const INTERNAL_LINKS = [];
         const CURRENT_SLUG = "test";
-        const PAGES_METADATA = {"union-federale-balte-ufb": {"title": "Union Fédérale Balte (UFB)", "slug": "union-federale-balte-ufb", "preview": "Présentation générale L’Union Fédérale Balte (UFB) est un État fédéral situé en Europe du Nord-Est, structuré autour du bassin de la mer Baltique. Elle regroupe plusieurs peuples et territoires histor...", "hidden_from_nav": false, "tags": ["pays"]}, "test": {"title": "test", "slug": "test", "preview": "Lorem ipsum Titre", "hidden_from_nav": false, "tags": []}};
+        const PAGES_METADATA = {"union-federale-balte-ufb": {"title": "Union Fédérale Balte (UFB)", "slug": "union-federale-balte-ufb", "preview": "Présentation générale L’Union Fédérale Balte (UFB) est un État fédéral situé en Europe du Nord-Est, structuré autour du bassin de la mer Baltique. Elle regroupe plusieurs peuples et territoires histor...", "hidden_from_nav": false, "tags": ["pays"]}, "test": {"title": "test", "slug": "test", "preview": "Lorem ipsum Titre Text 2", "hidden_from_nav": false, "tags": []}, "test2": {"title": "test2", "slug": "test2", "preview": "Test 12", "hidden_from_nav": false, "tags": []}};
 
         const homeBtn = document.querySelector('.home-btn');
         if (homeBtn) {
@@ -337,12 +350,14 @@
         console.log('📊 Métadonnées:', Object.keys(PAGES_METADATA).length, 'pages');
     </script>
     <script>
-        // responsive-layout.js - Système responsive OPTIMISÉ avec préservation des superpositions
+        // responsive-layout.js - Gestion par groupes avec compensation
 
 class ResponsiveLayout {
     constructor(options = {}) {
         this.config = {
-            editorCanvasWidth: options.editorCanvasWidth || 1920,
+            // ⚠️ Largeur canonique : doit correspondre à .canvas-inner (editor.css)
+            // et .canvas-container (viewer.css) — actuellement 1400px.
+            editorCanvasWidth: options.editorCanvasWidth || 1400,
             editorCanvasHeight: options.editorCanvasHeight || 1080,
             
             contentMarginLeft: options.contentMarginLeft || 280,
@@ -355,29 +370,17 @@ class ResponsiveLayout {
             },
             
             minSizes: {
-                text: { w: 200, h: 80 },
-                image: { w: 150, h: 100 },
-                gallery: { w: 250, h: 200 },
-                video: { w: 300, h: 200 },
-                youtube: { w: 300, h: 200 },
-                shape: { w: 100, h: 50 },
-                table: { w: 250, h: 150 },
-                separator: { w: 100, h: 2 }
+                text: { w: 200, h: 40 },
+                image: { w: 100, h: 80 },
+                gallery: { w: 200, h: 150 },
+                video: { w: 250, h: 150 },
+                youtube: { w: 250, h: 150 },
+                shape: { w: 80, h: 40 },
+                table: { w: 200, h: 100 },
+                separator: { w: 80, h: 2 }
             },
             
-            // ✅ FACTEURS TRÈS AGRESSIFS pour le texte
-            heightAdjustFactors: {
-                text: 3.0,      // ×3 pour les textes
-                table: 2.5,
-                image: 1.0,
-                gallery: 1.0,
-                video: 0.8,
-                youtube: 0.8,
-                shape: 0.3,
-                separator: 0
-            },
-            
-            componentGap: 15,
+            overlapThreshold: 0.05, // 5% = superposition
             
             ...options
         };
@@ -387,21 +390,19 @@ class ResponsiveLayout {
     }
     
     init(components) {
-        console.log('🔧 Initialisation du système responsive OPTIMISÉ');
+        console.log('🔧 Init avec groupes et compensation');
         
         this.originalLayout = this.deepClone(components);
         this.currentBreakpoint = this.detectBreakpoint();
         
         const availableWidth = this.getAvailableWidth();
         
-        console.log(`📐 Canvas éditeur: ${this.config.editorCanvasWidth}px`);
-        console.log(`📐 Largeur disponible: ${availableWidth}px`);
-        console.log(`📊 Breakpoint: ${this.currentBreakpoint}`);
+        console.log(`📐 ${this.config.editorCanvasWidth}px → ${availableWidth}px`);
         
         const responsiveComponents = this.applyResponsive(components, availableWidth);
         this.setupResizeListener();
         
-        console.log(`✅ Responsive initialisé - ${responsiveComponents.length} composants`);
+        console.log(`✅ ${responsiveComponents.length} composants`);
         
         return responsiveComponents;
     }
@@ -416,21 +417,28 @@ class ResponsiveLayout {
     
     getAvailableWidth() {
         const screenWidth = window.innerWidth;
-        const breakpoint = this.currentBreakpoint;
+        const bp = this.currentBreakpoint;
         
-        if (breakpoint === 'mobile') {
+        if (bp === 'mobile') {
             return screenWidth - (this.config.contentPadding * 2);
         }
         
-        return screenWidth - this.config.contentMarginLeft - (this.config.contentPadding * 2);
+        // Largeur brute disponible = écran - sidebar - padding
+        const raw = screenWidth - this.config.contentMarginLeft - (this.config.contentPadding * 2);
+        
+        // ✅ FIX : Le canvas est limité à editorCanvasWidth (max-width).
+        // Si l'écran est plus grand que le canvas, la largeur disponible est
+        // exactement editorCanvasWidth — pas plus. Sans ce cap, le ratio
+        // dépasse 1.0 et les composants sont agrandis hors de la page.
+        return Math.min(raw, this.config.editorCanvasWidth);
     }
     
     getScalingRatio(availableWidth) {
         let ratio = availableWidth / this.config.editorCanvasWidth;
         
-        const breakpoint = this.currentBreakpoint;
-        if (breakpoint === 'mobile') ratio = Math.min(ratio, 0.6);
-        else if (breakpoint === 'tablet') ratio = Math.min(ratio, 0.8);
+        const bp = this.currentBreakpoint;
+        if (bp === 'mobile') ratio = Math.min(ratio, 0.6);
+        else if (bp === 'tablet') ratio = Math.min(ratio, 0.8);
         
         return Math.max(ratio, 0.3);
     }
@@ -438,18 +446,143 @@ class ResponsiveLayout {
     applyResponsive(components, availableWidth) {
         const ratio = this.getScalingRatio(availableWidth);
         
-        console.log(`📐 Ratio de scaling: ${(ratio * 100).toFixed(1)}%`);
+        console.log(`📐 Ratio: ${(ratio * 100).toFixed(1)}%`);
         
         let adjusted = this.deepClone(components);
-        adjusted.sort((a, b) => a.y - b.y);
         
-        // Phase 1 : Scaling avec ajustement hauteur
-        adjusted = adjusted.map(comp => this.scaleComponent(comp, ratio, availableWidth));
+        // 1. Créer les groupes de composants superposés
+        const groups = this.buildGroups(adjusted);
+        console.log(`📦 ${groups.length} groupes`);
         
-        // Phase 2 : Redistribution SÉLECTIVE (pas toucher aux superpositions)
-        adjusted = this.redistributeSelectively(adjusted);
+        // 2. Trier par Y minimum du groupe
+        groups.sort((a, b) => a.minY - b.minY);
         
-        return adjusted;
+        // 3. Traiter chaque groupe
+        let result = [];
+        let cumulativeOffset = 0;
+        
+        for (let group of groups) {
+            const processed = this.processGroup(group, ratio, availableWidth, cumulativeOffset);
+            result = result.concat(processed.components);
+            
+            // Ajouter la croissance du groupe à l'offset
+            cumulativeOffset += processed.totalGrowth;
+            
+            if (processed.totalGrowth > 0) {
+                console.log(`🔽 Groupe ${group.id}: +${processed.totalGrowth.toFixed(0)}px ajouté à l'offset (total: ${cumulativeOffset.toFixed(0)}px)`);
+            }
+        }
+        
+        return result;
+    }
+    
+    /**
+     * 🎯 Construit des groupes de composants superposés
+     */
+    buildGroups(components) {
+        const groups = [];
+        const assigned = new Set();
+        let groupId = 0;
+        
+        components.sort((a, b) => a.y - b.y);
+        
+        for (let comp of components) {
+            if (assigned.has(comp.id)) continue;
+            
+            const group = {
+                id: `group-${groupId++}`,
+                components: [comp],
+                minY: comp.y,
+                maxY: comp.y + comp.h
+            };
+            assigned.add(comp.id);
+            
+            // Expansion du groupe : chercher tous les composants qui chevauchent
+            let changed = true;
+            while (changed) {
+                changed = false;
+                
+                for (let other of components) {
+                    if (assigned.has(other.id)) continue;
+                    
+                    // Vérifier si other chevauche UN membre du groupe
+                    for (let member of group.components) {
+                        if (this.doOverlap(member, other)) {
+                            const ratio = this.getOverlapRatio(member, other);
+                            
+                            if (ratio > this.config.overlapThreshold) {
+                                group.components.push(other);
+                                group.minY = Math.min(group.minY, other.y);
+                                group.maxY = Math.max(group.maxY, other.y + other.h);
+                                assigned.add(other.id);
+                                changed = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (group.components.length > 1) {
+                console.log(`  📦 ${group.id}: ${group.components.map(c => c.id).join(', ')}`);
+            }
+            
+            groups.push(group);
+        }
+        
+        return groups;
+    }
+    
+    /**
+     * 🎯 Traite un groupe entier
+     */
+    processGroup(group, ratio, availableWidth, offsetY) {
+        const components = group.components;
+        const result = [];
+        let maxGrowth = 0;
+        
+        if (components.length === 1) {
+            // Groupe simple (1 composant)
+            const comp = this.scaleComponent(components[0], ratio, availableWidth);
+            
+            // Appliquer l'offset cumulé
+            comp.y = (components[0].y * ratio) + offsetY;
+            
+            if (comp.type === 'text' || comp.type === 'table') {
+                const growth = this.adjustTextHeight(comp);
+                maxGrowth = growth;
+            }
+            
+            result.push(comp);
+        } else {
+            // Groupe superposé (infobox)
+            console.log(`  ✨ Traitement groupe: ${components.length} composants`);
+            
+            // Point de référence du groupe
+            const refY = Math.min(...components.map(c => c.y));
+            
+            // Scaler chaque composant en préservant les positions RELATIVES
+            for (let comp of components) {
+                const scaled = this.scaleComponent(comp, ratio, availableWidth);
+                
+                // 🎯 CLEF : Position relative au groupe préservée
+                const relativeY = comp.y - refY;
+                scaled.y = (refY * ratio) + (relativeY * ratio) + offsetY;
+                
+                // Ajuster hauteur des textes
+                if (comp.type === 'text' || comp.type === 'table') {
+                    const growth = this.adjustTextHeight(scaled);
+                    maxGrowth = Math.max(maxGrowth, growth);
+                }
+                
+                result.push(scaled);
+            }
+        }
+        
+        return {
+            components: result,
+            totalGrowth: maxGrowth
+        };
     }
     
     scaleComponent(component, ratio, availableWidth) {
@@ -457,193 +590,174 @@ class ResponsiveLayout {
         const scaled = { ...component };
         
         scaled.x = component.x * ratio;
-        scaled.y = component.y * ratio;
         scaled.w = Math.max(minSize.w, component.w * ratio);
         scaled.h = Math.max(minSize.h, component.h * ratio);
         
-        const originalScaledW = component.w * ratio;
-        let widthWasReduced = false;
-        
-        // Réduction de largeur si débordement
         if (scaled.x + scaled.w > availableWidth) {
-            const overflow = (scaled.x + scaled.w) - availableWidth;
-            
-            if (scaled.x > 20) {
-                const shift = Math.min(overflow, scaled.x - 10);
-                scaled.x -= shift;
-            }
-            
-            if (scaled.x + scaled.w > availableWidth) {
-                scaled.w = Math.max(minSize.w, availableWidth - scaled.x - 10);
-                widthWasReduced = true;
-            }
+            scaled.w = Math.max(minSize.w, availableWidth - scaled.x - 10);
         }
         
-        const widthCompressionRatio = scaled.w / originalScaledW;
-        
-        // ✅ AJUSTEMENT HAUTEUR TRÈS AGRESSIF pour le texte
-        if (widthCompressionRatio < 0.98 || widthWasReduced) {
-            const heightFactor = this.config.heightAdjustFactors[component.type] || 1.5;
-            
-            // Formule TRÈS agressive
-            const compressionFactor = 1 / widthCompressionRatio;
-            const heightMultiplier = 1 + ((compressionFactor - 1) * heightFactor);
-            
-            const baseHeight = component.h * ratio;
-            const newHeight = baseHeight * heightMultiplier;
-            const heightDelta = newHeight - baseHeight;
-            
-            scaled.h = newHeight;
-            scaled._heightIncreased = heightDelta;
-            
-            console.log(`📏 ${component.id} (${component.type}): ${(widthCompressionRatio * 100).toFixed(0)}% → +${heightDelta.toFixed(0)}px`);
-        } else {
-            scaled._heightIncreased = 0;
-        }
-        
-        scaled._originalY = component.y * ratio;
-        scaled._originalBottom = (component.y + component.h) * ratio;
+        scaled._scaledH = scaled.h;
         
         return scaled;
     }
     
     /**
-     * ✅ Redistribution SÉLECTIVE : préserve les superpositions
+     * Ajuste la hauteur d'un texte et retourne la croissance.
+     * 
+     * ⚠️ ATTENTION — Timing CSS :
+     * Cette méthode mesure le scrollHeight de l'élément DOM.
+     * Elle doit être appelée APRÈS que les feuilles de style partagées
+     * (shared-components.css) soient appliquées par le navigateur.
+     * Si appelée trop tôt (avant le premier repaint), le navigateur
+     * utilise ses styles par défaut et retourne un scrollHeight erroné
+     * (souvent 2-3x trop grand), créant des espaces vides géants.
+     * → Le setTimeout(200) dans l'init() de la page protège contre ça.
      */
-    redistributeSelectively(components) {
-        const adjusted = [];
+    adjustTextHeight(comp) {
+        const element = document.getElementById(comp.id);
+        if (!element) return 0;
         
-        for (let i = 0; i < components.length; i++) {
-            let current = { ...components[i] };
-            let needsRepositioning = false;
-            
-            // Vérifier les collisions avec les composants déjà placés
-            for (let j = 0; j < adjusted.length; j++) {
-                const existing = adjusted[j];
-                
-                if (this.doOverlap(current, existing)) {
-                    // ✅ CLEF : Vérifier si c'est une superposition INTENTIONNELLE
-                    if (this.isIntentionalOverlap(current, existing)) {
-                        console.log(`✨ Superposition préservée: ${current.id} ↔ ${existing.id}`);
-                        // NE PAS décaler
-                    } else {
-                        // Collision accidentelle → décaler
-                        const newY = existing.y + existing.h + this.config.componentGap;
-                        console.log(`🔽 ${current.id} décalé de ${current.y.toFixed(0)} → ${newY.toFixed(0)}px`);
-                        current.y = newY;
-                        needsRepositioning = true;
-                    }
-                }
-            }
-            
-            delete current._originalY;
-            delete current._originalBottom;
-            
-            adjusted.push(current);
+        const content = element.querySelector('.text-content') || element;
+        
+        // Sauvegarder les styles courants
+        const oldW = element.style.width;
+        const oldH = element.style.height;
+        const oldOverflow = content.style.overflowY;
+        
+        // Appliquer la largeur cible pour mesurer le wrapping réel du texte
+        element.style.width = `${comp.w}px`;
+        element.style.height = 'auto';
+        content.style.overflowY = 'visible';
+        
+        // Forcer le reflow
+        void element.offsetHeight;
+        
+        const measured = content.scrollHeight;
+        
+        // Restaurer
+        element.style.width = oldW;
+        element.style.height = oldH;
+        content.style.overflowY = oldOverflow;
+        
+        const minH = this.config.minSizes[comp.type]?.h || 40;
+        const scaledH = comp._scaledH;
+        
+        // ✅ FIX : Plafonner la hauteur mesurée.
+        // Si le CSS n'est pas encore rendu au moment de la mesure, scrollHeight
+        // peut être fantaisiste (ex: 1200px pour 3 lignes de texte).
+        // On refuse d'accepter une hauteur > 3× la hauteur scalée sauf si la
+        // hauteur scalée est très petite (composant volontairement petit).
+        const MAX_GROWTH_RATIO = 3.0;
+        const cappedH = scaledH > 60
+            ? Math.min(measured, scaledH * MAX_GROWTH_RATIO)
+            : measured;
+        
+        comp.h = Math.max(minH, cappedH + 3);
+        
+        const growth = comp.h - scaledH;
+        
+        if (growth > 5) {
+            console.log(`    📏 ${comp.id}: +${growth.toFixed(0)}px (mesuré: ${measured}px, capé: ${cappedH.toFixed(0)}px)`);
         }
         
-        return adjusted;
+        delete comp._scaledH;
+        
+        return Math.max(0, growth);
     }
     
-    doOverlap(comp1, comp2) {
-        const tolerance = 3;
+    doOverlap(c1, c2) {
         return !(
-            comp1.x + comp1.w < comp2.x + tolerance ||
-            comp2.x + comp2.w < comp1.x + tolerance ||
-            comp1.y + comp1.h < comp2.y + tolerance ||
-            comp2.y + comp2.h < comp1.y + tolerance
+            c1.x + c1.w <= c2.x ||
+            c2.x + c2.w <= c1.x ||
+            c1.y + c1.h <= c2.y ||
+            c2.y + c2.h <= c1.y
         );
     }
     
-    /**
-     * ✅ Détection AMÉLIORÉE des superpositions intentionnelles
-     */
-    isIntentionalOverlap(comp1, comp2) {
-        if (!this.doOverlap(comp1, comp2)) return false;
+    getOverlapRatio(c1, c2) {
+        const x1 = Math.max(c1.x, c2.x);
+        const y1 = Math.max(c1.y, c2.y);
+        const x2 = Math.min(c1.x + c1.w, c2.x + c2.w);
+        const y2 = Math.min(c1.y + c1.h, c2.y + c2.h);
         
-        const overlapX = Math.max(0, Math.min(comp1.x + comp1.w, comp2.x + comp2.w) - Math.max(comp1.x, comp2.x));
-        const overlapY = Math.max(0, Math.min(comp1.y + comp1.h, comp2.y + comp2.h) - Math.max(comp1.y, comp2.y));
-        const overlapArea = overlapX * overlapY;
-        
-        const area1 = comp1.w * comp1.h;
-        const area2 = comp2.w * comp2.h;
+        const overlapArea = (x2 - x1) * (y2 - y1);
+        const area1 = c1.w * c1.h;
+        const area2 = c2.w * c2.h;
         const minArea = Math.min(area1, area2);
         
-        // ✅ Si > 15% de surface commune = intentionnel
-        return overlapArea > minArea * 0.15;
+        return overlapArea / minArea;
     }
     
     applyToDOM(components) {
         components.forEach(comp => {
-            const element = document.getElementById(comp.id);
-            if (!element) {
-                console.warn(`⚠️ ${comp.id} introuvable`);
-                return;
-            }
+            const el = document.getElementById(comp.id);
+            if (!el) return;
             
-            element.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-            element.style.left = `${comp.x}px`;
-            element.style.top = `${comp.y}px`;
-            element.style.width = `${comp.w}px`;
-            element.style.height = `${comp.h}px`;
+            el.style.transition = 'all 0.3s ease';
+            el.style.left = `${comp.x}px`;
+            el.style.top = `${comp.y}px`;
+            el.style.width = `${comp.w}px`;
+            el.style.height = `${comp.h}px`;
             
-            if (comp.type === 'text') {
-                this.adjustTextSize(element, comp);
+            if (comp.type === 'text' || comp.type === 'table') {
+                this.setTextStyle(el);
             }
         });
         
-        this.adjustCanvasHeight(components);
+        this.setCanvasHeight(components);
     }
     
-    adjustTextSize(element, component) {
-        const textContent = element.querySelector('.text-content');
-        if (!textContent) return;
+    setTextStyle(element) {
+        const content = element.querySelector('.text-content');
+        if (!content) return;
         
         const ratio = this.getScalingRatio(this.getAvailableWidth());
-        const breakpoint = this.currentBreakpoint;
+        const bp = this.currentBreakpoint;
         
-        let baseFontSize = 15;
-        if (breakpoint === 'mobile') baseFontSize = 13;
-        else if (breakpoint === 'tablet') baseFontSize = 14;
+        let size = 15;
+        if (bp === 'mobile') size = 13;
+        else if (bp === 'tablet') size = 14;
         
-        const fontSize = Math.max(11, baseFontSize * Math.min(ratio, 1));
+        size = Math.max(11, size * Math.min(ratio, 1));
         
-        textContent.style.fontSize = `${fontSize}px`;
-        textContent.style.lineHeight = '1.6';
-        textContent.style.overflowY = 'auto';
-        textContent.style.padding = '12px';
+        content.style.fontSize = `${size}px`;
+        content.style.lineHeight = '1.6';
+        content.style.padding = '12px';
+        content.style.overflowY = 'auto';
+        content.style.boxSizing = 'border-box';
     }
     
-    adjustCanvasHeight(components) {
+    setCanvasHeight(components) {
         const canvas = document.querySelector('.canvas-container');
         if (!canvas) return;
         
-        let maxBottom = 0;
-        components.forEach(comp => {
-            const bottom = comp.y + comp.h;
-            if (bottom > maxBottom) maxBottom = bottom;
+        let max = 0;
+        components.forEach(c => {
+            const bottom = c.y + c.h;
+            if (bottom > max) max = bottom;
         });
         
-        canvas.style.minHeight = `${maxBottom + 100}px`;
+        canvas.style.minHeight = `${max + 100}px`;
     }
     
     setupResizeListener() {
-        let resizeTimer;
+        let timer;
         
         window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
+            clearTimeout(timer);
             
-            resizeTimer = setTimeout(() => {
-                const newBreakpoint = this.detectBreakpoint();
+            timer = setTimeout(() => {
+                const newBp = this.detectBreakpoint();
                 
-                if (newBreakpoint !== this.currentBreakpoint) {
-                    console.log(`🔄 ${this.currentBreakpoint} → ${newBreakpoint}`);
-                    this.currentBreakpoint = newBreakpoint;
+                if (newBp !== this.currentBreakpoint) {
+                    console.log(`🔄 ${this.currentBreakpoint} → ${newBp}`);
+                    this.currentBreakpoint = newBp;
                     
                     if (this.originalLayout) {
-                        const availableWidth = this.getAvailableWidth();
-                        const responsive = this.applyResponsive(this.originalLayout, availableWidth);
-                        this.applyToDOM(responsive);
+                        const w = this.getAvailableWidth();
+                        const resp = this.applyResponsive(this.originalLayout, w);
+                        this.applyToDOM(resp);
                     }
                 }
             }, 250);
@@ -654,30 +768,16 @@ class ResponsiveLayout {
         return JSON.parse(JSON.stringify(obj));
     }
     
-    getDebugInfo() {
-        const availableWidth = this.getAvailableWidth();
-        const ratio = this.getScalingRatio(availableWidth);
-        
-        return {
-            breakpoint: this.currentBreakpoint,
-            ratio: ratio,
-            editorCanvasWidth: this.config.editorCanvasWidth,
-            availableWidth: availableWidth,
-            screenWidth: window.innerWidth,
-            componentsCount: this.originalLayout?.length || 0
-        };
-    }
-    
     showDebugOverlay() {
         document.getElementById('responsive-debug-overlay')?.remove();
         
-        const overlay = document.createElement('div');
-        overlay.id = 'responsive-debug-overlay';
-        overlay.style.cssText = `
+        const div = document.createElement('div');
+        div.id = 'responsive-debug-overlay';
+        div.style.cssText = `
             position: fixed;
             bottom: 20px;
             left: 300px;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0,0,0,0.95);
             color: #0f0;
             padding: 15px;
             border-radius: 8px;
@@ -685,68 +785,50 @@ class ResponsiveLayout {
             font-size: 12px;
             z-index: 100000;
             max-width: 400px;
-            box-shadow: 0 4px 15px rgba(0, 255, 0, 0.5);
+            box-shadow: 0 4px 15px rgba(0,255,0,0.5);
             border: 2px solid #0f0;
         `;
         
-        const info = this.getDebugInfo();
-        const components = document.querySelectorAll('.component');
-        let heightIncreasedCount = 0;
-        let totalHeightIncrease = 0;
-        let overflowCount = 0;
+        const w = this.getAvailableWidth();
+        const r = this.getScalingRatio(w);
         
-        components.forEach(el => {
-            const h = parseFloat(el.style.height);
-            const id = el.id;
-            const comp = this.originalLayout?.find(c => c.id === id);
-            
-            if (comp) {
-                const originalH = comp.h * info.ratio;
-                const delta = h - originalH;
-                if (delta > 5) {
-                    heightIncreasedCount++;
-                    totalHeightIncrease += delta;
-                }
-            }
-            
-            // Détecter overflow
+        const comps = document.querySelectorAll('.component');
+        let overflow = 0;
+        
+        comps.forEach(el => {
             if (el.dataset.type === 'text') {
-                const textContent = el.querySelector('.text-content');
-                if (textContent && textContent.scrollHeight > textContent.clientHeight + 5) {
-                    overflowCount++;
+                const txt = el.querySelector('.text-content');
+                if (txt && txt.scrollHeight > txt.clientHeight + 5) {
+                    overflow++;
+                    console.warn(`⚠️ Overflow: ${el.id}`);
                 }
             }
         });
         
-        overlay.innerHTML = `
-            <strong style="color: #0ff; font-size: 14px;">📊 RESPONSIVE DEBUG</strong><br>
-            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #0f0;">
-                Breakpoint: <span style="color: #ff0;">${info.breakpoint}</span><br>
-                Ratio: <span style="color: #ff0;">${(info.ratio * 100).toFixed(0)}%</span><br>
-                Canvas éditeur: <span style="color: #ff0;">${info.editorCanvasWidth}px</span><br>
-                Largeur dispo: <span style="color: #ff0;">${info.availableWidth}px</span><br>
+        div.innerHTML = `
+            <strong style="color:#0ff;font-size:14px;">📊 DEBUG GROUPES</strong><br>
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid #0f0;">
+                BP: <span style="color:#ff0;">${this.currentBreakpoint}</span><br>
+                Ratio: <span style="color:#ff0;">${(r*100).toFixed(0)}%</span><br>
+                Seuil overlap: <span style="color:#ff0;">${(this.config.overlapThreshold*100).toFixed(0)}%</span><br>
+                Canvas: <span style="color:#ff0;">${this.config.editorCanvasWidth}px</span><br>
+                Dispo: <span style="color:#ff0;">${w}px</span><br>
+                Comps: <span style="color:#ff0;">${this.originalLayout?.length || 0}</span><br>
+                <strong style="color:${overflow>0?'#f00':'#0f0'}">Overflow: ${overflow}</strong>
             </div>
-            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #0f0;">
-                Composants: <span style="color: #ff0;">${info.componentsCount}</span><br>
-                Hauteurs augmentées: <span style="color: ${heightIncreasedCount > 0 ? '#0f0' : '#666'}">${heightIncreasedCount}</span><br>
-                Total ajouté: <span style="color: #0f0; font-weight: bold;">+${totalHeightIncrease.toFixed(0)}px</span><br>
-                <strong style="color: ${overflowCount > 0 ? '#f00' : '#0f0'}">Textes en overflow: ${overflowCount}</strong><br>
+            <div style="margin-top:10px;font-size:10px;color:#999;">
+                Les groupes superposés gardent<br>
+                leurs positions relatives intactes
             </div>
-            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #0f0;">
+            <div style="margin-top:10px;">
                 <button onclick="window.responsiveLayout.hideDebugOverlay()" style="
-                    background: #f00;
-                    color: white;
-                    border: none;
-                    padding: 8px 15px;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    font-size: 12px;
-                    font-weight: bold;
-                ">✖ Fermer</button>
+                    background:#f00;color:white;border:none;padding:8px 15px;
+                    border-radius:4px;cursor:pointer;font-size:12px;font-weight:bold;
+                ">✖</button>
             </div>
         `;
         
-        document.body.appendChild(overlay);
+        document.body.appendChild(div);
     }
     
     hideDebugOverlay() {
@@ -756,47 +838,59 @@ class ResponsiveLayout {
     reset() {
         if (!this.originalLayout) return;
         this.applyToDOM(this.originalLayout);
-        console.log('🔄 Layout réinitialisé');
     }
 }
 
-// INITIALISATION AUTOMATIQUE
+// INIT
 if (typeof window !== 'undefined') {
     document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-            const components = Array.from(document.querySelectorAll('.component')).map(el => {
-                const typeClass = Array.from(el.classList).find(cls => cls.startsWith('component-'));
-                const type = typeClass ? typeClass.replace('component-', '') : 'unknown';
-                
-                return {
-                    id: el.id,
-                    type: type,
-                    x: parseFloat(el.style.left) || 0,
-                    y: parseFloat(el.style.top) || 0,
-                    w: parseFloat(el.style.width) || 300,
-                    h: parseFloat(el.style.height) || 200,
-                    z: parseInt(el.style.zIndex) || 0
-                };
+        // ✅ FIX : On attend que les feuilles de style (shared-components.css,
+        // viewer.css) soient appliquées ET que le navigateur ait fait son premier
+        // rendu avant de mesurer les heights. requestAnimationFrame() garantit
+        // qu'on est dans le cycle de rendu suivant, après l'application du CSS.
+        //
+        // Pourquoi deux rAF ?
+        // - 1er rAF : CSS appliqué, mais le layout peut ne pas être calculé.
+        // - 2ème rAF : Layout calculé et stable, mesures fiables.
+        //
+        // Le setTimeout(100) ajoute une marge supplémentaire pour les CSS externes
+        // (CDN Quill, etc.) qui peuvent charger légèrement après DOMContentLoaded.
+        
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    const comps = Array.from(document.querySelectorAll('.component')).map(el => {
+                        const tc = Array.from(el.classList).find(c => c.startsWith('component-'));
+                        const type = tc ? tc.replace('component-', '') : 'unknown';
+                        
+                        return {
+                            id: el.id,
+                            type: type,
+                            x: parseFloat(el.style.left) || 0,
+                            y: parseFloat(el.style.top) || 0,
+                            w: parseFloat(el.style.width) || 300,
+                            h: parseFloat(el.style.height) || 200,
+                            z: parseInt(el.style.zIndex) || 0
+                        };
+                    });
+                    
+                    if (comps.length > 0) {
+                        const cw = parseInt(document.querySelector('meta[name="editor-canvas-width"]')?.content) || 1400;
+                        
+                        console.log(`📦 ${comps.length} composants | Canvas éditeur: ${cw}px`);
+                        
+                        window.responsiveLayout = new ResponsiveLayout({
+                            editorCanvasWidth: cw
+                        });
+                        
+                        const resp = window.responsiveLayout.init(comps);
+                        window.responsiveLayout.applyToDOM(resp);
+                        
+                        console.log('✅ Responsive initialisé');
+                    }
+                }, 100);
             });
-            
-            if (components.length > 0) {
-                const editorWidth = parseInt(document.querySelector('meta[name="editor-canvas-width"]')?.content) || 1920;
-                const editorHeight = parseInt(document.querySelector('meta[name="editor-canvas-height"]')?.content) || 1080;
-                
-                console.log(`📦 ${components.length} composants | Canvas: ${editorWidth}×${editorHeight}px`);
-                
-                window.responsiveLayout = new ResponsiveLayout({
-                    editorCanvasWidth: editorWidth,
-                    editorCanvasHeight: editorHeight
-                });
-                
-                const responsive = window.responsiveLayout.init(components);
-                window.responsiveLayout.applyToDOM(responsive);
-                
-                console.log('✅ Responsive OPTIMISÉ activé');
-                console.log('💡 Commandes: ResponsiveDebug.showAll() | ResponsiveDebug.report()');
-            }
-        }, 200);
+        });
     });
 }
 
@@ -887,11 +981,15 @@ class ResponsiveDebugUtils {
         console.log('Meta tags:', meta);
         console.log('Canvas actuel:', actual);
         
-        if (meta.width && parseInt(meta.width) < 1900) {
-            console.warn('⚠️ PROBLÈME: Canvas éditeur trop petit!');
+        // Largeur canonique = 1400px (définie dans editor.css + viewer.css)
+        const CANONICAL = 1400;
+        if (meta.width && Math.abs(parseInt(meta.width) - CANONICAL) > 50) {
+            console.warn('⚠️ PROBLÈME: Canvas éditeur non canonique!');
             console.warn(`   Valeur actuelle: ${meta.width}px`);
-            console.warn(`   Valeur attendue: ~1920px`);
-            console.warn('   → La taille du canvas n\'a pas été sauvegardée correctement');
+            console.warn(`   Valeur attendue: ~${CANONICAL}px`);
+            console.warn('   → Resauvegardez la page depuis l\'éditeur pour corriger.');
+        } else if (meta.width) {
+            console.log(`✅ Canvas OK: ${meta.width}px (~${CANONICAL}px attendu)`);
         }
         
         console.groupEnd();
@@ -1094,8 +1192,8 @@ class ResponsiveDebugUtils {
         // Problèmes détectés
         const problems = [];
         
-        if (canvasCheck.meta.width && parseInt(canvasCheck.meta.width) < 1900) {
-            problems.push('Canvas éditeur trop petit (< 1900px)');
+        if (canvasCheck.meta.width && Math.abs(parseInt(canvasCheck.meta.width) - 1400) > 50) {
+            problems.push(`Canvas éditeur non canonique (${canvasCheck.meta.width}px au lieu de ~1400px)`);
         }
         
         const overflowCount = componentData.filter(c => c.overflow === '⚠️').length;

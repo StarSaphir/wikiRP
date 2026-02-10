@@ -1,5 +1,3 @@
-viewer.css - Style cohérent avec les pages wiki
-
 * {
     margin: 0;
     padding: 0;
@@ -187,261 +185,68 @@ body {
 
 .canvas-container {
     position: relative;
-    width: 100%;
+    /* Largeur canonique identique à editor.css (.canvas-inner width).
+       ⚠️ Si vous changez cette valeur, changez aussi editor.css et app.py. */
+    width: 1400px;
+    max-width: 100%;
+    margin: 0 auto;
     background: #1a1a1a;
     border-radius: 10px;
-    padding: 20px;
+    /* PAS de padding : les composants sont positionnés en px absolus
+       depuis le coin supérieur gauche du canvas. Tout padding décalerait
+       tous les composants et créerait une divergence avec l'éditeur. */
+    padding: 0;
 }
 
-/* Composants */
+/* Composants
+   Les styles du CONTENU des composants (texte, images, tableaux, etc.)
+   sont dans shared-components.css, partagé avec l'éditeur.
+   Seuls les styles propres au viewer (animation d'apparition, hover) restent ici. */
+
 .component {
     position: absolute;
     overflow: hidden;
 }
 
-.component-text .text-content {
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    padding: 15px;
-    line-height: 1.6;
+/* Animation d'apparition (gérée par IntersectionObserver dans le JS inline) */
+.component {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 }
 
-.component-text .text-content h1,
-.component-text .text-content h2,
-.component-text .text-content h3 {
-    scroll-margin-top: 80px;
-    color: linear-gradient(135deg, #4a9eff, #667eea);
-    margin-bottom: 15px;
-    font-weight: 700;
+/* Effets hover propres au viewer (non présents dans l'éditeur) */
+.component-image:hover img {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
 }
 
-.component-text .text-content h1 {
-    font-size: 32px;
-    background: linear-gradient(135deg, #4a9eff, #667eea);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+/* Amélioration de la lisibilité (viewer uniquement) */
+.component-text .text-content em {
+    color: #ccc;
 }
 
-.component-text .text-content h2 {
-    font-size: 24px;
-}
-
-.component-text .text-content h3 {
-    font-size: 20px;
-}
-
-.component-text .text-content p {
-    margin-bottom: 15px;
-    color: #e0e0e0;
-}
-
-.component-text .text-content a {
-    color: #4a9eff !important;
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.2s;
+/* Liens internes — flèche au hover (viewer uniquement) */
+.component-text .text-content a[href^="../"] {
     position: relative;
+    padding-bottom: 2px;
 }
 
-.component-text .text-content a:hover {
-    border-bottom-color: #4a9eff;
+.component-text .text-content a[href^="../"]::after {
+    content: '→';
+    margin-left: 4px;
+    opacity: 0;
+    transition: opacity 0.2s, margin-left 0.2s;
 }
 
-.component-text .text-content a:visited {
-    color: #4a9eff !important;
+.component-text .text-content a[href^="../"]:hover::after {
+    opacity: 1;
+    margin-left: 6px;
 }
 
-.component-text .text-content ol,
-.component-text .text-content ul {
-    margin-left: 25px;
-    margin-bottom: 15px;
-}
-
-.component-text .text-content li {
-    margin-bottom: 8px;
-}
-
-.component-text .text-content strong {
-    color: #fff;
-    font-weight: 600;
-}
-
-.component-text .text-content blockquote {
-    border-left: 4px solid #4a9eff;
-    padding-left: 20px;
-    margin: 20px 0;
-    color: #aaa;
-    font-style: italic;
-}
-
-.component-text .text-content code {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-family: 'Courier New', monospace;
-    font-size: 0.9em;
-    color: #f093fb;
-}
-
-.component-text .text-content pre {
-    background: #0a0a0a;
-    padding: 15px;
-    border-radius: 8px;
-    overflow-x: auto;
-    margin: 20px 0;
-    border: 1px solid #333;
-}
-
-.component-text .text-content pre code {
-    background: none;
-    padding: 0;
-}
-
-/* Images */
-.component-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-/* Formes */
-.component-shape {
-    border-radius: 5px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-/* Séparateur */
-.component-separator hr {
-    border: none;
-    border-top: 2px solid #666;
-    margin: 0;
-}
-
-/* Vidéo */
-.component-video video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.component-youtube iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    border-radius: 8px;
-}
-
-/* Tableau */
-.component-table {
-    overflow: auto;
-    padding: 10px;
-}
-
-.component-table table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #252525;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.component-table th,
-.component-table td {
-    padding: 12px;
-    text-align: left;
-    border: 1px solid #333;
-}
-
-.component-table th {
-    background: #333;
-    color: #4a9eff;
-    font-weight: bold;
-}
-
-.component-table tr:hover {
-    background: rgba(74, 158, 255, 0.05);
-}
-
-/* Galerie */
-.component-gallery {
-    overflow: hidden;
-}
-
-.gallery-carousel {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.gallery-slide {
-    transition: opacity 0.5s ease-in-out;
-}
-
-.gallery-slide[style*="display: block"] {
-    animation: fadeIn 0.5s;
-}
-
-.gallery-prev,
-.gallery-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    border: none;
-    padding: 15px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 24px;
-    z-index: 10;
-    transition: all 0.3s;
-}
-
-.gallery-prev:hover,
-.gallery-next:hover {
-    background: rgba(74, 158, 255, 0.8);
-    transform: translateY(-50%) scale(1.1);
-}
-
-.gallery-prev {
-    left: 10px;
-}
-
-.gallery-next {
-    right: 10px;
-}
-
-.gallery-indicators {
-    position: absolute;
-    bottom: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 8px;
-    z-index: 10;
-}
-
-.gallery-indicator {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.5);
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.gallery-indicator:hover {
-    background: #4a9eff;
-    transform: scale(1.2);
-}
-
-.gallery-indicator[style*="background: #4a9eff"] {
-    background: #4a9eff !important;
+/* Tableau — styles de survol viewer uniquement */
+.component-table table tbody tr:hover {
+    background: rgba(74, 158, 255, 0.08);
 }
 
 /* Preview des liens */
@@ -546,22 +351,11 @@ body {
 
 /* Animations */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
-/* Animation d'apparition des composants */
-.component {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-}
-
-/* États de chargement */
+/* État de chargement */
 .preview-loading {
     padding: 20px;
     text-align: center;
@@ -574,16 +368,6 @@ body {
     text-align: center;
     color: #ff4a4a;
     font-size: 13px;
-}
-
-/* Amélioration de la lisibilité */
-.component-text .text-content {
-    font-size: 15px;
-    letter-spacing: 0.2px;
-}
-
-.component-text .text-content em {
-    color: #ccc;
 }
 
 /* Bouton de menu mobile */
@@ -629,32 +413,6 @@ body {
 .component-text .text-content a[href^="../"]:hover::after {
     opacity: 1;
     margin-left: 6px;
-}
-
-/* Effet de survol sur les images */
-.component-image img {
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.component-image:hover img {
-    transform: scale(1.02);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-}
-
-/* Style pour les tableaux plus complexes */
-.component-table table tbody tr:nth-child(even) {
-    background: rgba(255, 255, 255, 0.02);
-}
-
-.component-table table tbody tr:hover {
-    background: rgba(74, 158, 255, 0.08);
-}
-
-/* Amélioration du focus pour l'accessibilité */
-a:focus,
-button:focus {
-    outline: 2px solid #4a9eff;
-    outline-offset: 2px;
 }
 
 .tags {

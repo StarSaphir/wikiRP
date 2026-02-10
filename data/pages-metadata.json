@@ -11,7 +11,14 @@
   "test": {
     "title": "test",
     "slug": "test",
-    "preview": "Lorem ipsum Titre",
+    "preview": "Lorem ipsum Titre Text 2",
+    "hidden_from_nav": false,
+    "tags": []
+  },
+  "test2": {
+    "title": "test2",
+    "slug": "test2",
+    "preview": "Test 12",
     "hidden_from_nav": false,
     "tags": []
   }

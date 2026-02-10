@@ -82,11 +82,15 @@ class ResponsiveDebugUtils {
         console.log('Meta tags:', meta);
         console.log('Canvas actuel:', actual);
         
-        if (meta.width && parseInt(meta.width) < 1900) {
-            console.warn('⚠️ PROBLÈME: Canvas éditeur trop petit!');
+        // Largeur canonique = 1400px (définie dans editor.css + viewer.css)
+        const CANONICAL = 1400;
+        if (meta.width && Math.abs(parseInt(meta.width) - CANONICAL) > 50) {
+            console.warn('⚠️ PROBLÈME: Canvas éditeur non canonique!');
             console.warn(`   Valeur actuelle: ${meta.width}px`);
-            console.warn(`   Valeur attendue: ~1920px`);
-            console.warn('   → La taille du canvas n\'a pas été sauvegardée correctement');
+            console.warn(`   Valeur attendue: ~${CANONICAL}px`);
+            console.warn('   → Resauvegardez la page depuis l\'éditeur pour corriger.');
+        } else if (meta.width) {
+            console.log(`✅ Canvas OK: ${meta.width}px (~${CANONICAL}px attendu)`);
         }
         
         console.groupEnd();
@@ -289,8 +293,8 @@ class ResponsiveDebugUtils {
         // Problèmes détectés
         const problems = [];
         
-        if (canvasCheck.meta.width && parseInt(canvasCheck.meta.width) < 1900) {
-            problems.push('Canvas éditeur trop petit (< 1900px)');
+        if (canvasCheck.meta.width && Math.abs(parseInt(canvasCheck.meta.width) - 1400) > 50) {
+            problems.push(`Canvas éditeur non canonique (${canvasCheck.meta.width}px au lieu de ~1400px)`);
         }
         
         const overflowCount = componentData.filter(c => c.overflow === '⚠️').length;

@@ -263,7 +263,7 @@ def update_page(slug):
     """Sauvegarde le layout d'une page"""
     data = request.json
     layout = data.get('layout', [])
-    canvas_width = data.get('canvas_width', 1920) 
+    canvas_width = data.get('canvas_width', 1400)
     canvas_height = data.get('canvas_height', 1080)
     
     # Créer un backup
@@ -483,7 +483,7 @@ def generate_html(slug, layout):
     title = page_info.get('title', slug)
     is_hidden = page_info.get('hidden_from_nav', False)
 
-    canvas_width = page_info.get('canvas_width', 1920)
+    canvas_width = page_info.get('canvas_width', 1400)
     canvas_height = page_info.get('canvas_height', 1080)
     
     # Calculer hauteur et extraire les titres
@@ -580,6 +580,13 @@ def generate_html(slug, layout):
     <meta name="editor-canvas-width" content="{canvas_width}">
     <meta name="editor-canvas-height" content="{canvas_height}">
     
+     <!-- Quill CSS : nécessaire pour .ql-align-*, .ql-indent-*, .ql-size-* -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.css">
+    
+    <!-- Styles partagés composants (identiques à l'éditeur) -->
+    <link rel="stylesheet" href="../../static/css/shared-components.css">
+    
+    <!-- Viewer CSS (sidebar, navigation, mise en page) -->
     <link rel="stylesheet" href="../../static/css/viewer.css">
     
     <style>
