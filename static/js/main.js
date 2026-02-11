@@ -141,11 +141,21 @@ async function handleSave() {
         const components = state.getComponents();
 
         const canvasElement = document.getElementById('canvas-inner') || document.getElementById('canvas');
-        const canvasWidth = canvasElement.offsetWidth || 1920;
-        const canvasHeight = canvasElement.offsetHeight || 1080;
+        
+        // ⚠️ CRITIQUE : Fallback = 1400px (largeur canonique définie dans editor.css)
+        // NE JAMAIS utiliser 1920px sinon le mobile sera cassé (ratio faux)
+        const canvasWidth = canvasElement ? canvasElement.offsetWidth : 1400;
+        const canvasHeight = canvasElement ? canvasElement.offsetHeight : 1080;
         
         console.log('💾 Sauvegarde de', components.length, 'composants');
         console.log(`📐 Taille du canvas: ${canvasWidth}x${canvasHeight}`);
+        
+        // ⚠️ Warning si canvas width incohérent
+        if (canvasWidth < 1300 || canvasWidth > 1500) {
+            console.warn(`⚠️ Canvas width inhabituel: ${canvasWidth}px (attendu: ~1400px)`);
+            console.warn('→ Vérifier que editor.css .canvas-inner { width: 1400px }');
+        }
+        
         console.log('📊 Contenu des composants:', components.map(c => ({
             id: c.id,
             type: c.type,
