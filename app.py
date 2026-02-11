@@ -574,19 +574,26 @@ def generate_html(slug, layout):
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- 📱 VIEWPORT MOBILE CRITIQUE -->
+    <!-- Sans ceci, les navigateurs mobiles affichent la page en mode desktop
+         puis la réduisent, ce qui casse tout le responsive. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    
     <title>{title}</title>
 
+    <!-- Canvas dimensions de l'éditeur (pour le système responsive) -->
     <meta name="editor-canvas-width" content="{canvas_width}">
     <meta name="editor-canvas-height" content="{canvas_height}">
     
-     <!-- Quill CSS : nécessaire pour .ql-align-*, .ql-indent-*, .ql-size-* -->
+    <!-- CSS : ordre CRITIQUE -->
+    <!-- 1. Quill CSS (base pour .ql-align-*, .ql-indent-*, .ql-size-*) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.css">
     
-    <!-- Styles partagés composants (identiques à l'éditeur) -->
+    <!-- 2. Styles partagés composants (identiques éditeur/viewer) -->
     <link rel="stylesheet" href="../../static/css/shared-components.css">
     
-    <!-- Viewer CSS (sidebar, navigation, mise en page) -->
+    <!-- 3. Viewer CSS (sidebar, navigation, mise en page globale) -->
     <link rel="stylesheet" href="../../static/css/viewer.css">
     
     <style>

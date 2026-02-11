@@ -38,19 +38,35 @@ class ResponsiveLayout {
     }
     
     init(components) {
-        console.log('🔧 Init avec groupes et compensation');
+        console.log('🔧 Init responsive avec groupes et compensation');
         
         this.originalLayout = this.deepClone(components);
         this.currentBreakpoint = this.detectBreakpoint();
         
         const availableWidth = this.getAvailableWidth();
+        const ratio = this.getScalingRatio(availableWidth);
         
-        console.log(`📐 ${this.config.editorCanvasWidth}px → ${availableWidth}px`);
+        // 📱 Debugging mobile
+        console.log('📱 Device info:', {
+            screenWidth: window.innerWidth,
+            screenHeight: window.innerHeight,
+            devicePixelRatio: window.devicePixelRatio,
+            userAgent: navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop'
+        });
+        
+        console.log('📊 Responsive config:', {
+            editorCanvasWidth: this.config.editorCanvasWidth,
+            breakpoint: this.currentBreakpoint,
+            availableWidth: availableWidth,
+            ratio: `${(ratio * 100).toFixed(1)}%`,
+            contentMarginLeft: this.config.contentMarginLeft,
+            contentPadding: this.config.contentPadding
+        });
         
         const responsiveComponents = this.applyResponsive(components, availableWidth);
         this.setupResizeListener();
         
-        console.log(`✅ ${responsiveComponents.length} composants`);
+        console.log(`✅ ${responsiveComponents.length} composants traités`);
         
         return responsiveComponents;
     }
@@ -68,13 +84,23 @@ class ResponsiveLayout {
         const bp = this.currentBreakpoint;
         
         if (bp === 'mobile') {
+            // Sur mobile, la sidebar est cachée et le .content prend toute
+            // la largeur moins le padding. Le canvas-container a width: 100%
+            // en CSS mobile, donc utilisons sa largeur réelle.
+            const canvas = document.querySelector('.canvas-container');
+            if (canvas) {
+                const canvasWidth = canvas.offsetWidth;
+                console.log(`📱 Mobile: canvas offsetWidth = ${canvasWidth}px`);
+                return canvasWidth;
+            }
+            // Fallback si le canvas n'existe pas encore
             return screenWidth - (this.config.contentPadding * 2);
         }
         
-        // Largeur brute disponible = écran - sidebar - padding
+        // Desktop/tablet : largeur brute = écran - sidebar - padding
         const raw = screenWidth - this.config.contentMarginLeft - (this.config.contentPadding * 2);
         
-        // ✅ FIX : Le canvas est limité à editorCanvasWidth (max-width).
+        // ✅ Le canvas est limité à editorCanvasWidth (max-width: 1400px).
         // Si l'écran est plus grand que le canvas, la largeur disponible est
         // exactement editorCanvasWidth — pas plus. Sans ce cap, le ratio
         // dépasse 1.0 et les composants sont agrandis hors de la page.

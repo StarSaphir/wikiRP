@@ -314,7 +314,14 @@ body {
     
     .content {
         margin-left: 0;
-        padding: 20px;
+        padding: 20px 10px; /* Réduire le padding horizontal sur mobile */
+    }
+    
+    /* 📱 CRITIQUE : Sur mobile, le canvas doit s'adapter à la largeur d'écran */
+    .canvas-container {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0; /* Pas de border-radius sur mobile (gain de place) */
     }
     
     .component-text .text-content h1 {
