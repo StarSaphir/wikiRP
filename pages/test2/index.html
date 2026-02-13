@@ -155,10 +155,10 @@
         </div>
         
         <div class="canvas-container">
-<div class="component component-text" id="comp-1" data-type="text" style="left:670px;top:80px;width:300px;height:200px;z-index:0;">
+<div class="component component-text" id="comp-1" data-type="text" data-original-x="670" data-original-y="80" data-original-w="300" data-original-h="200" style="left:670px;top:80px;width:300px;height:200px;z-index:0;">
 <div class="text-content"><p><a href="../union-federale-balte-ufb/" rel="noopener noreferrer" target="_blank">Test 12</a></p></div>
 </div>
-<div class="component component-image" id="comp-2" data-type="image" style="left:50px;top:50px;width:300px;height:200px;z-index:1;">
+<div class="component component-image" id="comp-2" data-type="image" data-original-x="50" data-original-y="50" data-original-w="300" data-original-h="200" style="left:50px;top:50px;width:300px;height:200px;z-index:1;">
 <img src="images/img_20260129_092831_118713.png" alt="Image" />
 </div>
 
@@ -999,13 +999,16 @@ if (typeof window !== 'undefined') {
                         const tc = Array.from(el.classList).find(c => c.startsWith('component-'));
                         const type = tc ? tc.replace('component-', '') : 'unknown';
                         
+                        // ✅ CRITIQUE: Lire depuis data-original-* au lieu de style inline
+                        // Les styles inline contiennent les valeurs de l'éditeur (1400px),
+                        // mais on veut les valeurs ORIGINALES pour recalculer le ratio mobile.
                         return {
                             id: el.id,
                             type: type,
-                            x: parseFloat(el.style.left) || 0,
-                            y: parseFloat(el.style.top) || 0,
-                            w: parseFloat(el.style.width) || 300,
-                            h: parseFloat(el.style.height) || 200,
+                            x: parseFloat(el.dataset.originalX || el.style.left) || 0,
+                            y: parseFloat(el.dataset.originalY || el.style.top) || 0,
+                            w: parseFloat(el.dataset.originalW || el.style.width) || 300,
+                            h: parseFloat(el.dataset.originalH || el.style.height) || 200,
                             z: parseInt(el.style.zIndex) || 0
                         };
                     });

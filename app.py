@@ -1157,7 +1157,12 @@ def render_component_html_with_anchors(comp, slug):
     if comp.get('custom_css'):
         style += comp['custom_css']
     
-    html = f'<div class="component component-{comp["type"]}" id="{comp["id"]}" data-type="{comp["type"]}" style="{style}">\n'
+    # ✅ AJOUT: Attributs data-* pour que responsive-layout.js lise les valeurs ORIGINALES
+    # Les styles inline contiennent les positions de l'éditeur (1400px de large),
+    # mais responsive-layout.js doit recalculer pour l'écran actuel (350px mobile, etc.)
+    data_attrs = f'data-original-x="{comp["x"]}" data-original-y="{comp["y"]}" data-original-w="{comp["w"]}" data-original-h="{comp["h"]}"'
+    
+    html = f'<div class="component component-{comp["type"]}" id="{comp["id"]}" data-type="{comp["type"]}" {data_attrs} style="{style}">\n'
     
     comp_type = comp['type']
     

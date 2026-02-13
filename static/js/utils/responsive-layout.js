@@ -649,13 +649,16 @@ if (typeof window !== 'undefined') {
                         const tc = Array.from(el.classList).find(c => c.startsWith('component-'));
                         const type = tc ? tc.replace('component-', '') : 'unknown';
                         
+                        // ✅ CRITIQUE: Lire depuis data-original-* au lieu de style inline
+                        // Les styles inline contiennent les valeurs de l'éditeur (1400px),
+                        // mais on veut les valeurs ORIGINALES pour recalculer le ratio mobile.
                         return {
                             id: el.id,
                             type: type,
-                            x: parseFloat(el.style.left) || 0,
-                            y: parseFloat(el.style.top) || 0,
-                            w: parseFloat(el.style.width) || 300,
-                            h: parseFloat(el.style.height) || 200,
+                            x: parseFloat(el.dataset.originalX || el.style.left) || 0,
+                            y: parseFloat(el.dataset.originalY || el.style.top) || 0,
+                            w: parseFloat(el.dataset.originalW || el.style.width) || 300,
+                            h: parseFloat(el.dataset.originalH || el.style.height) || 200,
                             z: parseInt(el.style.zIndex) || 0
                         };
                     });
