@@ -597,21 +597,54 @@ class ResponsiveLayout {
 // INIT
 if (typeof window !== 'undefined') {
     document.addEventListener('DOMContentLoaded', () => {
-        // ✅ FIX : On attend que les feuilles de style (shared-components.css,
-        // viewer.css) soient appliquées ET que le navigateur ait fait son premier
-        // rendu avant de mesurer les heights. requestAnimationFrame() garantit
-        // qu'on est dans le cycle de rendu suivant, après l'application du CSS.
+        // ✅ NOUVEAU FIX MOBILE : Attendre que le canvas ait sa vraie largeur
+        // avant d'initialiser le responsive.
         //
-        // Pourquoi deux rAF ?
-        // - 1er rAF : CSS appliqué, mais le layout peut ne pas être calculé.
-        // - 2ème rAF : Layout calculé et stable, mesures fiables.
+        // Problème : Sur mobile, les media queries CSS peuvent prendre du temps
+        // à s'appliquer. Si on mesure le canvas trop tôt, on obtient sa largeur
+        // desktop (1400px) au lieu de sa largeur mobile (~350px).
         //
-        // Le setTimeout(100) ajoute une marge supplémentaire pour les CSS externes
-        // (CDN Quill, etc.) qui peuvent charger légèrement après DOMContentLoaded.
+        // Solution : Polling jusqu'à ce que le canvas ait une largeur < 800px
+        // (ce qui indique que le CSS mobile est appliqué) OU timeout après 2s.
         
-        requestAnimationFrame(() => {
+        function waitForCanvasResize(callback, attempts = 0) {
+            const canvas = document.querySelector('.canvas-container');
+            
+            if (!canvas) {
+                console.warn('⚠️ Canvas container non trouvé, retry...');
+                if (attempts < 20) {
+                    setTimeout(() => waitForCanvasResize(callback, attempts + 1), 50);
+                } else {
+                    console.error('❌ Canvas container non trouvé après 1s');
+                }
+                return;
+            }
+            
+            const canvasWidth = canvas.offsetWidth;
+            const screenWidth = window.innerWidth;
+            const isMobile = screenWidth <= 768;
+            
+            // Sur mobile, attendre que le canvas soit < 800px (CSS media query appliqué)
+            // Sur desktop, le canvas peut rester à 1400px, c'est normal
+            const canvasReadyForMobile = !isMobile || canvasWidth < 800;
+            
+            console.log(`📱 Vérification canvas: width=${canvasWidth}px, screen=${screenWidth}px, ready=${canvasReadyForMobile}`);
+            
+            if (canvasReadyForMobile || attempts >= 40) {
+                if (attempts >= 40) {
+                    console.warn(`⚠️ Timeout: canvas width=${canvasWidth}px après 2s`);
+                }
+                callback();
+            } else {
+                // Retry après 50ms
+                setTimeout(() => waitForCanvasResize(callback, attempts + 1), 50);
+            }
+        }
+        
+        function initResponsive() {
+            // Double requestAnimationFrame pour garantir que le CSS est appliqué
             requestAnimationFrame(() => {
-                setTimeout(() => {
+                requestAnimationFrame(() => {
                     const comps = Array.from(document.querySelectorAll('.component')).map(el => {
                         const tc = Array.from(el.classList).find(c => c.startsWith('component-'));
                         const type = tc ? tc.replace('component-', '') : 'unknown';
@@ -641,9 +674,12 @@ if (typeof window !== 'undefined') {
                         
                         console.log('✅ Responsive initialisé');
                     }
-                }, 100);
+                });
             });
-        });
+        }
+        
+        // Lancer l'init seulement quand le canvas a la bonne taille
+        waitForCanvasResize(initResponsive);
     });
 }
 
