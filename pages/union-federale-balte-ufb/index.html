@@ -454,8 +454,10 @@ class ResponsiveLayout {
         return responsiveComponents;
     }
     
-    detectBreakpoint() {
-        const width = window.innerWidth;
+    detectBreakpoint() {      
+        const canvas = document.querySelector('.canvas-container');
+        const width = canvas ? canvas.offsetWidth : window.innerWidth;
+       
         if (width <= this.config.breakpoints.mobile) return 'mobile';
         if (width <= this.config.breakpoints.tablet) return 'tablet';
         if (width <= this.config.breakpoints.desktop) return 'desktop';
