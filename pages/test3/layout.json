@@ -1,0 +1,27 @@
+[
+  {
+    "id": "comp-1",
+    "type": "text",
+    "x": 50,
+    "y": 70,
+    "w": 300,
+    "h": 200,
+    "z": 0,
+    "content": "<p>Test3</p>",
+    "custom_css": "",
+    "custom_js": ""
+  },
+  {
+    "id": "comp-2",
+    "type": "image",
+    "x": 530,
+    "y": 170,
+    "w": 300,
+    "h": 200,
+    "z": 1,
+    "content": "",
+    "custom_css": "",
+    "custom_js": "",
+    "image_path": "images/img_20260325_192827_462086.png"
+  }
+]

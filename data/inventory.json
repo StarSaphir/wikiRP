@@ -27,5 +27,14 @@
     "tags": [],
     "canvas_width": 1067,
     "canvas_height": 580
+  },
+  {
+    "title": "Test3",
+    "slug": "test3",
+    "hidden_from_nav": false,
+    "created_at": "2026-03-25T19:27:48.052691",
+    "tags": [],
+    "canvas_width": 1400,
+    "canvas_height": 670
   }
 ]

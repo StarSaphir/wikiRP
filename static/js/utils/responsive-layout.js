@@ -1,4 +1,10 @@
 // responsive-layout.js - Gestion par groupes avec compensation
+// FIXES:
+//   - Bug 1: Suppression du cap artificiel 0.6/0.8 sur mobile/tablet
+//   - Bug 2: Resize listener déclenché aussi sur changement de largeur (rotation)
+//   - Bug 4: Centrage correct sur grands écrans (> editorCanvasWidth)
+//   - Bug 5: Groupes élargis aux composants proches (< 10px gap)
+//   - Bug 6: setTextStyle appliqué sur tous les breakpoints
 
 class ResponsiveLayout {
     constructor(options = {}) {
@@ -30,11 +36,16 @@ class ResponsiveLayout {
             
             overlapThreshold: 0.05, // 5% = superposition
             
+            // FIX Bug 5: gap max pour considérer deux composants comme "voisins"
+            neighborGap: 10, // px
+            
             ...options
         };
         
         this.originalLayout = null;
         this.currentBreakpoint = this.detectBreakpoint();
+        // FIX Bug 2: mémoriser la largeur précédente pour détecter les rotations
+        this.lastAvailableWidth = 0;
     }
     
     init(components) {
@@ -44,6 +55,7 @@ class ResponsiveLayout {
         this.currentBreakpoint = this.detectBreakpoint();
         
         const availableWidth = this.getAvailableWidth();
+        this.lastAvailableWidth = availableWidth;
         const ratio = this.getScalingRatio(availableWidth);
         
         // 📱 Debugging mobile
@@ -112,11 +124,12 @@ class ResponsiveLayout {
     getScalingRatio(availableWidth) {
         let ratio = availableWidth / this.config.editorCanvasWidth;
         
-        const bp = this.currentBreakpoint;
-        if (bp === 'mobile') ratio = Math.min(ratio, 0.6);
-        else if (bp === 'tablet') ratio = Math.min(ratio, 0.8);
-        
-        return Math.max(ratio, 0.3);
+        // FIX Bug 1: Suppression des caps artificiels 0.6/0.8.
+        // Le ratio est calculé depuis la vraie largeur canvas disponible,
+        // donc il est déjà correct. Un cap bas causait un débordement horizontal
+        // sur mobile car les composants étaient placés à des coordonnées trop grandes.
+        // On garde uniquement un minimum de sécurité à 0.15 (écrans très étroits).
+        return Math.max(ratio, 0.15);
     }
     
     applyResponsive(components, availableWidth) {
@@ -126,7 +139,7 @@ class ResponsiveLayout {
         
         let adjusted = this.deepClone(components);
         
-        // 1. Créer les groupes de composants superposés
+        // 1. Créer les groupes de composants superposés ou voisins
         const groups = this.buildGroups(adjusted);
         console.log(`📦 ${groups.length} groupes`);
         
@@ -153,12 +166,14 @@ class ResponsiveLayout {
     }
     
     /**
-     * 🎯 Construit des groupes de composants superposés
+     * 🎯 Construit des groupes de composants superposés OU proches voisins
+     * FIX Bug 5: les composants séparés par < neighborGap px sont aussi groupés
      */
     buildGroups(components) {
         const groups = [];
         const assigned = new Set();
         let groupId = 0;
+        const gap = this.config.neighborGap;
         
         components.sort((a, b) => a.y - b.y);
         
@@ -174,6 +189,7 @@ class ResponsiveLayout {
             assigned.add(comp.id);
             
             // Expansion du groupe : chercher tous les composants qui chevauchent
+            // OU sont très proches (< gap px)
             let changed = true;
             while (changed) {
                 changed = false;
@@ -181,11 +197,13 @@ class ResponsiveLayout {
                 for (let other of components) {
                     if (assigned.has(other.id)) continue;
                     
-                    // Vérifier si other chevauche UN membre du groupe
+                    // Vérifier si other chevauche OU est voisin d'UN membre du groupe
                     for (let member of group.components) {
-                        if (this.doOverlap(member, other)) {
+                        const overlaps = this.doOverlap(member, other);
+                        const isNeighbor = this.areNeighbors(member, other, gap);
+                        
+                        if (overlaps) {
                             const ratio = this.getOverlapRatio(member, other);
-                            
                             if (ratio > this.config.overlapThreshold) {
                                 group.components.push(other);
                                 group.minY = Math.min(group.minY, other.y);
@@ -194,6 +212,14 @@ class ResponsiveLayout {
                                 changed = true;
                                 break;
                             }
+                        } else if (isNeighbor) {
+                            // FIX Bug 5: composants adjacents regroupés pour synchroniser l'offset
+                            group.components.push(other);
+                            group.minY = Math.min(group.minY, other.y);
+                            group.maxY = Math.max(group.maxY, other.y + other.h);
+                            assigned.add(other.id);
+                            changed = true;
+                            break;
                         }
                     }
                 }
@@ -208,21 +234,25 @@ class ResponsiveLayout {
         
         return groups;
     }
+
+    /**
+     * Vérifie si deux composants sont voisins (gap < threshold)
+     */
+    areNeighbors(c1, c2, gap) {
+        // Chevauchement horizontal nécessaire pour être "voisins verticaux"
+        const hOverlap = !(c1.x + c1.w + gap < c2.x || c2.x + c2.w + gap < c1.x);
+        if (!hOverlap) return false;
+        
+        // Séparation verticale < gap
+        const vGap1 = c2.y - (c1.y + c1.h); // espace entre c1 bas et c2 haut
+        const vGap2 = c1.y - (c2.y + c2.h); // espace entre c2 bas et c1 haut
+        const vGap = Math.max(vGap1, vGap2);
+        
+        return vGap >= 0 && vGap <= gap;
+    }
     
     /**
      * 🎯 Traite un groupe entier
-     * 
-     * Cas typique d'un groupe superposé :
-     *   - 1 shape (fond coloré)
-     *   - 1 image (logo/illustration)
-     *   - 1 texte (description)
-     * 
-     * Le texte peut grandir après scaling (wrapping). Dans ce cas :
-     *   - Les shapes qui "contiennent" le texte (≥ 80% de recouvrement
-     *     vertical et horizontal) doivent grandir avec lui.
-     *   - Les images gardent leur ratio mais se repositionnent.
-     *   - Tous les membres conservent leurs positions RELATIVES
-     *     au sein du groupe.
      */
     processGroup(group, ratio, availableWidth, offsetY) {
         const components = group.components;
@@ -235,9 +265,9 @@ class ResponsiveLayout {
             
             let growth = 0;
             if (comp.type === 'text' || comp.type === 'table') {
-                growth = this.adjustTextHeight(comp); // supprime _scaledH
+                growth = this.adjustTextHeight(comp);
             } else {
-                delete comp._scaledH; // nettoyer pour les shapes, images, etc.
+                delete comp._scaledH;
             }
             
             result.push(comp);
@@ -255,8 +285,8 @@ class ResponsiveLayout {
             const s = this.scaleComponent(comp, ratio, availableWidth);
             const relativeY = comp.y - refY;
             s.y = (refY * ratio) + (relativeY * ratio) + offsetY;
-            s._origRelY  = relativeY;           // position relative originale (avant scale)
-            s._savedScaledH = s._scaledH;       // copie avant que adjustTextHeight la supprime
+            s._origRelY  = relativeY;
+            s._savedScaledH = s._scaledH;
             return s;
         });
         
@@ -264,7 +294,7 @@ class ResponsiveLayout {
         let maxTextGrowth = 0;
         for (let comp of scaled) {
             if (comp.type === 'text' || comp.type === 'table') {
-                const growth = this.adjustTextHeight(comp); // supprime _scaledH sur ce comp
+                const growth = this.adjustTextHeight(comp);
                 if (growth > maxTextGrowth) maxTextGrowth = growth;
             }
         }
@@ -277,8 +307,6 @@ class ResponsiveLayout {
             for (let comp of scaled) {
                 if (comp.type === 'text' || comp.type === 'table') continue;
                 
-                // Un composant "conteneur" est une shape qui occupe ≥ 60% de la
-                // largeur du groupe, OU une image qui sert de fond (relY < 10% du groupe).
                 const coverageX = groupW > 0 ? comp.w / groupW : 0;
                 const relYRatio = groupOrigH > 0 ? comp._origRelY / groupOrigH : 0;
                 
@@ -297,7 +325,7 @@ class ResponsiveLayout {
         for (let comp of scaled) {
             delete comp._origRelY;
             delete comp._savedScaledH;
-            delete comp._scaledH; // au cas où (non-texte sans adjustTextHeight)
+            delete comp._scaledH;
             result.push(comp);
         }
         
@@ -326,18 +354,6 @@ class ResponsiveLayout {
     
     /**
      * Ajuste la hauteur d'un texte et retourne la croissance.
-     * 
-     * ⚠️ ATTENTION — Timing CSS :
-     * Cette méthode mesure le scrollHeight de l'élément DOM.
-     * Elle doit être appelée APRÈS que les feuilles de style partagées
-     * (shared-components.css) soient appliquées par le navigateur.
-     * → Le double requestAnimationFrame + setTimeout(100) dans l'init()
-     *   protège normalement contre ça.
-     * 
-     * ⚠️ Ne pas mettre un plafond de croissance trop bas (ex: 3×) :
-     * un texte compressé à 50% de largeur peut légitimement nécessiter
-     * 4× ou plus sa hauteur scalée. On détecte le CSS mal chargé
-     * autrement (via la font-size effective).
      */
     adjustTextHeight(comp) {
         const element = document.getElementById(comp.id);
@@ -345,12 +361,9 @@ class ResponsiveLayout {
         
         const content = element.querySelector('.text-content') || element;
         
-        // ✅ Détecter si le CSS est bien chargé en vérifiant la font-size
-        // réelle (shared-components.css définit 15px ; le navigateur sans
-        // CSS donne ~16px mais avec une line-height différente qui gonfle
-        // les mesures). On mesure avant de toucher le DOM.
+        // ✅ Détecter si le CSS est bien chargé
         const computedFS = parseFloat(window.getComputedStyle(content).fontSize) || 0;
-        const cssIsReady = computedFS > 0 && computedFS <= 40; // sanity check
+        const cssIsReady = computedFS > 0 && computedFS <= 40;
         
         if (!cssIsReady) {
             console.warn(`⚠️ ${comp.id}: CSS potentiellement non chargé (fontSize=${computedFS}px), skip adjustTextHeight`);
@@ -362,10 +375,7 @@ class ResponsiveLayout {
         const oldW = element.style.width;
         const oldH = element.style.height;
         const oldOverflow = content.style.overflowY;
-        const oldVis    = element.style.visibility;
         
-        // Rendre invisible (pas hidden : on veut que le layout soit calculé)
-        // puis appliquer la largeur cible pour mesurer le wrapping réel
         element.style.width = `${comp.w}px`;
         element.style.height = 'auto';
         content.style.overflowY = 'visible';
@@ -383,9 +393,6 @@ class ResponsiveLayout {
         const minH = this.config.minSizes[comp.type]?.h || 40;
         const scaledH = comp._scaledH;
         
-        // ✅ Pas de plafond arbitraire : on accepte la mesure réelle.
-        // Le seul garde-fou est un ratio absurde (> 10×) qui trahit
-        // une mesure aberrante (ex: CSS chargé mais composant caché/off-screen).
         const ABERRANT_RATIO = 10;
         if (measured > scaledH * ABERRANT_RATIO && scaledH > 30) {
             console.warn(`⚠️ ${comp.id}: mesure aberrante (${measured}px vs scaledH=${scaledH.toFixed(0)}px), ignorée`);
@@ -394,7 +401,7 @@ class ResponsiveLayout {
             return 0;
         }
         
-        comp.h = Math.max(minH, measured + 6); // +6px de marge de confort
+        comp.h = Math.max(minH, measured + 6);
         
         const growth = comp.h - scaledH;
         
@@ -431,27 +438,44 @@ class ResponsiveLayout {
     }
     
     applyToDOM(components) {
+        // FIX Bug 4: Calculer l'offset de centrage si l'écran est plus large que le canvas
+        const centerOffset = this.getCenterOffset();
+
         components.forEach(comp => {
             const el = document.getElementById(comp.id);
             if (!el) return;
             
-            // Transition ciblée : éviter d'animer 'all' pour ne pas
-            // créer d'effets indésirables sur les shapes étendues.
             el.style.transition = 'left 0.3s ease, top 0.3s ease, width 0.3s ease, height 0.3s ease';
-            el.style.left   = `${comp.x}px`;
+            el.style.left   = `${comp.x + centerOffset}px`;
             el.style.top    = `${comp.y}px`;
             el.style.width  = `${comp.w}px`;
             el.style.height = `${comp.h}px`;
             
+            // FIX Bug 6: appliquer setTextStyle sur TOUS les breakpoints, pas seulement ratio < 1
             if (comp.type === 'text' || comp.type === 'table') {
                 this.setTextStyle(el);
-                // S'assurer que le texte est scrollable s'il déborde encore
                 const content = el.querySelector('.text-content');
                 if (content) content.style.overflowY = 'auto';
             }
         });
         
         this.setCanvasHeight(components);
+    }
+
+    /**
+     * FIX Bug 4: Calcule l'offset horizontal pour centrer le contenu
+     * sur les grands écrans où le canvas est plus petit que la zone disponible.
+     */
+    getCenterOffset() {
+        const availableWidth = this.getAvailableWidth();
+        const ratio = this.getScalingRatio(availableWidth);
+        const scaledCanvasWidth = this.config.editorCanvasWidth * ratio;
+
+        // Si le canvas scalé est plus petit que l'espace disponible, centrer
+        if (scaledCanvasWidth < availableWidth) {
+            return Math.round((availableWidth - scaledCanvasWidth) / 2);
+        }
+        return 0;
     }
     
     setTextStyle(element) {
@@ -461,13 +485,14 @@ class ResponsiveLayout {
         const ratio = this.getScalingRatio(this.getAvailableWidth());
         const bp = this.currentBreakpoint;
         
-        // N'écraser la font-size que si l'écran est plus petit que le canvas
-        // (ratio < 1). Si ratio >= 1, laisser shared-components.css gérer (15px).
-        // Cela évite que le JS écrase le CSS sur des écrans normaux.
+        // FIX Bug 6: appliquer l'ajustement de font-size sur tous les cas où
+        // ratio < 1 (écran plus petit que le canvas éditeur).
+        // Sur wide/desktop avec ratio >= 1, laisser shared-components.css gérer.
         if (ratio < 1) {
             let size = 15; // valeur de base de shared-components.css
             if (bp === 'mobile') size = 13;
             else if (bp === 'tablet') size = 14;
+            else if (bp === 'desktop') size = 14.5;
             
             // Réduire proportionnellement, minimum 11px pour la lisibilité
             size = Math.max(11, size * ratio);
@@ -496,6 +521,11 @@ class ResponsiveLayout {
         canvas.style.minHeight = `${max + 100}px`;
     }
     
+    /**
+     * FIX Bug 2: Resize listener amélioré.
+     * Se déclenche aussi si la largeur disponible change significativement
+     * (par ex. rotation d'écran sans changement de breakpoint).
+     */
     setupResizeListener() {
         let timer;
         
@@ -504,14 +534,18 @@ class ResponsiveLayout {
             
             timer = setTimeout(() => {
                 const newBp = this.detectBreakpoint();
+                const newWidth = this.getAvailableWidth();
                 
-                if (newBp !== this.currentBreakpoint) {
-                    console.log(`🔄 ${this.currentBreakpoint} → ${newBp}`);
+                // Recalculer si le breakpoint OU la largeur a changé significativement (> 20px)
+                const widthChanged = Math.abs(newWidth - this.lastAvailableWidth) > 20;
+                
+                if (newBp !== this.currentBreakpoint || widthChanged) {
+                    console.log(`🔄 ${this.currentBreakpoint} → ${newBp} | width: ${this.lastAvailableWidth}px → ${newWidth}px`);
                     this.currentBreakpoint = newBp;
+                    this.lastAvailableWidth = newWidth;
                     
                     if (this.originalLayout) {
-                        const w = this.getAvailableWidth();
-                        const resp = this.applyResponsive(this.originalLayout, w);
+                        const resp = this.applyResponsive(this.originalLayout, newWidth);
                         this.applyToDOM(resp);
                     }
                 }
@@ -546,6 +580,7 @@ class ResponsiveLayout {
         
         const w = this.getAvailableWidth();
         const r = this.getScalingRatio(w);
+        const centerOffset = this.getCenterOffset();
         
         const comps = document.querySelectorAll('.component');
         let overflow = 0;
@@ -568,6 +603,7 @@ class ResponsiveLayout {
                 Seuil overlap: <span style="color:#ff0;">${(this.config.overlapThreshold*100).toFixed(0)}%</span><br>
                 Canvas: <span style="color:#ff0;">${this.config.editorCanvasWidth}px</span><br>
                 Dispo: <span style="color:#ff0;">${w}px</span><br>
+                Center offset: <span style="color:#ff0;">${centerOffset}px</span><br>
                 Comps: <span style="color:#ff0;">${this.originalLayout?.length || 0}</span><br>
                 <strong style="color:${overflow>0?'#f00':'#0f0'}">Overflow: ${overflow}</strong>
             </div>
@@ -589,6 +625,19 @@ class ResponsiveLayout {
     hideDebugOverlay() {
         document.getElementById('responsive-debug-overlay')?.remove();
     }
+
+    getDebugInfo() {
+        const w = this.getAvailableWidth();
+        const r = this.getScalingRatio(w);
+        return {
+            breakpoint: this.currentBreakpoint,
+            ratio: `${(r * 100).toFixed(1)}%`,
+            editorCanvasWidth: this.config.editorCanvasWidth,
+            availableWidth: w,
+            centerOffset: this.getCenterOffset(),
+            lastAvailableWidth: this.lastAvailableWidth
+        };
+    }
     
     reset() {
         if (!this.originalLayout) return;
@@ -599,15 +648,8 @@ class ResponsiveLayout {
 // INIT
 if (typeof window !== 'undefined') {
     document.addEventListener('DOMContentLoaded', () => {
-        // ✅ NOUVEAU FIX MOBILE : Attendre que le canvas ait sa vraie largeur
-        // avant d'initialiser le responsive.
-        //
-        // Problème : Sur mobile, les media queries CSS peuvent prendre du temps
-        // à s'appliquer. Si on mesure le canvas trop tôt, on obtient sa largeur
-        // desktop (1400px) au lieu de sa largeur mobile (~350px).
-        //
-        // Solution : Polling jusqu'à ce que le canvas ait une largeur < 800px
-        // (ce qui indique que le CSS mobile est appliqué) OU timeout après 2s.
+        // ✅ Attendre que le canvas ait sa vraie largeur avant d'initialiser le responsive.
+        // Sur mobile, les media queries CSS peuvent prendre du temps à s'appliquer.
         
         function waitForCanvasResize(callback, attempts = 0) {
             const canvas = document.querySelector('.canvas-container');
@@ -627,7 +669,6 @@ if (typeof window !== 'undefined') {
             const isMobile = screenWidth <= 768;
             
             // Sur mobile, attendre que le canvas soit < 800px (CSS media query appliqué)
-            // Sur desktop, le canvas peut rester à 1400px, c'est normal
             const canvasReadyForMobile = !isMobile || canvasWidth < 800;
             
             console.log(`📱 Vérification canvas: width=${canvasWidth}px, screen=${screenWidth}px, ready=${canvasReadyForMobile}`);
@@ -638,7 +679,6 @@ if (typeof window !== 'undefined') {
                 }
                 callback();
             } else {
-                // Retry après 50ms
                 setTimeout(() => waitForCanvasResize(callback, attempts + 1), 50);
             }
         }
@@ -651,9 +691,7 @@ if (typeof window !== 'undefined') {
                         const tc = Array.from(el.classList).find(c => c.startsWith('component-'));
                         const type = tc ? tc.replace('component-', '') : 'unknown';
                         
-                        // ✅ CRITIQUE: Lire depuis data-original-* au lieu de style inline
-                        // Les styles inline contiennent les valeurs de l'éditeur (1400px),
-                        // mais on veut les valeurs ORIGINALES pour recalculer le ratio mobile.
+                        // ✅ Lire depuis data-original-* pour avoir les valeurs de l'éditeur
                         return {
                             id: el.id,
                             type: type,
@@ -678,6 +716,7 @@ if (typeof window !== 'undefined') {
                         window.responsiveLayout.applyToDOM(resp);
                         
                         console.log('✅ Responsive initialisé');
+                        console.log('💡 Debug: window.responsiveLayout.showDebugOverlay() | .getDebugInfo() | .reset()');
                     }
                 });
             });

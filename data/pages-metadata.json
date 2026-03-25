@@ -21,5 +21,12 @@
     "preview": "Test 12",
     "hidden_from_nav": false,
     "tags": []
+  },
+  "test3": {
+    "title": "Test3",
+    "slug": "test3",
+    "preview": "Test3",
+    "hidden_from_nav": false,
+    "tags": []
   }
 }

@@ -683,10 +683,82 @@ def generate_html(slug, layout):
                 font-size: 22px;
             }}
         }}
+
+        /* 📱 Bouton hamburger — visible uniquement mobile */
+        .sidebar-toggle {{
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 2000;
+            background: #4a9eff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }}
+
+        /* Bouton fermer dans la sidebar */
+        .sidebar-close-btn {{
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }}
+
+        .sidebar-close-btn:hover {{
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+        }}
+
+        /* Overlay sombre derrière la sidebar ouverte sur mobile */
+        .sidebar-overlay {{
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1500;
+        }}
+
+        .sidebar-overlay.active {{
+            display: block;
+        }}
+
+        @media (max-width: 768px) {{
+            .sidebar-toggle {{
+                display: block;
+            }}
+
+            .sidebar-close-btn {{
+                display: block;
+            }}
+
+            /* La sidebar est masquée par défaut sur mobile */
+            .sidebar {{
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 1600;
+            }}
+
+            .sidebar.open {{
+                transform: translateX(0);
+            }}
+        }}
     </style>
 </head>
 <body>
-    <nav class="sidebar">
+    <nav class="sidebar" id="sidebar">
+        <button class="sidebar-close-btn" id="sidebar-close" aria-label="Fermer le menu">✕</button>
         <div class="sidebar-header">
             <h2>📚 {title}</h2>
             <a href="../../wiki/" class="home-btn">
@@ -718,6 +790,11 @@ def generate_html(slug, layout):
     </nav>
     
     <main class="content">
+        <!-- 📱 Bouton hamburger (visible uniquement sur mobile) -->
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Ouvrir le menu">☰</button>
+        <!-- Overlay pour fermer la sidebar sur mobile -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
         <!-- 🎨 BANNIÈRE SIMPLIFIÉE -->
         <div class="page-header">
             <div class="page-header-content">
@@ -765,6 +842,13 @@ def generate_html(slug, layout):
         }}
         
         fetch('../../data/inventory.json')
+            .then(res => {{
+                if (!res.ok) {{
+                    // Fallback: essayer depuis la racine GitHub Pages
+                    return fetch('/data/inventory.json');
+                }}
+                return res;
+            }})
             .then(res => res.json())
             .then(pages => {{
                 const visiblePages = pages.filter(p => !p.hidden_from_nav);
@@ -921,6 +1005,38 @@ def generate_html(slug, layout):
         
         console.log('✅ Viewer initialisé');
         console.log('📊 Métadonnées:', Object.keys(PAGES_METADATA).length, 'pages');
+
+        // 📱 Sidebar mobile : hamburger / overlay / fermeture
+        (function() {{
+            const sidebar   = document.getElementById('sidebar');
+            const toggle    = document.getElementById('sidebar-toggle');
+            const overlay   = document.getElementById('sidebar-overlay');
+            const closeBtn  = document.getElementById('sidebar-close');
+            if (!sidebar || !toggle) return;
+
+            function openSidebar() {{
+                sidebar.classList.add('open');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }}
+
+            function closeSidebar() {{
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }}
+
+            toggle.addEventListener('click', openSidebar);
+            if (closeBtn)  closeBtn.addEventListener('click', closeSidebar);
+            if (overlay)   overlay.addEventListener('click', closeSidebar);
+
+            // Fermer la sidebar quand on clique sur un lien (navigation mobile)
+            sidebar.querySelectorAll('a').forEach(a => {{
+                a.addEventListener('click', () => {{
+                    if (window.innerWidth <= 768) closeSidebar();
+                }});
+            }});
+        }})();
     </script>
     <script>
         {responsive_js_content}
@@ -1157,9 +1273,7 @@ def render_component_html_with_anchors(comp, slug):
     if comp.get('custom_css'):
         style += comp['custom_css']
     
-    # ✅ AJOUT: Attributs data-* pour que responsive-layout.js lise les valeurs ORIGINALES
-    # Les styles inline contiennent les positions de l'éditeur (1400px de large),
-    # mais responsive-layout.js doit recalculer pour l'écran actuel (350px mobile, etc.)
+    # ✅ Attributs data-* pour que responsive-layout.js lise les valeurs ORIGINALES
     data_attrs = f'data-original-x="{comp["x"]}" data-original-y="{comp["y"]}" data-original-w="{comp["w"]}" data-original-h="{comp["h"]}"'
     
     html = f'<div class="component component-{comp["type"]}" id="{comp["id"]}" data-type="{comp["type"]}" {data_attrs} style="{style}">\n'
@@ -1183,7 +1297,10 @@ def render_component_html_with_anchors(comp, slug):
         html += f'<div class="text-content">{content}</div>\n'
     
     elif comp_type == 'image':
-        html += f'<img src="{comp.get("image_path", "")}" alt="Image" />\n'
+        # ✅ FIX perf: loading=lazy + decoding=async pour éviter les CLS et accélérer le chargement
+        img_path = comp.get("image_path", "")
+        object_fit = comp.get("object_fit", "contain")
+        html += f'<img src="{img_path}" alt="Image" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:{object_fit};" />\n'
     
     elif comp_type == 'gallery':
         # 🔧 FIX: Générer un carousel fonctionnel avec toutes les images
@@ -1331,6 +1448,18 @@ def render_component_html_with_anchors(comp, slug):
         html += '<hr />\n'
     
     html += '</div>\n'
+
+    # ✅ FIX sécurité: custom_js injecté dans un script isolé APRÈS la div,
+    # jamais inline dans le style. On vérifie qu'il ne contient pas de balises
+    # script imbriquées avant de l'injecter.
+    custom_js = comp.get('custom_js', '').strip()
+    if custom_js:
+        # Refus d'injection si le JS contient des tentatives d'échappement
+        if '</script' not in custom_js.lower() and 'document.write' not in custom_js.lower():
+            html += f'<script>(function(){{ var __comp = document.getElementById("{comp["id"]}"); {custom_js} }})();</script>\n'
+        else:
+            html += f'<!-- custom_js refusé pour {comp["id"]}: contenu dangereux détecté -->\n'
+
     return html
 
 # --- Routes Statiques ---
