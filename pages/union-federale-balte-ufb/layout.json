@@ -25,18 +25,6 @@
     "z": 1
   },
   {
-    "content": "<p><strong>L’Union Fédérale Balte</strong></p>",
-    "custom_css": "",
-    "custom_js": "",
-    "h": 40,
-    "id": "comp-3",
-    "type": "text",
-    "w": 280,
-    "x": 1107,
-    "y": 60,
-    "z": 2
-  },
-  {
     "content": "",
     "custom_css": "",
     "custom_js": "",
@@ -156,5 +144,17 @@
     "x": 25,
     "y": 870,
     "z": 12
+  },
+  {
+    "id": "comp-1768999956452",
+    "type": "text",
+    "x": 1099,
+    "y": 61,
+    "w": 300,
+    "h": 50,
+    "z": 12,
+    "content": "<p>Union Fédérale Balte</p>",
+    "custom_css": "",
+    "custom_js": ""
   }
 ]

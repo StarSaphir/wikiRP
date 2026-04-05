@@ -492,8 +492,8 @@ class ResponsiveLayout {
         }
         
         content.style.lineHeight   = '1.6';
-        content.style.padding      = '12px';
-        content.style.overflowY    = 'auto';
+        content.style.padding      = '10px';
+        content.style.overflowY    = 'hidden';
         content.style.boxSizing    = 'border-box';
     }
     
@@ -666,16 +666,10 @@ if (typeof window !== 'undefined') {
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     // ✅ Exclure les composants du layout mobile (data-no-responsive="true")
-                    // Ils ont des IDs suffixés -m et des coordonnées format 390px —
-                    // les inclure dans le responsive desktop causerait des calculs erronés.
                     const comps = Array.from(document.querySelectorAll('.component:not([data-no-responsive])'))
                         .map(el => {
                         const tc = Array.from(el.classList).find(c => c.startsWith('component-'));
                         const type = tc ? tc.replace('component-', '') : 'unknown';
-                        
-                        // ✅ CRITIQUE: Lire depuis data-original-* au lieu de style inline
-                        // Les styles inline contiennent les valeurs de l'éditeur (1400px),
-                        // mais on veut les valeurs ORIGINALES pour recalculer le ratio mobile.
                         return {
                             id: el.id,
                             type: type,
@@ -689,19 +683,108 @@ if (typeof window !== 'undefined') {
                     
                     if (comps.length > 0) {
                         const cw = parseInt(document.querySelector('meta[name="editor-canvas-width"]')?.content) || 1400;
-                        
                         console.log(`📦 ${comps.length} composants | Canvas éditeur: ${cw}px`);
                         
-                        window.responsiveLayout = new ResponsiveLayout({
-                            editorCanvasWidth: cw
-                        });
-                        
+                        window.responsiveLayout = new ResponsiveLayout({ editorCanvasWidth: cw });
                         const resp = window.responsiveLayout.init(comps);
                         window.responsiveLayout.applyToDOM(resp);
-                        
-                        console.log('✅ Responsive initialisé');
+                        console.log('✅ Responsive desktop initialisé');
                     }
+
+                    // ✅ Scaler aussi le layout mobile si présent
+                    initMobileLayout();
                 });
+            });
+        }
+
+        /**
+         * Scale le bloc .layout-mobile en fonction de la largeur réelle de l'écran.
+         * Le layout mobile a été créé pour un canvas de 390px (iPhone 14).
+         * Sur un téléphone plus étroit (320px) ou plus large (430px), on applique
+         * un ratio pour que tout reste proportionnel et que rien ne soit coupé.
+         *
+         * Stratégie : on lit les data-original-* (coordonnées 390px) et on applique
+         * ratio = screenWidth / 390. Les hauteurs de texte sont ajustées après scaling.
+         */
+        function initMobileLayout() {
+            const mobileBlock = document.querySelector('.layout-mobile');
+            if (!mobileBlock) return;
+
+            // Ne s'applique que si on est effectivement sur mobile (écran < 768px)
+            if (window.innerWidth > 768) return;
+
+            const MOBILE_CANVAS_W = 390;
+            const screenW = window.innerWidth;
+            const ratio   = Math.max(0.5, Math.min(1.2, screenW / MOBILE_CANVAS_W));
+
+            console.log(`📱 Layout mobile: écran=${screenW}px | ratio=${(ratio*100).toFixed(0)}%`);
+
+            // Si ratio ≈ 1, pas besoin de scaling
+            if (Math.abs(ratio - 1) < 0.03) {
+                console.log('📱 Ratio ~1, pas de scaling mobile nécessaire');
+                return;
+            }
+
+            const mobileComps = Array.from(mobileBlock.querySelectorAll('.component'));
+            let maxBottom = 0;
+
+            mobileComps.forEach(el => {
+                const origX = parseFloat(el.dataset.originalX) || 0;
+                const origY = parseFloat(el.dataset.originalY) || 0;
+                const origW = parseFloat(el.dataset.originalW) || 300;
+                const origH = parseFloat(el.dataset.originalH) || 200;
+                const type  = el.dataset.type || 'text';
+
+                const newX = Math.round(origX * ratio);
+                const newY = Math.round(origY * ratio);
+                const newW = Math.round(origW * ratio);
+
+                // Hauteur : les textes peuvent avoir besoin de plus de place
+                // si on réduit la largeur (wrapping) — on mesure le scrollHeight réel
+                let newH = Math.round(origH * ratio);
+
+                el.style.left   = `${newX}px`;
+                el.style.top    = `${newY}px`;
+                el.style.width  = `${newW}px`;
+                el.style.height = `${newH}px`;
+
+                // Ajustement hauteur pour les textes
+                if (type === 'text' || type === 'table') {
+                    const content = el.querySelector('.text-content');
+                    if (content) {
+                        // Ajuster la font-size proportionnellement, min 11px
+                        const baseFontSize = 14;
+                        const fontSize = Math.max(11, Math.round(baseFontSize * ratio));
+                        content.style.fontSize   = `${fontSize}px`;
+                        content.style.lineHeight = '1.6';
+                        content.style.padding    = '10px';
+                        content.style.overflowY  = 'hidden';
+                        content.style.boxSizing  = 'border-box';
+
+                        // Mesurer la vraie hauteur nécessaire
+                        el.style.height = 'auto';
+                        content.style.overflowY = 'visible';
+                        void el.offsetHeight; // force reflow
+                        const measured = content.scrollHeight + 4;
+                        newH = Math.max(newH, measured);
+                        el.style.height  = `${newH}px`;
+                        content.style.overflowY = 'auto';
+                    }
+                }
+
+                const bottom = newY + newH;
+                if (bottom > maxBottom) maxBottom = bottom;
+            });
+
+            // Mettre à jour la hauteur du bloc mobile
+            mobileBlock.style.minHeight = `${maxBottom + 20}px`;
+
+            console.log(`📱 Layout mobile scalé: ${mobileComps.length} composants, hauteur totale ${maxBottom}px`);
+
+            // Ré-appliquer au resize
+            window.addEventListener('resize', () => {
+                // Seulement si on est toujours sur mobile
+                if (window.innerWidth <= 768) initMobileLayout();
             });
         }
         

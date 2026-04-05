@@ -12,10 +12,11 @@ export class TextComponent extends BaseComponent {
             <div class="text-content" id="text-${component.id}" style="
                 width: 100%;
                 height: 100%;
-                overflow: auto;
-                padding: 15px;
+                overflow: hidden;
+                padding: 10px;
                 color: #e0e0e0;
                 line-height: 1.6;
+                box-sizing: border-box;
             ">
                 ${content}
             </div>
@@ -41,10 +42,22 @@ export class TextComponent extends BaseComponent {
 
         const originalContent = component.content || '';
 
-        this.showEditorPanel(component, textEl, element, originalContent);
+        // ── Préparation du montage Quill ──────────────────────────────────────
+        // Quill injecte un .ql-container autour de l'élément cible et un .ql-editor
+        // à l'intérieur avec overflow:auto en style inline. Pour éviter que ces styles
+        // restent après l'édition, on monte Quill sur un div temporaire DANS textEl,
+        // puis on nettoie tout proprement lors du finishEditing.
+
+        // Vider textEl et y mettre un div temporaire pour Quill
+        const quillMount = document.createElement('div');
+        quillMount.style.cssText = 'width:100%;height:100%;';
+        textEl.innerHTML = '';
+        textEl.appendChild(quillMount);
+
+        this.showEditorPanel(component, textEl, quillMount, element, originalContent);
     }
 
-    showEditorPanel(component, textEl, element, originalContent) {
+    showEditorPanel(component, textEl, quillMount, element, originalContent) {
         const propsPanel = document.getElementById('properties-panel');
         const propsContent = document.getElementById('properties-content');
 
@@ -127,17 +140,14 @@ export class TextComponent extends BaseComponent {
             </div>
         `;
 
-        // Initialiser Quill SANS le bouton link natif
-        const quill = new Quill(textEl, {
+        // Initialiser Quill sur le div temporaire (pas sur textEl directement)
+        const quill = new Quill(quillMount, {
             theme: 'snow',
             modules: { 
                 toolbar: {
                     container: `#toolbar-${component.id}`,
                     handlers: {
-                        // ✅ DÉSACTIVER le handler natif de Quill
-                        link: function() {
-                            // Ne rien faire, on utilise nos modales custom
-                        }
+                        link: function() {}
                     }
                 }
             }
@@ -189,12 +199,26 @@ export class TextComponent extends BaseComponent {
         const finishEditing = () => {
             console.log('✅ Finalisation édition texte...');
             
-            // 🔧 FIX: Récupérer le contenu de Quill
+            // Récupérer le contenu depuis l'éditeur Quill
             const newContent = quill.root.innerHTML;
             component.content = newContent;
+
+            // ── Nettoyage complet de Quill ────────────────────────────────────
+            // On supprime tout ce que Quill a injecté (ql-container, ql-toolbar...)
+            // et on restaure textEl à son état initial propre.
+            textEl.innerHTML = '';
+            // Supprimer les classes Quill éventuellement ajoutées sur textEl
+            textEl.classList.remove('ql-container', 'ql-snow', 'ql-editor', 'ql-blank');
+            // Réappliquer le style du render() pour garantir pas d'overflow
+            textEl.style.overflow   = 'hidden';
+            textEl.style.overflowY  = 'hidden';
+            textEl.style.padding    = '10px';
+            textEl.style.boxSizing  = 'border-box';
+            textEl.style.lineHeight = '1.6';
+            // Injecter le contenu sauvegardé directement
             textEl.innerHTML = newContent;
             
-            // 🔧 FIX: Mettre à jour dans le state ET déclencher un événement
+            // Mettre à jour dans le state
             this.state.updateComponent(component.id, { content: newContent });
             
             this.instances.delete(component.id);
@@ -207,14 +231,12 @@ export class TextComponent extends BaseComponent {
                 element.interactInstance.draggable(true).resizable(true);
             }
             
-            // 🔧 FIX: Émettre un événement pour notifier le changement
             this.state.emit('componentContentUpdated', {
                 id: component.id,
                 content: newContent
             });
             
             this.state.setSelectedComponent(component.id);
-            
             document.removeEventListener('keydown', handleEscape);
             
             console.log('📝 Contenu sauvegardé:', newContent.substring(0, 100) + '...');
