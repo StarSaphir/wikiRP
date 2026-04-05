@@ -59,6 +59,10 @@ def get_layout_file(slug):
     """Retourne le fichier layout.json d'une page"""
     return get_page_dir(slug) / 'layout.json'
 
+def get_mobile_layout_file(slug):
+    """Retourne le fichier layout-mobile.json d'une page"""
+    return get_page_dir(slug) / 'layout-mobile.json'
+
 def create_backup(slug):
     """Crée une sauvegarde du layout"""
     page_dir = get_page_dir(slug)
@@ -282,7 +286,7 @@ def update_page(slug):
             break
     save_inventory(inventory)
     
-    # Générer le HTML
+    # Générer le HTML (en conservant le layout mobile existant s'il y en a un)
     generate_html(slug, layout)
     generate_pages_metadata()
     regenerate_wiki_pages()
@@ -317,6 +321,54 @@ def get_page_layout(slug):
     
     with open(layout_file, 'r', encoding='utf-8') as f:
         return jsonify(json.load(f))
+
+@app.route('/api/pages/<slug>/layout-mobile', methods=['GET'])
+def get_mobile_layout(slug):
+    """Récupère le layout mobile d'une page (vide = pas encore défini)"""
+    mobile_file = get_mobile_layout_file(slug)
+    if not mobile_file.exists():
+        return jsonify([])
+    with open(mobile_file, 'r', encoding='utf-8') as f:
+        return jsonify(json.load(f))
+
+@app.route('/api/pages/<slug>/layout-mobile', methods=['PUT'])
+def save_mobile_layout(slug):
+    """Sauvegarde le layout mobile d'une page et régénère le HTML"""
+    data   = request.json
+    layout = data.get('layout', [])
+
+    page_dir = get_page_dir(slug)
+    if not page_dir.exists():
+        return jsonify({"error": "Page non trouvée"}), 404
+
+    mobile_file = get_mobile_layout_file(slug)
+    with open(mobile_file, 'w', encoding='utf-8') as f:
+        json.dump(layout, f, indent=2, ensure_ascii=False)
+
+    # Régénérer le HTML en incluant le nouveau layout mobile
+    desktop_file = get_layout_file(slug)
+    desktop_layout = []
+    if desktop_file.exists():
+        with open(desktop_file, 'r', encoding='utf-8') as f:
+            desktop_layout = json.load(f)
+
+    generate_html(slug, desktop_layout, mobile_layout=layout)
+    print(f"✅ Layout mobile sauvegardé pour {slug} ({len(layout)} composants)")
+    return jsonify({"success": True})
+
+@app.route('/api/pages/<slug>/layout-mobile', methods=['DELETE'])
+def delete_mobile_layout(slug):
+    """Supprime le layout mobile (retour au responsive automatique)"""
+    mobile_file = get_mobile_layout_file(slug)
+    if mobile_file.exists():
+        mobile_file.unlink()
+    # Régénérer le HTML sans layout mobile
+    desktop_file = get_layout_file(slug)
+    if desktop_file.exists():
+        with open(desktop_file, 'r', encoding='utf-8') as f:
+            desktop_layout = json.load(f)
+        generate_html(slug, desktop_layout, mobile_layout=None)
+    return jsonify({"success": True})
 
 @app.route('/api/pages/<slug>/copy', methods=['POST'])
 def copy_page_layout(slug):
@@ -471,12 +523,27 @@ def generate_pages_metadata():
 
 
 # --- Génération HTML ---
-def generate_html(slug, layout):
-    """Génère le fichier index.html avec prévisualisations statiques"""
+def generate_html(slug, layout, mobile_layout=None):
+    """Génère le fichier index.html avec prévisualisations statiques.
+    
+    Si mobile_layout est None, tente de charger layout-mobile.json.
+    Si un layout mobile existe, les composants sont embarqués dans le HTML
+    avec deux blocs distincts gérés par CSS/JS selon la largeur d'écran.
+    """
     import json
     import re
     
     page_dir = get_page_dir(slug)
+
+    # Charger le layout mobile depuis le fichier si non fourni
+    if mobile_layout is None:
+        mobile_file = get_mobile_layout_file(slug)
+        if mobile_file.exists():
+            try:
+                with open(mobile_file, 'r', encoding='utf-8') as f:
+                    mobile_layout = json.load(f)
+            except Exception:
+                mobile_layout = None
     
     inventory = load_inventory()
     page_info = next((p for p in inventory if p['slug'] == slug), {})
@@ -523,6 +590,14 @@ def generate_html(slug, layout):
             internal_link_matches = re.findall(r'href="\.\.\/([^\/]+)\/"', content)
             internal_links.update(internal_link_matches)
     
+    # Calculer la hauteur du layout mobile (pour le min-height du bloc)
+    mobile_max_bottom = 0
+    if mobile_layout:
+        for comp in mobile_layout:
+            bottom = comp['y'] + comp['h']
+            if bottom > mobile_max_bottom:
+                mobile_max_bottom = bottom
+
     # Charger les métadonnées
     metadata_file = DATA_DIR / 'pages-metadata.json'
     pages_metadata = {}
@@ -684,81 +759,30 @@ def generate_html(slug, layout):
             }}
         }}
 
-        /* 📱 Bouton hamburger — visible uniquement mobile */
-        .sidebar-toggle {{
-            display: none;
-            position: fixed;
-            top: 12px;
-            left: 12px;
-            z-index: 2000;
-            background: #4a9eff;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 20px;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }}
-
-        /* Bouton fermer dans la sidebar */
-        .sidebar-close-btn {{
-            display: none;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            color: #999;
-            font-size: 18px;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }}
-
-        .sidebar-close-btn:hover {{
-            color: #fff;
-            background: rgba(255,255,255,0.1);
-        }}
-
-        /* Overlay sombre derrière la sidebar ouverte sur mobile */
-        .sidebar-overlay {{
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 1500;
-        }}
-
-        .sidebar-overlay.active {{
-            display: block;
+        /* ── Layouts desktop / mobile ──────────────────────────────────────── */
+        .layout-mobile {{
+            display: none !important;  /* caché sur desktop — toujours */
         }}
 
         @media (max-width: 768px) {{
-            .sidebar-toggle {{
-                display: block;
+            .layout-desktop {{
+                display: none !important;
             }}
-
-            .sidebar-close-btn {{
-                display: block;
+            .layout-mobile {{
+                display: block !important;
+                position: relative;
+                width: 100%;
+                min-height: {mobile_max_bottom + 40}px;
             }}
-
-            /* La sidebar est masquée par défaut sur mobile */
-            .sidebar {{
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-                z-index: 1600;
-            }}
-
-            .sidebar.open {{
-                transform: translateX(0);
+            .canvas-container {{
+                min-height: unset;
+                overflow-x: hidden;
             }}
         }}
     </style>
 </head>
 <body>
-    <nav class="sidebar" id="sidebar">
-        <button class="sidebar-close-btn" id="sidebar-close" aria-label="Fermer le menu">✕</button>
+    <nav class="sidebar">
         <div class="sidebar-header">
             <h2>📚 {title}</h2>
             <a href="../../wiki/" class="home-btn">
@@ -790,11 +814,6 @@ def generate_html(slug, layout):
     </nav>
     
     <main class="content">
-        <!-- 📱 Bouton hamburger (visible uniquement sur mobile) -->
-        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Ouvrir le menu">☰</button>
-        <!-- Overlay pour fermer la sidebar sur mobile -->
-        <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
         <!-- 🎨 BANNIÈRE SIMPLIFIÉE -->
         <div class="page-header">
             <div class="page-header-content">
@@ -806,12 +825,34 @@ def generate_html(slug, layout):
         <div class="canvas-container">
 '''
     
-    # Composants triés avec IDs sur les titres
+    # ── Composants desktop ────────────────────────────────────────────────────
+    # Les composants desktop-only sont cachés sur mobile si un layout mobile existe.
+    # Les composants mobile_only du layout desktop sont ignorés ici (cas impossible
+    # mais sécurité supplémentaire).
+    has_mobile = bool(mobile_layout)
+
     sorted_components = sorted(layout, key=lambda x: x.get('z', 0))
-    
+
+    # Bloc desktop : visible uniquement sur desktop si layout mobile défini
+    if has_mobile:
+        html += '        <div class="layout-desktop">\n'
+
     for comp in sorted_components:
-        html += render_component_html_with_anchors(comp, slug)
-    
+        if not comp.get('mobile_only', False):
+            html += render_component_html_with_anchors(comp, slug)
+
+    if has_mobile:
+        html += '        </div><!-- /layout-desktop -->\n'
+
+    # ── Composants mobile ─────────────────────────────────────────────────────
+    # Bloc mobile : visible uniquement sur écran < 768px si layout mobile défini
+    if has_mobile:
+        sorted_mobile = sorted(mobile_layout, key=lambda x: x.get('z', 0))
+        html += '        <div class="layout-mobile">\n'
+        for comp in sorted_mobile:
+            html += render_component_html_with_anchors(comp, slug, is_mobile_layout=True)
+        html += '        </div><!-- /layout-mobile -->\n'
+
     # Fermeture du HTML avec script
     html += f'''
         </div>
@@ -842,13 +883,6 @@ def generate_html(slug, layout):
         }}
         
         fetch('../../data/inventory.json')
-            .then(res => {{
-                if (!res.ok) {{
-                    // Fallback: essayer depuis la racine GitHub Pages
-                    return fetch('/data/inventory.json');
-                }}
-                return res;
-            }})
             .then(res => res.json())
             .then(pages => {{
                 const visiblePages = pages.filter(p => !p.hidden_from_nav);
@@ -1005,38 +1039,6 @@ def generate_html(slug, layout):
         
         console.log('✅ Viewer initialisé');
         console.log('📊 Métadonnées:', Object.keys(PAGES_METADATA).length, 'pages');
-
-        // 📱 Sidebar mobile : hamburger / overlay / fermeture
-        (function() {{
-            const sidebar   = document.getElementById('sidebar');
-            const toggle    = document.getElementById('sidebar-toggle');
-            const overlay   = document.getElementById('sidebar-overlay');
-            const closeBtn  = document.getElementById('sidebar-close');
-            if (!sidebar || !toggle) return;
-
-            function openSidebar() {{
-                sidebar.classList.add('open');
-                overlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }}
-
-            function closeSidebar() {{
-                sidebar.classList.remove('open');
-                overlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }}
-
-            toggle.addEventListener('click', openSidebar);
-            if (closeBtn)  closeBtn.addEventListener('click', closeSidebar);
-            if (overlay)   overlay.addEventListener('click', closeSidebar);
-
-            // Fermer la sidebar quand on clique sur un lien (navigation mobile)
-            sidebar.querySelectorAll('a').forEach(a => {{
-                a.addEventListener('click', () => {{
-                    if (window.innerWidth <= 768) closeSidebar();
-                }});
-            }});
-        }})();
     </script>
     <script>
         {responsive_js_content}
@@ -1265,18 +1267,34 @@ def generate_html(slug, layout):
         print(f"❌ Erreur écriture HTML pour {slug}: {e}")
         raise
 
-def render_component_html_with_anchors(comp, slug):
-    """Génère le HTML avec ancres sur les titres"""
+def render_component_html_with_anchors(comp, slug, is_mobile_layout=False):
+    """Génère le HTML d'un composant avec ancres sur les titres.
+
+    is_mobile_layout=True : composant issu du layout-mobile.json (canvas 390px).
+    Les IDs sont suffixés avec '-m' pour éviter les doublons avec le layout desktop,
+    ce qui empêche le responsive JS de cibler les deux blocs simultanément.
+    """
     import re
     
+    # ✅ Suffixe -m sur les IDs mobiles pour éviter les doublons
+    comp_id = f'{comp["id"]}-m' if is_mobile_layout else comp["id"]
+
     style = f'left:{comp["x"]}px;top:{comp["y"]}px;width:{comp["w"]}px;height:{comp["h"]}px;z-index:{comp.get("z", 0)};'
     if comp.get('custom_css'):
         style += comp['custom_css']
     
-    # ✅ Attributs data-* pour que responsive-layout.js lise les valeurs ORIGINALES
+    # Classes CSS supplémentaires
+    extra_classes = []
+    if comp.get('mobile_only'):
+        extra_classes.append('mobile-only')
+    extra_cls_str = (' ' + ' '.join(extra_classes)) if extra_classes else ''
+
     data_attrs = f'data-original-x="{comp["x"]}" data-original-y="{comp["y"]}" data-original-w="{comp["w"]}" data-original-h="{comp["h"]}"'
+    # data-no-responsive : empêche responsive-layout.js de cibler ce composant
+    if is_mobile_layout:
+        data_attrs += ' data-no-responsive="true"'
     
-    html = f'<div class="component component-{comp["type"]}" id="{comp["id"]}" data-type="{comp["type"]}" {data_attrs} style="{style}">\n'
+    html = f'<div class="component component-{comp["type"]}{extra_cls_str}" id="{comp_id}" data-type="{comp["type"]}" {data_attrs} style="{style}">\n'
     
     comp_type = comp['type']
     
@@ -1297,10 +1315,7 @@ def render_component_html_with_anchors(comp, slug):
         html += f'<div class="text-content">{content}</div>\n'
     
     elif comp_type == 'image':
-        # ✅ FIX perf: loading=lazy + decoding=async pour éviter les CLS et accélérer le chargement
-        img_path = comp.get("image_path", "")
-        object_fit = comp.get("object_fit", "contain")
-        html += f'<img src="{img_path}" alt="Image" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:{object_fit};" />\n'
+        html += f'<img src="{comp.get("image_path", "")}" alt="Image" />\n'
     
     elif comp_type == 'gallery':
         # 🔧 FIX: Générer un carousel fonctionnel avec toutes les images
@@ -1448,18 +1463,6 @@ def render_component_html_with_anchors(comp, slug):
         html += '<hr />\n'
     
     html += '</div>\n'
-
-    # ✅ FIX sécurité: custom_js injecté dans un script isolé APRÈS la div,
-    # jamais inline dans le style. On vérifie qu'il ne contient pas de balises
-    # script imbriquées avant de l'injecter.
-    custom_js = comp.get('custom_js', '').strip()
-    if custom_js:
-        # Refus d'injection si le JS contient des tentatives d'échappement
-        if '</script' not in custom_js.lower() and 'document.write' not in custom_js.lower():
-            html += f'<script>(function(){{ var __comp = document.getElementById("{comp["id"]}"); {custom_js} }})();</script>\n'
-        else:
-            html += f'<!-- custom_js refusé pour {comp["id"]}: contenu dangereux détecté -->\n'
-
     return html
 
 # --- Routes Statiques ---
